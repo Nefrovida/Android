@@ -19,10 +19,11 @@ fun LaboratoryScreen(
         modifier = modifier.fillMaxSize()
     )  {
         //TODO: corregir a lo adecuado en su momento (lista de reportes de laboratorio)
-        AgendaList(
+        /*AgendaList(
+
             onCardClick = {
                 //TODO: navegar al detalle del reporte
             }
-        )
+        )*/
     }
 }

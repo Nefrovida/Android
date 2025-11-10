@@ -14,13 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.nefrovida.domain.model.Appointments
+
 
 @Composable
 fun AppointmentCard (
-    name: String,
-    date: String,
-    type: String,
-    duration: Int,
+    appointment: Appointments,
     onClick: () -> Unit
 ) {
     Card(
@@ -37,20 +36,20 @@ fun AppointmentCard (
             horizontalAlignment = Alignment.Start,
         ) {
             Text (
-                text = name,
+                text = appointment.name,
                 style = MaterialTheme.typography.titleMedium,
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Fecha: $date",
+                text = "Fecha: ${appointment.date}",
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                text = type,
+                text = appointment.type,
                 style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                text = "Duración: $duration minutos",
+                text = "Duración: ${appointment.duration} minutos",
                 style = MaterialTheme.typography.bodySmall,
             )
         }

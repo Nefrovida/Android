@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
+import com.example.nefrovida.domain.model.Appointments
 
 
 @Suppress("ktlint:standard:function-naming")
@@ -56,11 +57,13 @@ fun AgendaScreen(
                 )
             }
             AgendaList(
+                appointmentList = Appointments.getMockData(),
                 onCardClick = { appointmentId ->
                     // TODO: Navegar al detalle de la cita
                     println("Cita seleccionada")
                 })
         }
+        //TODO: hacer del calendario una molécula
         if (showDatePicker) {
             androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
                 androidx.compose.material3.Surface(
