@@ -47,10 +47,12 @@ fun NfBottomNavigationBar(
                     )
                 },
                 label = { Text(destination.label) },
-                alwaysShowLabel = false,
+                alwaysShowLabel = true,
                 colors = NavigationBarItemDefaults.colors(
                     selectedIconColor = MaterialTheme.colorScheme.onSurface,
                     unselectedIconColor = MaterialTheme.colorScheme.onSurface,
+                    selectedTextColor = MaterialTheme.colorScheme.onSurface,
+                    unselectedTextColor = MaterialTheme.colorScheme.onSurface,
                     indicatorColor = MaterialTheme.colorScheme.primary
                 )
             )

@@ -1,31 +1,27 @@
-package com.example.nefrovida.presentation.screens.agenda
+package com.example.nefrovida.presentation.screens.laboratory
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.example.nefrovida.presentation.screens.home.components.AgendaList
-import com.example.nefrovida.ui.organisms.NfBottomNavigationBar
 
 @Suppress("ktlint:standard:function-naming")
 
 @Composable
-fun AgendaScreen(
+fun LaboratoryScreen(
     onBackClick: () -> Unit,
-    navController: NavController,
+    navController : NavController,
     modifier: Modifier = Modifier
-) {
+){
     Box(
-        modifier = modifier
-            .fillMaxSize()
-    ) {
+        modifier = modifier.fillMaxSize()
+    )  {
+        //TODO: corregir a lo adecuado en su momento (lista de reportes de laboratorio)
         AgendaList(
-            onCardClick = { appointmentId ->
-                // TODO: Navegar al detalle de la cita
-                println("Cita seleccionada")
+            onCardClick = {
+                //TODO: navegar al detalle del reporte
             }
         )
     }
