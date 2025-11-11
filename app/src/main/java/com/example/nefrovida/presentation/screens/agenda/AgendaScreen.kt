@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.DatePickerDefaults
@@ -19,15 +21,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.presentation.screens.home.components.AgendaList
-import com.example.nefrovida.ui.atoms.FilterButton
-import com.example.nefrovida.ui.organisms.NfBottomNavigationBar
 import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import com.example.nefrovida.domain.model.Appointments
+import com.example.nefrovida.ui.atoms.SimpleIconButton
 
 
 @Suppress("ktlint:standard:function-naming")
@@ -51,7 +51,9 @@ fun AgendaScreen(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                FilterButton(
+                SimpleIconButton(
+                    icon = Icons.Default.FilterList,
+                    contentDescription = "Filtrar por día",
                     modifier = Modifier.padding(8.dp),
                     onClick = { showDatePicker = true }
                 )

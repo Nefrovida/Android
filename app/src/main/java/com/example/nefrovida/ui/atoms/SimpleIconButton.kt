@@ -10,7 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
-fun FilterButton(
+fun SimpleIconButton(
+    icon: ImageVector,
+    contentDescription: String?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ){
@@ -19,8 +21,8 @@ fun FilterButton(
         modifier = modifier
     ){
         Icon(
-            imageVector = Icons.Outlined.FilterList,
-            contentDescription = "Filtrar por fecha",
+            imageVector = icon,
+            contentDescription = contentDescription,
             tint = MaterialTheme.colorScheme.onSurface,
         )
     }
