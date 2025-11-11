@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.material3.DatePickerDefaults
@@ -52,7 +52,7 @@ fun AgendaScreen(
                 horizontalArrangement = Arrangement.End
             ) {
                 SimpleIconButton(
-                    icon = Icons.Default.FilterList,
+                    icon = Icons.Default.FilterAlt,
                     contentDescription = "Filtrar por día",
                     modifier = Modifier.padding(8.dp),
                     onClick = { showDatePicker = true }
