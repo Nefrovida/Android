@@ -21,7 +21,7 @@ fun LaboratoryScreen(
         //TODO: corregir a lo adecuado en su momento (lista de reportes de laboratorio)
         AgendaList(
             onCardClick = {
-                //TODO: navegar al detalle del reporte
+                navController.navigate("reportDetail")
             }
         )
     }
