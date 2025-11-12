@@ -10,10 +10,10 @@ import javax.inject.Inject
 class GetLabAnalysisListUseCase @Inject constructor(
     private val repository: LabAnalysisRepository
 ) {
-    operator fun invoke(): Flow<Result<List<LabAnalysis>>> = flow {
+    operator fun invoke(page: Int): Flow<Result<List<LabAnalysis>>> = flow {
         try {
             emit(Result.Loading)
-            val labAnalysisList = repository.getLabAnalysisList()
+            val labAnalysisList = repository.getLabAnalysisList(page)
             emit(Result.Success(labAnalysisList))
         } catch (e: Exception) {
             emit(Result.Error(e))

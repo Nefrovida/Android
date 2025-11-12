@@ -1,4 +1,4 @@
-package com.example.nefrovida.presentation.screens.labanalysis.atoms
+package com.example.nefrovida.ui.atoms.laboratory
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.domain.model.LabAnalysis
@@ -39,18 +40,25 @@ fun Status(value: String) {
             Icons.Outlined.CheckCircle,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.primary,
+            tint = Color.Green,
         )
         "LAB" -> Icon(
             Icons.Outlined.Warning,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
+            tint = Color.Red,
         )
         "PENDING" -> Icon(
             Icons.Outlined.Warning,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
-            tint = MaterialTheme.colorScheme.tertiary
+            tint = Color(0x996666)
+        )
+        "REQUESTED" -> Icon(
+            Icons.Outlined.DateRange,
+            contentDescription = "Requested",
+            modifier = Modifier.size(48.dp),
+            tint = Color.Yellow
         )
     }
 }

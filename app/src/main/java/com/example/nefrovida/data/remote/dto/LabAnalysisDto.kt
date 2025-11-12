@@ -6,7 +6,8 @@ import java.util.Date
 enum class AnalysisTypes {
     SENT,
     PENDING,
-    LAB
+    LAB,
+    REQUESTED
 }
 
 data class LabAnalysisDto(

@@ -23,9 +23,9 @@ class LabAnalysisViewModel @Inject constructor(
         loadLabAnalysisList()
     }
 
-    fun loadLabAnalysisList() {
+    fun loadLabAnalysisList(page: Int = 0) {
         viewModelScope.launch {
-            getLabAnalysisListUseCase().collect { result ->
+            getLabAnalysisListUseCase(page).collect { result ->
                 _uiState.update { state ->
                     when (result) {
                         is Result.Loading -> state.copy(

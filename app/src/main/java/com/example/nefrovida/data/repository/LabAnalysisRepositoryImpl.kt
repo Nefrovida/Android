@@ -11,8 +11,8 @@ import javax.inject.Singleton
 class LabAnalysisRepositoryImpl @Inject constructor(
     private val api: LaboratoryApi
 ) : LabAnalysisRepository {
-    override suspend fun getLabAnalysisList(): List<LabAnalysis> {
-        val response = api.getLabResults()
+    override suspend fun getLabAnalysisList(page: Int): List<LabAnalysis> {
+        val response = api.getLabResults(page = page)
         return response.map { result ->
             result.toDomain()
         }
