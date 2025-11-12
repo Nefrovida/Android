@@ -1,16 +1,16 @@
-package com.example.nefrovida.presentation.screens.create_analysis
+package com.example.nefrovida.presentation.screens.add_analysis
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nefrovida.domain.usecase.CreateAnalysisUseCase
+import com.example.nefrovida.domain.usecase.AddAnalysisUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-data class CreateAnalysisState(
+data class AddAnalysisState(
     val name: String = "",
     val description: String = "",
     val previousRequirements: String = "",
@@ -22,11 +22,11 @@ data class CreateAnalysisState(
 )
 
 @HiltViewModel
-class CreateAnalysisViewModel @Inject constructor(
-    private val createAnalysisUseCase: CreateAnalysisUseCase
+class AddAnalysisViewModel @Inject constructor(
+    private val addAnalysisUseCase: AddAnalysisUseCase
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(CreateAnalysisState())
+    var uiState by mutableStateOf(AddAnalysisState())
         private set
 
     fun onNameChange(name: String) {
@@ -53,7 +53,7 @@ class CreateAnalysisViewModel @Inject constructor(
         uiState = uiState.copy(success = false)
     }
 
-    fun createAnalysis() {
+    fun addAnalysis() {
         viewModelScope.launch {
             uiState = uiState.copy(isLoading = true, error = null)
 
@@ -65,7 +65,7 @@ class CreateAnalysisViewModel @Inject constructor(
                 return@launch
             }
 
-            val result = createAnalysisUseCase(
+            val result = addAnalysisUseCase(
                 name = uiState.name,
                 description = uiState.description,
                 previousRequirements = uiState.previousRequirements,
@@ -74,7 +74,7 @@ class CreateAnalysisViewModel @Inject constructor(
             )
 
             result.onSuccess {
-                uiState = CreateAnalysisState(success = true)
+                uiState = AddAnalysisState(success = true)
             }.onFailure {
                 uiState = uiState.copy(isLoading = false, error = it.message)
             }

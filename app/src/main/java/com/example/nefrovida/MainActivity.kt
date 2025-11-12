@@ -6,16 +6,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.MailOutline
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.DateRange
-import androidx.compose.material.icons.outlined.List
-import androidx.compose.material.icons.outlined.MailOutline
+import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,8 +19,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.nefrovida.presentation.screens.add_analysis.AddAnalysisScreen
 import com.example.nefrovida.presentation.screens.analysis.AnalysisListScreen
-import com.example.nefrovida.presentation.screens.create_analysis.CreateAnalysisScreen
 import com.example.nefrovida.ui.theme.NefrovidaTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -42,7 +34,7 @@ val navItems = listOf(
     Screen("agenda", "Agenda", Icons.Outlined.DateRange, Icons.Filled.DateRange),
 )
 
-const val CREATE_ANALYSIS_ROUTE = "create_analysis"
+const val ADD_ANALYSIS_ROUTE = "add_analysis"
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -86,15 +78,15 @@ class MainActivity : ComponentActivity() {
                         // Main screens from Bottom Nav
                         composable("home") { /* Placeholder for Home Screen */ Text("Home Screen") }
                         composable("analysis") { 
-                            AnalysisListScreen(onNavigateToCreate = { navController.navigate(CREATE_ANALYSIS_ROUTE) })
+                            AnalysisListScreen(onNavigateToAdd = { navController.navigate(ADD_ANALYSIS_ROUTE) })
                         }
                         composable("forums") { /* Placeholder for Forums Screen */ Text("Forums Screen") }
                         composable("agenda") { /* Placeholder for Agenda Screen */ Text("Agenda Screen") }
 
                         // Secondary screens
-                        composable(CREATE_ANALYSIS_ROUTE) {
-                            CreateAnalysisScreen(
-                                onAnalysisCreated = { navController.popBackStack() }
+                        composable(ADD_ANALYSIS_ROUTE) {
+                            AddAnalysisScreen(
+                                onAnalysisAdded = { navController.popBackStack() }
                             )
                         }
                     }

@@ -1,7 +1,7 @@
 package com.example.nefrovida.data.repository
 
 import com.example.nefrovida.data.remote.api.ApiService
-import com.example.nefrovida.data.remote.dto.CreateAnalysisRequest
+import com.example.nefrovida.data.remote.dto.AddAnalysisRequest
 import com.example.nefrovida.data.remote.dto.ErrorResponse
 import com.example.nefrovida.data.remote.dto.toDomain
 import com.example.nefrovida.domain.model.Analysis
@@ -12,10 +12,10 @@ import javax.inject.Inject
 
 class AnalysisRepositoryImpl @Inject constructor(
     private val apiService: ApiService,
-    private val gson: Gson // Inject Gson to parse error bodies
+    private val gson: Gson
 ) : AnalysisRepository {
 
-    override suspend fun createAnalysis(
+    override suspend fun addAnalysis(
         name: String,
         description: String,
         previousRequirements: String,
@@ -23,8 +23,8 @@ class AnalysisRepositoryImpl @Inject constructor(
         communityCost: Double
     ): Result<Analysis> {
         return try {
-            val request = CreateAnalysisRequest(name, description, previousRequirements, generalCost, communityCost)
-            val response = apiService.createAnalysis(request)
+            val request = AddAnalysisRequest(name, description, previousRequirements, generalCost, communityCost)
+            val response = apiService.addAnalysis(request)
             val responseBody = response.body()
 
             if (response.isSuccessful && responseBody != null) {
@@ -34,14 +34,12 @@ class AnalysisRepositoryImpl @Inject constructor(
                     Result.failure(Exception(responseBody.message ?: "El servidor reportó un error sin mensaje."))
                 }
             } else {
-                // Handle HTTP errors (4xx, 5xx)
                 val errorBody = response.errorBody()?.string()
                 if (errorBody != null) {
                     try {
                         val errorResponse = gson.fromJson(errorBody, ErrorResponse::class.java)
                         Result.failure(IOException(errorResponse.error.message))
                     } catch (e: Exception) {
-                        // Error body is not in the expected format
                         Result.failure(IOException("Error al decodificar la respuesta del servidor: ${response.code()}"))
                     }
                 } else {

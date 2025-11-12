@@ -1,4 +1,4 @@
-package com.example.nefrovida.presentation.screens.create_analysis
+package com.example.nefrovida.presentation.screens.add_analysis
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,9 +14,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun CreateAnalysisScreen(
-    viewModel: CreateAnalysisViewModel = hiltViewModel(),
-    onAnalysisCreated: () -> Unit
+fun AddAnalysisScreen(
+    viewModel: AddAnalysisViewModel = hiltViewModel(),
+    onAnalysisAdded: () -> Unit
 ) {
     val uiState = viewModel.uiState
 
@@ -24,7 +24,7 @@ fun CreateAnalysisScreen(
         SuccessDialog(
             onDismiss = {
                 viewModel.onSuccessDialogDismissed()
-                onAnalysisCreated()
+                onAnalysisAdded()
             }
         )
     }
@@ -38,7 +38,7 @@ fun CreateAnalysisScreen(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         } else {
             Text(
-                text = "Formulario para crear análisis",
+                text = "Formulario para agregar análisis",
                 style = MaterialTheme.typography.headlineSmall,
                 modifier = Modifier.padding(bottom = 24.dp).align(Alignment.CenterHorizontally)
             )
@@ -130,11 +130,11 @@ fun CreateAnalysisScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             FilledTonalButton(
-                onClick = { viewModel.createAnalysis() },
+                onClick = { viewModel.addAnalysis() },
                 enabled = !uiState.isLoading && uiState.name.isNotBlank(),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Crear")
+                Text("Agregar")
             }
 
             uiState.error?.let {

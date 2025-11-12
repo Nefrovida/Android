@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AnalysisListScreen(
-    onNavigateToCreate: () -> Unit
+    onNavigateToAdd: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -22,8 +22,8 @@ fun AnalysisListScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        FilledTonalButton(onClick = onNavigateToCreate) {
-            Text("Crear análisis")
+        FilledTonalButton(onClick = onNavigateToAdd) {
+            Text("Agregar análisis")
         }
     }
 }

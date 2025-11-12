@@ -3,7 +3,7 @@ package com.example.nefrovida.domain.usecase
 import com.example.nefrovida.domain.repository.AnalysisRepository
 import javax.inject.Inject
 
-class CreateAnalysisUseCase @Inject constructor(
+class AddAnalysisUseCase @Inject constructor(
     private val repository: AnalysisRepository
 ) {
     suspend operator fun invoke(
@@ -12,5 +12,5 @@ class CreateAnalysisUseCase @Inject constructor(
         previousRequirements: String,
         generalCost: Double,
         communityCost: Double
-    ) = repository.createAnalysis(name, description, previousRequirements, generalCost, communityCost)
+    ) = repository.addAnalysis(name, description, previousRequirements, generalCost, communityCost)
 }

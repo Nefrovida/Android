@@ -2,7 +2,10 @@ package com.example.nefrovida.data.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
-data class CreateAnalysisRequest(
+/**
+ * Data Transfer Object for creating a new analysis.
+ */
+data class AddAnalysisRequest(
     @SerializedName("name")
     val name: String,
     @SerializedName("description")

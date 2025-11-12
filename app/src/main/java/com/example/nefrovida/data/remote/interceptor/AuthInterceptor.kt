@@ -6,7 +6,7 @@ import okhttp3.Response
 class AuthInterceptor : Interceptor {
 
     // --- Temporary Hardcoded Token for Testing ---
-    private val authToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhN2IyYmMxOC05OGIwLTQ3NDktOTk2ZC1iZjE1ODVmMTg1NTYiLCJyb2xlSWQiOjIsInByaXZpbGVnZXMiOlsiVklFV19BTkFMWVNJUyIsIkNSRUFURV9BTkFMWVNJUyIsIlVQREFURV9BTkFMWVNJUyIsIkRFTEVURV9BTkFMWVNJUyJdLCJpYXQiOjE3NjI4ODM2NDksImV4cCI6MTc2Mjk3MDA0OX0.ShwKHb2QUG361AgDLSrjd7w0AbAZIqP9j9I7ZGOWtBY"
+    private val authToken = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMzE3NzU5MC01MDNkLTQ3MDEtOGY5Yi1jZDFkZmI4ZDQzNzkiLCJyb2xlSWQiOjIsInByaXZpbGVnZXMiOlsiVklFV19BTkFMWVNJUyIsIkNSRUFURV9BTkFMWVNJUyIsIlVQREFURV9BTkFMWVNJUyIsIkRFTEVURV9BTkFMWVNJUyJdLCJpYXQiOjE3NjI5NzMxNjIsImV4cCI6MTc2MzU3Nzk2Mn0.sCP3ofOuIGLbiVByWJ0GQB3Y2wo88B00BhzyN9CKRlE"
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest = chain.request()
