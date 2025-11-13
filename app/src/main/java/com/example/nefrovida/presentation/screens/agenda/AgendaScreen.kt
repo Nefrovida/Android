@@ -31,6 +31,7 @@ import androidx.compose.material3.rememberDatePickerState
 
 @Suppress("ktlint:standard:function-naming")
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 fun AgendaScreen(
     onBackClick: () -> Unit,
@@ -57,8 +58,7 @@ fun AgendaScreen(
             }
             AgendaList(
                 onCardClick = { appointmentId ->
-                    // TODO: Navegar al detalle de la cita
-                    println("Cita seleccionada")
+                    navController.navigate("appointment_detail/$appointmentId")
                 })
         }
         if (showDatePicker) {

@@ -7,6 +7,9 @@ import androidx.navigation.compose.composable
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
 import com.example.nefrovida.presentation.screens.home.HomeScreen
 import com.example.nefrovida.presentation.screens.laboratory.LaboratoryScreen
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.example.nefrovida.presentation.screens.agenda.AppointmentDetailScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -36,6 +39,19 @@ fun NefrovidaNavGraph(
             AgendaScreen( navController = navController,
                 onBackClick = { navController.popBackStack() }
             )
+        }
+        // Dentro de NavHost en NavGraph.kt
+        composable(
+            route = "appointment_detail/{appointmentId}",
+            arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val appointmentId = backStackEntry.arguments?.getString("appointmentId")
+            if (appointmentId != null) {
+                AppointmentDetailScreen(
+                    appointmentId = appointmentId,
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
