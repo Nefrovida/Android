@@ -43,7 +43,7 @@ fun Status(value: String) {
             tint = Color.Green,
         )
         "LAB" -> Icon(
-            Icons.Outlined.Warning,
+            Icons.Outlined.Science,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
             tint = Color.Red,
@@ -52,7 +52,7 @@ fun Status(value: String) {
             Icons.Outlined.Warning,
             contentDescription = null,
             modifier = Modifier.size(48.dp),
-            tint = Color(0x996666)
+            tint = Color(0xFF996666)
         )
         "REQUESTED" -> Icon(
             Icons.Outlined.DateRange,

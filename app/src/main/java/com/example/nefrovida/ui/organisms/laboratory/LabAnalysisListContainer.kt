@@ -1,5 +1,7 @@
 package com.example.nefrovida.ui.organisms.laboratory
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -16,6 +18,7 @@ import com.example.nefrovida.ui.molecule.PopupBox
 import com.example.nefrovida.ui.molecule.laboratory.LabAnalysisListContent
 import com.example.nefrovida.ui.organisms.ErrorView
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun LabAnalysisListContainer(
     labAnalysisList: List<LabAnalysis>,
@@ -24,8 +27,6 @@ fun LabAnalysisListContainer(
     onRetry: () -> Unit,
     loadMoreItems: (Int) -> Unit
 ) {
-    var showFilter by rememberSaveable { mutableStateOf(false) }
-
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -51,14 +52,5 @@ fun LabAnalysisListContainer(
                 )
             }
         }
-    }
-
-    PopupBox(
-        popupWidth = 200F,
-        popupHeight = 300F,
-        showPopup = showFilter,
-        onClickOutside = {showFilter = false}
-    ) {
-        Text("Filter")
     }
 }
