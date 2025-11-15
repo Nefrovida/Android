@@ -20,11 +20,11 @@ class AppointmentRepositoryImpl @Inject constructor (
         return response.map{it.toDomain()}
     }
 
-    override suspend fun getAppointmentById(id: Int): Appointment{
+    override suspend fun getAppointmentById(id: String): Appointment{
         return api.getAppointmentById(id).toDomain()
     }
 
-    override suspend fun cancelAppointmentById(id: Int) : Boolean {
+    override suspend fun cancelAppointmentById(id: String) : Boolean {
         return api.cancelAppointment(id)
     }
 }

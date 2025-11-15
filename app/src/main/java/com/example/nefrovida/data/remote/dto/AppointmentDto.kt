@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 
 enum class AppointmentStatus{
     MISSED,
-    CANCELLED,
+    CANCELED,
     FINISHED,
     PROGRAMMED
 }
@@ -14,7 +14,7 @@ enum class AppointmentTypes{
     VIRTUAL
 }
 data class AppointmentDto (
-    @SerializedName("appointmentId") val id: Int,
+    @SerializedName("patient_appointment_id") val id: String,
     @SerializedName("name") val name: String,
     @SerializedName("date_hour") val dateHour: String,
     @SerializedName("duration") val duration: Int,
