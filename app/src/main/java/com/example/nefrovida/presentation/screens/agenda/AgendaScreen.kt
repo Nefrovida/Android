@@ -63,7 +63,7 @@ fun AgendaScreen(
             AgendaList(
                 appointmentList = Appointment.getMockData(),
                 onCardClick = { appointment ->
-                    selectedAppointment = appointment
+                    viewModel.getAppointment(appointment.id)
                     showDialog = true
                     println("Cita seleccionada")
                 })
