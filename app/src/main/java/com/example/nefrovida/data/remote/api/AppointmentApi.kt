@@ -14,15 +14,15 @@ interface AppointmentApi {
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0
     ) : List<AppointmentDto>
-    @GET("appointments-per-day")
+    @GET("agenda/appointments-per-day")
     suspend fun getAppointmentListByDate(
         @Query("date") date:String
     ): List<AppointmentDto>
 
     //TODO: implementar en back
     @GET("appointment/{id}")
-    suspend fun getAppointmentById(@Path("id") id: Int): AppointmentDto
+    suspend fun getAppointmentById(@Path("id") id: String): AppointmentDto
     @POST("appointments/{id}/cancel")
-    suspend fun cancelAppointment(@Path("id") id:Int): Boolean
+    suspend fun cancelAppointment(@Path("id") id:String): Boolean
 
 }

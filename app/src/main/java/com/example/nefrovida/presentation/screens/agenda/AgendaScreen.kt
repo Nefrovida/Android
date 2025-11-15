@@ -26,28 +26,27 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.collectAsState
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.ui.atoms.SimpleIconButton
-
-
-@Suppress("ktlint:standard:function-naming")
 
 @Composable
 fun AgendaScreen(
     onBackClick: () -> Unit,
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: AgendaViewModel = hiltViewModel(),
 ) {
-    var showDialog by remember {mutableStateOf(false)}
-    var selectedAppointment by remember {mutableStateOf<Appointment?>(null)}
+    var showDialog by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
-    // TODO: pasar este estado al back
     val datePickerState = rememberDatePickerState()
+    val uiState by viewModel.uiState.collectAsState()
+    val appointments = uiState.appointmentFilteredList
 
     Scaffold { _ ->
         Column(
-            modifier = modifier
-                .fillMaxSize()
+            modifier = modifier.fillMaxSize()
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -61,31 +60,33 @@ fun AgendaScreen(
                 )
             }
             AgendaList(
-                appointmentList = Appointment.getMockData(),
+                appointmentList = appointments ?: emptyList(),
                 onCardClick = { appointment ->
                     viewModel.getAppointment(appointment.id)
                     showDialog = true
-                    println("Cita seleccionada")
-                })
+                }
+            )
             if (showDialog) {
-                Dialog(
-                    title = "Doctor: ${selectedAppointment!!.name}",
-                    text = "Fecha: ${selectedAppointment!!.date}\n" + "Hora: ${selectedAppointment!!.time} \n" +
-                            "${selectedAppointment!!.type}\n\n" + "¿Deseas cancelar esta cita?",
-                    confirmText = "Sí, cancelar",
-                    dismissText = "No",
-                    onConfirm = {
-                        selectedAppointment.let { appointment ->
+                uiState.selectedAppointment?.let { appointment ->
+                    Dialog(
+                        title = "Doctor: ${appointment.name}",
+                        text = """
+                            Fecha: ${appointment.date}
+                            Hora: ${appointment.time}
+                            ${appointment.type}
+
+                            ¿Deseas cancelar esta cita?
+                        """.trimIndent(),
+                        confirmText = "Sí, cancelar",
+                        dismissText = "No",
+                        onConfirm = {
                             viewModel.cancelAppointment(appointment.id)
-                        }
-                        showDialog = false
-                    },
-                    onDismiss = {
-                        showDialog = false
-                    }
-                )
+                            showDialog = false
+                        },
+                        onDismiss = { showDialog = false }
+                    )
+                }
             }
-            //TODO: hacer del calendario una molécula
             if (showDatePicker) {
                 androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
                     androidx.compose.material3.Surface(
@@ -94,7 +95,6 @@ fun AgendaScreen(
                         tonalElevation = 6.dp
                     ) {
                         Column(modifier = Modifier.padding(16.dp)) {
-
                             DatePicker(
                                 state = datePickerState,
                                 colors = DatePickerDefaults.colors(
@@ -112,12 +112,10 @@ fun AgendaScreen(
                                     selectedDayContainerColor = MaterialTheme.colorScheme.onPrimary
                                 )
                             )
-
                             androidx.compose.material3.Divider(
                                 modifier = Modifier.padding(vertical = 8.dp),
                                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                             )
-
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -133,8 +131,12 @@ fun AgendaScreen(
                                 }
                                 TextButton(onClick = {
                                     val selectedDate = datePickerState.selectedDateMillis
+                                    if (selectedDate != null) {
+                                        val formattedDate = java.text.SimpleDateFormat("yyyy-MM-dd")
+                                            .format(java.util.Date(selectedDate))
+                                        viewModel.loadAgendaList(formattedDate)
+                                    }
                                     showDatePicker = false
-                                    println("Fecha seleccionada: $selectedDate")
                                 }) {
                                     Text(
                                         "Aceptar",
@@ -149,3 +151,4 @@ fun AgendaScreen(
         }
     }
 }
+

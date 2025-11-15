@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.flow
 class cancelAppointmentUseCase @Inject constructor(
     private val repository: AppointmentRepository
 ) {
-    operator fun invoke(id: Int): Flow<Result<Unit>> = flow {
+    operator fun invoke(id: String): Flow<Result<Unit>> = flow {
         try {
             emit(Result.Loading)
             repository.cancelAppointmentById(id)
