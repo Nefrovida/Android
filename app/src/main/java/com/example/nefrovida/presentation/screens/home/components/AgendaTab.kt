@@ -7,14 +7,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import com.example.nefrovida.presentation.navigation.Screen
-import com.example.nefrovida.domain.model.Appointments
+import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.ui.organisms.AppointmentCard
 
 
 @Composable
-fun AgendaList(appointmentList: List<Appointments>,
-               onCardClick: (Appointments) -> Unit){
+fun AgendaList(appointmentList: List<Appointment>,
+               onCardClick: (Appointment) -> Unit){
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
         contentPadding = PaddingValues(16.dp),
@@ -22,7 +21,7 @@ fun AgendaList(appointmentList: List<Appointments>,
         ){
         //TODO: jalar el contenido de la base de datos
         items(items = appointmentList,
-            key = {it.appointmentId},
+            key = {it.id},
             ) { appointment ->
             AppointmentCard(
                 appointment = appointment,

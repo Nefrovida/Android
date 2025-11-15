@@ -2,7 +2,6 @@ package com.example.nefrovida.presentation.screens.agenda
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,7 +26,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
-import com.example.nefrovida.domain.model.Appointments
+import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 
 
@@ -40,7 +39,7 @@ fun AgendaScreen(
     modifier: Modifier = Modifier
 ) {
     var showDialog by remember {mutableStateOf(false)}
-    var selectedAppointment by remember {mutableStateOf<Appointments?>(null)}
+    var selectedAppointment by remember {mutableStateOf<Appointment?>(null)}
     var showDatePicker by remember { mutableStateOf(false) }
     // TODO: pasar este estado al back
     val datePickerState = rememberDatePickerState()
@@ -62,7 +61,7 @@ fun AgendaScreen(
                 )
             }
             AgendaList(
-                appointmentList = Appointments.getMockData(),
+                appointmentList = Appointment.getMockData(),
                 onCardClick = { appointment ->
                     selectedAppointment = appointment
                     showDialog = true
@@ -76,7 +75,9 @@ fun AgendaScreen(
                     confirmText = "Sí, cancelar",
                     dismissText = "No",
                     onConfirm = {
-                        println("Cancelando cita $selectedAppointment…")
+                        selectedAppointment.let { appointment ->
+                            viewModel.cancelAppointment(appointment.id)
+                        }
                         showDialog = false
                     },
                     onDismiss = {
