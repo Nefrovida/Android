@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.presentation.screens.home.components.AgendaList
+import com.example.nefrovida.ui.molecules.Dialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -38,6 +39,8 @@ fun AgendaScreen(
     navController: NavController,
     modifier: Modifier = Modifier
 ) {
+    var showDialog by remember {mutableStateOf(false)}
+    var selectedAppointment by remember {mutableStateOf<Appointments?>(null)}
     var showDatePicker by remember { mutableStateOf(false) }
     // TODO: pasar este estado al back
     val datePickerState = rememberDatePickerState()
@@ -60,66 +63,83 @@ fun AgendaScreen(
             }
             AgendaList(
                 appointmentList = Appointments.getMockData(),
-                onCardClick = { appointmentId ->
-                    // TODO: Navegar al detalle de la cita
+                onCardClick = { appointment ->
+                    selectedAppointment = appointment
+                    showDialog = true
                     println("Cita seleccionada")
                 })
-        }
-        //TODO: hacer del calendario una molécula
-        if (showDatePicker) {
-            androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
-                androidx.compose.material3.Surface(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = MaterialTheme.shapes.medium,
-                    tonalElevation = 6.dp
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
+            if (showDialog) {
+                Dialog(
+                    title = "Doctor: ${selectedAppointment!!.name}",
+                    text = "Fecha: ${selectedAppointment!!.date}\n" + "Hora: ${selectedAppointment!!.time} \n" +
+                            "${selectedAppointment!!.type}\n\n" + "¿Deseas cancelar esta cita?",
+                    confirmText = "Sí, cancelar",
+                    dismissText = "No",
+                    onConfirm = {
+                        println("Cancelando cita $selectedAppointment…")
+                        showDialog = false
+                    },
+                    onDismiss = {
+                        showDialog = false
+                    }
+                )
+            }
+            //TODO: hacer del calendario una molécula
+            if (showDatePicker) {
+                androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
+                    androidx.compose.material3.Surface(
+                        color = MaterialTheme.colorScheme.primary,
+                        shape = MaterialTheme.shapes.medium,
+                        tonalElevation = 6.dp
+                    ) {
+                        Column(modifier = Modifier.padding(16.dp)) {
 
-                        DatePicker(
-                            state = datePickerState,
-                            colors = DatePickerDefaults.colors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                titleContentColor = MaterialTheme.colorScheme.onSurface,
-                                headlineContentColor = MaterialTheme.colorScheme.onSurface,
-                                weekdayContentColor = MaterialTheme.colorScheme.onSurface,
-                                subheadContentColor = MaterialTheme.colorScheme.onSurface,
-                                yearContentColor = MaterialTheme.colorScheme.onSurface,
-                                selectedYearContentColor = MaterialTheme.colorScheme.onSurface,
-                                dayContentColor = MaterialTheme.colorScheme.onSurface,
-                                selectedDayContentColor = MaterialTheme.colorScheme.onSurface,
-                                todayContentColor = MaterialTheme.colorScheme.onSurface,
-                                todayDateBorderColor = MaterialTheme.colorScheme.onSurface,
-                                selectedDayContainerColor = MaterialTheme.colorScheme.onPrimary
+                            DatePicker(
+                                state = datePickerState,
+                                colors = DatePickerDefaults.colors(
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                                    headlineContentColor = MaterialTheme.colorScheme.onSurface,
+                                    weekdayContentColor = MaterialTheme.colorScheme.onSurface,
+                                    subheadContentColor = MaterialTheme.colorScheme.onSurface,
+                                    yearContentColor = MaterialTheme.colorScheme.onSurface,
+                                    selectedYearContentColor = MaterialTheme.colorScheme.onSurface,
+                                    dayContentColor = MaterialTheme.colorScheme.onSurface,
+                                    selectedDayContentColor = MaterialTheme.colorScheme.onSurface,
+                                    todayContentColor = MaterialTheme.colorScheme.onSurface,
+                                    todayDateBorderColor = MaterialTheme.colorScheme.onSurface,
+                                    selectedDayContainerColor = MaterialTheme.colorScheme.onPrimary
+                                )
                             )
-                        )
 
-                        androidx.compose.material3.Divider(
-                            modifier = Modifier.padding(vertical = 8.dp),
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                        )
+                            androidx.compose.material3.Divider(
+                                modifier = Modifier.padding(vertical = 8.dp),
+                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                            )
 
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(MaterialTheme.colorScheme.primary)
-                                .padding(horizontal = 8.dp, vertical = 4.dp),
-                            horizontalArrangement = Arrangement.End
-                        ) {
-                            TextButton(onClick = { showDatePicker = false }) {
-                                Text(
-                                    "Cancelar",
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            TextButton(onClick = {
-                                val selectedDate = datePickerState.selectedDateMillis
-                                showDatePicker = false
-                                println("Fecha seleccionada: $selectedDate")
-                            }) {
-                                Text(
-                                    "Aceptar",
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .background(MaterialTheme.colorScheme.primary)
+                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                TextButton(onClick = { showDatePicker = false }) {
+                                    Text(
+                                        "Cancelar",
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+                                TextButton(onClick = {
+                                    val selectedDate = datePickerState.selectedDateMillis
+                                    showDatePicker = false
+                                    println("Fecha seleccionada: $selectedDate")
+                                }) {
+                                    Text(
+                                        "Aceptar",
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
                             }
                         }
                     }

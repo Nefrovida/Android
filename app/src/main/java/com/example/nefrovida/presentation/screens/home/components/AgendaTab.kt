@@ -14,7 +14,7 @@ import com.example.nefrovida.ui.organisms.AppointmentCard
 
 @Composable
 fun AgendaList(appointmentList: List<Appointments>,
-               onCardClick: (String) -> Unit){
+               onCardClick: (Appointments) -> Unit){
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
         contentPadding = PaddingValues(16.dp),
@@ -26,7 +26,7 @@ fun AgendaList(appointmentList: List<Appointments>,
             ) { appointment ->
             AppointmentCard(
                 appointment = appointment,
-                onClick = {onCardClick(appointment.appointmentId)},
+                onClick = {onCardClick(appointment)},
             )
         }
     }
