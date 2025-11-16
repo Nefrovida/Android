@@ -10,7 +10,7 @@ import com.example.nefrovida.domain.model.Appointment
 class GetAppointmentUseCase @Inject constructor(
     private val repository: AppointmentRepository,
 ){
-    operator fun invoke(id: String): Flow<Result<Appointment>> =
+    operator fun invoke(id: Int): Flow<Result<Appointment>> =
         flow {
             try{
                 emit(Result.Loading)
