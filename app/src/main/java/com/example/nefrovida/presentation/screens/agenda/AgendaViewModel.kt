@@ -26,9 +26,12 @@ class AgendaViewModel @Inject constructor (
     val uiState: StateFlow<AgendaUiState> = _uiState.asStateFlow()
 
     init {
-        loadAgendaList("2025-11-24")
-    }
+        val today = java.text.SimpleDateFormat("yyyy-MM-dd")
+            .format(java.util.Date())
 
+        loadAgendaList(today)    }
+
+    //TODO: quitar logs
     fun loadAgendaList(date: String) {
         viewModelScope.launch {
             getAppointmentFilteredListUseCase(date).collect { result ->
@@ -38,7 +41,8 @@ class AgendaViewModel @Inject constructor (
                             Log.d("AgendaVM", "Loading appointments for date: $date")
 
                             state.copy(
-                            isLoading = true
+                            isLoading = true,
+                                selectedDate = date
 
                         )}
 
@@ -47,7 +51,8 @@ class AgendaViewModel @Inject constructor (
                             state.copy(
                             appointmentFilteredList = result.data,
                             isLoading = false,
-                            error = null
+                            error = null,
+                                selectedDate = date
                         )}
 
                         is Result.Error -> {
@@ -63,49 +68,68 @@ class AgendaViewModel @Inject constructor (
         }
     }
 
-    fun getAppointment(id: String) {
+    fun getAppointment(id: Int) {
+        Log.d("AgendaVM", "Llamando getAppointmentById con id = $id")
         viewModelScope.launch {
             getAppointmentUseCase(id).collect { result ->
                 _uiState.update { state ->
                     when (result) {
-                        is Result.Loading -> state.copy(isLoading = true)
-                        is Result.Success ->
+                        is Result.Loading -> {
+                            Log.d("AgendaVM", "Loading appointment for id: $id")
+                            state.copy(isLoading = true)}
+                        is Result.Success -> {
+                            Log.d("AgendaVM", "Appointment received = $result")
                             state.copy(
                                 selectedAppointment = result.data,
                                 isLoading = false,
                                 error = null
-                            )
+                            )}
 
-                        is Result.Error -> state.copy(
-                            error = result.exception.message,
-                            isLoading = false
-                        )
+                        is Result.Error -> {
+                            Log.e("AgendaVM", "Error fetching appointments", result.exception)
+                            state.copy(
+                                error = result.exception.message,
+                                isLoading = false
+                            )}
+                        }
                     }
                 }
             }
-
-        }
     }
 
-    fun cancelAppointment(id: String) {
+    fun cancelAppointment(id: Int) {
         viewModelScope.launch {
             cancelAppointmentUseCase(id).collect { result ->
-                _uiState.update { state ->
                     when (result) {
-                        is Result.Loading -> state.copy(isLoading = true)
+                        is Result.Loading -> {
+                            _uiState.update {state ->
+                            Log.d("AgendaVMCancel", "Loading cancel for id: $id")
+                            state.copy(isLoading = true)}}
 
-                        is Result.Success -> state.copy(
-                            selectedAppointment = state.selectedAppointment?.copy(
-                                status = AppointmentStatus.CANCELED
-                            ),
-                            isLoading = false,
-                            error = null
-                        )
+                        is Result.Success -> {
+                            Log.d("AgendaVMCancel", "APPOINTMENT CANCELED")
+                            _uiState.value.selectedDate?.let {
+                                selected ->
+                                loadAgendaList(selected)
+                            }
+                            _uiState.update {
+                                state ->
+                                state.copy(
+                                    selectedAppointment = state.selectedAppointment?.copy(
+                                        status = AppointmentStatus.CANCELED
+                                    ),
+                                    isLoading = false,
+                                    error = null
+                                )
+                            }}
 
-                        is Result.Error -> state.copy(
+                        is Result.Error -> {
+                            Log.e("AgendaVMCancel", "Error canceling appointment", result.exception)
+                            _uiState.update { state ->
+                            state.copy(
                             error = result.exception.message,
                             isLoading = false
-                        )
+                        )}
                     }
                 }
             }

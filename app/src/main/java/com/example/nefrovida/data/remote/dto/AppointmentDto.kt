@@ -14,7 +14,7 @@ enum class AppointmentTypes{
     VIRTUAL
 }
 data class AppointmentDto (
-    @SerializedName("patient_appointment_id") val id: String,
+    @SerializedName("patient_appointment_id") val id: Int,
     @SerializedName("name") val name: String,
     @SerializedName("date_hour") val dateHour: String,
     @SerializedName("duration") val duration: Int,

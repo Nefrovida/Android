@@ -1,5 +1,6 @@
 package com.example.nefrovida.presentation.screens.agenda
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -62,6 +63,7 @@ fun AgendaScreen(
             AgendaList(
                 appointmentList = appointments ?: emptyList(),
                 onCardClick = { appointment ->
+                    Log.d("AgendaScreen", "CLICK en card con ID = $appointment.id")
                     viewModel.getAppointment(appointment.id)
                     showDialog = true
                 }
@@ -81,6 +83,7 @@ fun AgendaScreen(
                         dismissText = "No",
                         onConfirm = {
                             viewModel.cancelAppointment(appointment.id)
+                            Log.d("AgendaScreen", "CLICK en confirm = $appointment.id")
                             showDialog = false
                         },
                         onDismiss = { showDialog = false }

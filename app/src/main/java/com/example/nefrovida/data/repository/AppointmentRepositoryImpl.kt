@@ -6,6 +6,7 @@ import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.repository.AppointmentRepository
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
+import retrofit2.Response
 
 @Singleton
 class AppointmentRepositoryImpl @Inject constructor (
@@ -20,11 +21,11 @@ class AppointmentRepositoryImpl @Inject constructor (
         return response.map{it.toDomain()}
     }
 
-    override suspend fun getAppointmentById(id: String): Appointment{
+    override suspend fun getAppointmentById(id: Int): Appointment{
         return api.getAppointmentById(id).toDomain()
     }
 
-    override suspend fun cancelAppointmentById(id: String) : Boolean {
+    override suspend fun cancelAppointmentById(id: Int) : Response<Unit> {
         return api.cancelAppointment(id)
     }
 }
