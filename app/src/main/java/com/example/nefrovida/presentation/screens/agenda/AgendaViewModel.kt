@@ -1,6 +1,5 @@
 package com.example.nefrovida.presentation.screens.agenda
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.data.remote.dto.AppointmentStatus
@@ -31,15 +30,12 @@ class AgendaViewModel @Inject constructor (
 
         loadAgendaList(today)    }
 
-    //TODO: quitar logs
     fun loadAgendaList(date: String) {
         viewModelScope.launch {
             getAppointmentFilteredListUseCase(date).collect { result ->
                 _uiState.update { state ->
                     when (result) {
                         is Result.Loading -> {
-                            Log.d("AgendaVM", "Loading appointments for date: $date")
-
                             state.copy(
                             isLoading = true,
                                 selectedDate = date
@@ -47,7 +43,6 @@ class AgendaViewModel @Inject constructor (
                         )}
 
                         is Result.Success -> {
-                            Log.d("AgendaVM", "Appointments received: ${result.data}")
                             state.copy(
                             appointmentFilteredList = result.data,
                             isLoading = false,
@@ -56,8 +51,6 @@ class AgendaViewModel @Inject constructor (
                         )}
 
                         is Result.Error -> {
-                            Log.e("AgendaVM", "Error fetching appointments", result.exception)
-
                             state.copy(
                             error = result.exception.message,
                             isLoading = false
@@ -69,16 +62,13 @@ class AgendaViewModel @Inject constructor (
     }
 
     fun getAppointment(id: Int) {
-        Log.d("AgendaVM", "Llamando getAppointmentById con id = $id")
         viewModelScope.launch {
             getAppointmentUseCase(id).collect { result ->
                 _uiState.update { state ->
                     when (result) {
                         is Result.Loading -> {
-                            Log.d("AgendaVM", "Loading appointment for id: $id")
                             state.copy(isLoading = true)}
                         is Result.Success -> {
-                            Log.d("AgendaVM", "Appointment received = $result")
                             state.copy(
                                 selectedAppointment = result.data,
                                 isLoading = false,
@@ -86,7 +76,6 @@ class AgendaViewModel @Inject constructor (
                             )}
 
                         is Result.Error -> {
-                            Log.e("AgendaVM", "Error fetching appointments", result.exception)
                             state.copy(
                                 error = result.exception.message,
                                 isLoading = false
@@ -103,11 +92,9 @@ class AgendaViewModel @Inject constructor (
                     when (result) {
                         is Result.Loading -> {
                             _uiState.update {state ->
-                            Log.d("AgendaVMCancel", "Loading cancel for id: $id")
                             state.copy(isLoading = true)}}
 
                         is Result.Success -> {
-                            Log.d("AgendaVMCancel", "APPOINTMENT CANCELED")
                             _uiState.value.selectedDate?.let {
                                 selected ->
                                 loadAgendaList(selected)
@@ -119,12 +106,12 @@ class AgendaViewModel @Inject constructor (
                                         status = AppointmentStatus.CANCELED
                                     ),
                                     isLoading = false,
-                                    error = null
+                                    error = null,
+                                    showCancelSuccess = true,
                                 )
                             }}
 
                         is Result.Error -> {
-                            Log.e("AgendaVMCancel", "Error canceling appointment", result.exception)
                             _uiState.update { state ->
                             state.copy(
                             error = result.exception.message,
@@ -135,4 +122,8 @@ class AgendaViewModel @Inject constructor (
             }
         }
     }
+    fun resetCancelSuccess() {
+        _uiState.update { it.copy(showCancelSuccess = false) }
+    }
+
 }

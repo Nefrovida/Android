@@ -24,13 +24,18 @@ import com.example.nefrovida.presentation.screens.home.components.AgendaList
 import com.example.nefrovida.ui.molecules.Dialog
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.ui.atoms.SimpleIconButton
+import kotlinx.coroutines.launch
 
 @Composable
 fun AgendaScreen(
@@ -44,8 +49,22 @@ fun AgendaScreen(
     val datePickerState = rememberDatePickerState()
     val uiState by viewModel.uiState.collectAsState()
     val appointments = uiState.appointmentFilteredList
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
 
-    Scaffold { _ ->
+    if (uiState.showCancelSuccess) {
+        LaunchedEffect(Unit) {
+            scope.launch {
+                snackbarHostState.showSnackbar("Cita cancelada con éxito")
+                viewModel.resetCancelSuccess()
+            }
+        }
+    }
+
+
+    Scaffold (
+        snackbarHost = {SnackbarHost(snackbarHostState)}
+    ){ _ ->
         Column(
             modifier = modifier.fillMaxSize()
         ) {
@@ -63,7 +82,6 @@ fun AgendaScreen(
             AgendaList(
                 appointmentList = appointments ?: emptyList(),
                 onCardClick = { appointment ->
-                    Log.d("AgendaScreen", "CLICK en card con ID = $appointment.id")
                     viewModel.getAppointment(appointment.id)
                     showDialog = true
                 }
@@ -83,7 +101,6 @@ fun AgendaScreen(
                         dismissText = "No",
                         onConfirm = {
                             viewModel.cancelAppointment(appointment.id)
-                            Log.d("AgendaScreen", "CLICK en confirm = $appointment.id")
                             showDialog = false
                         },
                         onDismiss = { showDialog = false }
@@ -135,8 +152,12 @@ fun AgendaScreen(
                                 TextButton(onClick = {
                                     val selectedDate = datePickerState.selectedDateMillis
                                     if (selectedDate != null) {
-                                        val formattedDate = java.text.SimpleDateFormat("yyyy-MM-dd")
-                                            .format(java.util.Date(selectedDate))
+                                        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).apply {
+                                            timeZone = java.util.TimeZone.getTimeZone("UTC")
+                                        }
+                                        val formattedDate = sdf.format(java.util.Date(selectedDate))
+                                        Log.d("AgendaScreen", "selectedDateMillis=$selectedDate formattedDate(UTC)=$formattedDate")
+
                                         viewModel.loadAgendaList(formattedDate)
                                     }
                                     showDatePicker = false
