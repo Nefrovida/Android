@@ -11,43 +11,41 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.nefrovida.presentation.screens.agenda.AgendaViewModel // Importa el ViewModel
-import com.example.nefrovida.presentation.screens.home.components.AgendaList
+// Importa el ViewModel RENOMBRADO
+import com.example.nefrovida.presentation.screens.agenda.PatientAgendaViewModel
+// Importa la LISTA NUEVA
+import com.example.nefrovida.presentation.screens.home.components.PatientAppointmentList
 
 @Composable
 fun LaboratoryScreen(
     onBackClick: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
-    // Hilt inyectará automáticamente el ViewModel
-    viewModel: AgendaViewModel = hiltViewModel()
+    // Llama al ViewModel RENOMBRADO
+    viewModel: PatientAgendaViewModel = hiltViewModel()
 ) {
-    // Observamos el estado (state) del ViewModel
+    // Observa el listState (del ViewModel del paciente)
     val state by viewModel.listState.collectAsState()
 
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        // Usamos un 'when' para reaccionar al estado
         when {
-            // --- ESTADO DE CARGA ---
             state.isLoading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-            // --- ESTADO DE ERROR ---
             state.error != null -> {
                 Text(
-                    text = "Error al cargar citas: ${state.error}",
+                    text = "Error: ${state.error}",
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
-            // --- ESTADO DE ÉXITO ---
             else -> {
-                // Si todo está bien, pasamos la lista real a AgendaList
-                AgendaList(
-                    appointments = state.appointments, // <-- Datos reales
-                    onCardClick = { appointmentId ->
-                        navController.navigate("appointment_detail/$appointmentId")
+                // Llama a la LISTA NUEVA del paciente
+                PatientAppointmentList(
+                    appointments = state.appointments,
+                    onCardClick = { appointment ->
+                        navController.navigate("appointment_detail/${appointment.id}")
                     }
                 )
             }

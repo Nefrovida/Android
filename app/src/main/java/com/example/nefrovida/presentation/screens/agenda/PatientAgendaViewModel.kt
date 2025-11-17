@@ -1,4 +1,3 @@
-// en presentation/screens/agenda/AgendaViewModel.kt
 package com.example.nefrovida.presentation.screens.agenda
 
 import androidx.lifecycle.ViewModel
@@ -27,7 +26,7 @@ data class AgendaDetailState(
 
 
 @HiltViewModel
-class AgendaViewModel @Inject constructor(
+class PatientAgendaViewModel @Inject constructor(
     private val repository: AppointmentRepository
 ) : ViewModel() {
 

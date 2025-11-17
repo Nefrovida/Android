@@ -1,5 +1,6 @@
 package com.example.nefrovida.presentation.screens.agenda
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +33,7 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+//import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 import kotlinx.coroutines.launch
@@ -47,6 +48,10 @@ fun AgendaScreen(
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+
+    // Estado para guardar la cita que se va a cancelar
+    var appointmentToCancel by remember { mutableStateOf<Appointment?>(null) }
+
     val datePickerState = rememberDatePickerState()
     val uiState by viewModel.uiState.collectAsState()
     val appointments = uiState.appointmentFilteredList
@@ -62,15 +67,18 @@ fun AgendaScreen(
         }
     }
 
-
-    Scaffold (
-        snackbarHost = {SnackbarHost(snackbarHostState)}
-    ){ _ ->
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) }
+    ) { padding -> // Renombrado a 'padding' para claridad
         Column(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier
+                .fillMaxSize()
+                .padding(padding) // Aplica el padding del Scaffold aquí
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 horizontalArrangement = Arrangement.End
             ) {
                 SimpleIconButton(
@@ -80,7 +88,44 @@ fun AgendaScreen(
                     onClick = { showDatePicker = true }
                 )
             }
+
+            // --- AQUÍ FALTABA LA LISTA ---
+            // La pasamos al composable AgendaList
+            AgendaList(
+                appointments = appointments,
+                onCardClick = { appointment ->
+                    navController.navigate("appointment_detail/${appointment.id}")
+                },
+                onCancelClick = { appointment ->
+                    // Guardamos la cita y mostramos el diálogo de confirmación
+                    appointmentToCancel = appointment
+                    showDialog = true
+                }
+            )
         }
+
+        // --- DIÁLOGO DE CANCELACIÓN (showDialog) ---
+        // Este bloque estaba mezclado con el DatePicker
+        if (showDialog && appointmentToCancel != null) {
+            Dialog( // Asumo que este es tu Composable de Diálogo personalizado
+                title = "Confirmar Cancelación",
+                text = "¿Deseas cancelar esta cita?",
+                confirmText = "Sí, cancelar",
+                dismissText = "No",
+                onConfirm = {
+                    viewModel.cancelAppointment(appointmentToCancel!!.id)
+                    showDialog = false
+                    appointmentToCancel = null // Limpiamos la selección
+                },
+                onDismiss = {
+                    showDialog = false
+                    appointmentToCancel = null // Limpiamos la selección
+                }
+            )
+        }
+
+        // --- DIÁLOGO DEL DATE PICKER (showDatePicker) ---
+        // Este es el bloque que estaba duplicado y anidado
         if (showDatePicker) {
             androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
                 androidx.compose.material3.Surface(
@@ -89,79 +134,57 @@ fun AgendaScreen(
                     tonalElevation = 6.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-
-                            ¿Deseas cancelar esta cita?
-                        """.trimIndent(),
-                        confirmText = "Sí, cancelar",
-                        dismissText = "No",
-                        onConfirm = {
-                            viewModel.cancelAppointment(appointment.id)
-                            showDialog = false
-                        },
-                        onDismiss = { showDialog = false }
-                    )
-                }
-            }
-            if (showDatePicker) {
-                androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
-                    androidx.compose.material3.Surface(
-                        color = MaterialTheme.colorScheme.primary,
-                        shape = MaterialTheme.shapes.medium,
-                        tonalElevation = 6.dp
-                    ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            DatePicker(
-                                state = datePickerState,
-                                colors = DatePickerDefaults.colors(
-                                    containerColor = MaterialTheme.colorScheme.primary,
-                                    titleContentColor = MaterialTheme.colorScheme.onSurface,
-                                    headlineContentColor = MaterialTheme.colorScheme.onSurface,
-                                    weekdayContentColor = MaterialTheme.colorScheme.onSurface,
-                                    subheadContentColor = MaterialTheme.colorScheme.onSurface,
-                                    yearContentColor = MaterialTheme.colorScheme.onSurface,
-                                    selectedYearContentColor = MaterialTheme.colorScheme.onSurface,
-                                    dayContentColor = MaterialTheme.colorScheme.onSurface,
-                                    selectedDayContentColor = MaterialTheme.colorScheme.onSurface,
-                                    todayContentColor = MaterialTheme.colorScheme.onSurface,
-                                    todayDateBorderColor = MaterialTheme.colorScheme.onSurface,
-                                    selectedDayContainerColor = MaterialTheme.colorScheme.onPrimary
+                        DatePicker(
+                            state = datePickerState,
+                            colors = DatePickerDefaults.colors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                titleContentColor = MaterialTheme.colorScheme.onSurface,
+                                headlineContentColor = MaterialTheme.colorScheme.onSurface,
+                                weekdayContentColor = MaterialTheme.colorScheme.onSurface,
+                                subheadContentColor = MaterialTheme.colorScheme.onSurface,
+                                yearContentColor = MaterialTheme.colorScheme.onSurface,
+                                selectedYearContentColor = MaterialTheme.colorScheme.onSurface,
+                                dayContentColor = MaterialTheme.colorScheme.onSurface,
+                                selectedDayContentColor = MaterialTheme.colorScheme.onSurface,
+                                todayContentColor = MaterialTheme.colorScheme.onSurface,
+                                todayDateBorderColor = MaterialTheme.colorScheme.onSurface,
+                                selectedDayContainerColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        )
+                        androidx.compose.material3.Divider(
+                            modifier = Modifier.padding(vertical = 8.dp),
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(MaterialTheme.colorScheme.primary)
+                                .padding(horizontal = 8.dp, vertical = 4.dp),
+                            horizontalArrangement = Arrangement.End
+                        ) {
+                            TextButton(onClick = { showDatePicker = false }) {
+                                Text(
+                                    "Cancelar",
+                                    color = MaterialTheme.colorScheme.onSurface
                                 )
-                            )
-                            androidx.compose.material3.Divider(
-                                modifier = Modifier.padding(vertical = 8.dp),
-                                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                            )
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(MaterialTheme.colorScheme.primary)
-                                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                TextButton(onClick = { showDatePicker = false }) {
-                                    Text(
-                                        "Cancelar",
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
-                                }
-                                TextButton(onClick = {
-                                    val selectedDate = datePickerState.selectedDateMillis
-                                    if (selectedDate != null) {
-                                        val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).apply {
-                                            timeZone = java.util.TimeZone.getTimeZone("UTC")
-                                        }
-                                        val formattedDate = sdf.format(java.util.Date(selectedDate))
-                                        Log.d("AgendaScreen", "selectedDateMillis=$selectedDate formattedDate(UTC)=$formattedDate")
-
-                                        viewModel.loadAgendaList(formattedDate)
+                            }
+                            TextButton(onClick = {
+                                val selectedDate = datePickerState.selectedDateMillis
+                                if (selectedDate != null) {
+                                    val sdf = java.text.SimpleDateFormat("yyyy-MM-dd", java.util.Locale.getDefault()).apply {
+                                        timeZone = java.util.TimeZone.getTimeZone("UTC")
                                     }
-                                    showDatePicker = false
-                                }) {
-                                    Text(
-                                        "Aceptar",
-                                        color = MaterialTheme.colorScheme.onSurface
-                                    )
+                                    val formattedDate = sdf.format(java.util.Date(selectedDate))
+                                    Log.d("AgendaScreen", "selectedDateMillis=$selectedDate formattedDate(UTC)=$formattedDate")
+
+                                    viewModel.loadAgendaList(formattedDate)
                                 }
+                                showDatePicker = false
+                            }) {
+                                Text(
+                                    "Aceptar",
+                                    color = MaterialTheme.colorScheme.onSurface
+                                )
                             }
                         }
                     }
@@ -170,4 +193,3 @@ fun AgendaScreen(
         }
     }
 }
-

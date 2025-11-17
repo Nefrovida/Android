@@ -38,11 +38,10 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppointmentDetailScreen(
-    appointmentId: String,
-    onBackClick: () -> Unit,
+    // ...
     modifier: Modifier = Modifier,
-    // Obtenemos la misma instancia del ViewModel
-    viewModel: AgendaViewModel = hiltViewModel()
+    // Llama al ViewModel RENOMBRADO
+    viewModel: PatientAgendaViewModel = hiltViewModel()
 ) {
     // Llama a la API solo una vez cuando la pantalla aparece
     LaunchedEffect(key1 = appointmentId) {
