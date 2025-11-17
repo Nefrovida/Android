@@ -6,7 +6,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Path
 
-interface NefrovidaApi {
+interface AppointmentApi {
 
     // Esta ruta es para el paciente
     //
