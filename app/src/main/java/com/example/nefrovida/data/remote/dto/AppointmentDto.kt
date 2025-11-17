@@ -15,13 +15,14 @@ enum class AppointmentTypes{
 }
 data class AppointmentDto (
     @SerializedName("patient_appointment_id") val id: Int,
-    @SerializedName("name") val name: String,
+    @SerializedName("doctor_name") val name: String,
     @SerializedName("date_hour") val dateHour: String,
     @SerializedName("duration") val duration: Int,
     @SerializedName("link") val link: String?,
     @SerializedName("place") val place: String?,
     @SerializedName("appointment_status") val status: AppointmentStatus,
     @SerializedName("appointment_type") val type: AppointmentTypes,
+    @SerializedName("appointment_name") val appointmentName: String?,
 
     ){
 
