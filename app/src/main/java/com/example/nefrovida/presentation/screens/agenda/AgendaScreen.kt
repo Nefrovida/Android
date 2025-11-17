@@ -56,10 +56,6 @@ fun AgendaScreen(
                     onClick = { showDatePicker = true }
                 )
             }
-            AgendaList(
-                onCardClick = { appointmentId ->
-                    navController.navigate("appointment_detail/$appointmentId")
-                })
         }
         if (showDatePicker) {
             androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {

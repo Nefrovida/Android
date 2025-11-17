@@ -1,3 +1,5 @@
+// Guarda esto en:
+// presentation/screens/agenda/AppointmentDetailScreen.kt
 
 package com.example.nefrovida.presentation.screens.agenda
 
@@ -28,6 +30,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.ui.organisms.AppointmentCard
 
+/**
+ * Muestra los detalles de una cita específica, incluyendo los
+ * requerimientos previos.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppointmentDetailScreen(
@@ -35,7 +41,9 @@ fun AppointmentDetailScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // --- Simulación de datos ---
     val appointment = getMockAppointmentDetails(appointmentId)
+    // --- Fin de simulación ---
 
     Scaffold(
         topBar = {
@@ -62,17 +70,21 @@ fun AppointmentDetailScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
+                .padding(16.dp), // Padding general del contenido
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+
+            // --- 👇 AQUÍ ESTÁ LA CORRECCIÓN 👇 ---
+            // Usamos los nuevos parámetros: specialty y time
             AppointmentCard(
                 name = appointment.name,
-                date = appointment.date,
-                type = appointment.type,
-                duration = appointment.duration,
-                onClick = { }
+                specialty = appointment.specialty, // <-- NUEVO
+                time = appointment.time,           // <-- NUEVO
+                onClick = { } // No se necesita acción de click aquí
             )
+            // --- FIN DE LA CORRECCIÓN ---
 
+            // 2. Esta es la sección de "Requerimientos"
             Text(
                 text = "Requerimientos Previos",
                 style = MaterialTheme.typography.titleMedium,
@@ -96,6 +108,9 @@ fun AppointmentDetailScreen(
     }
 }
 
+/**
+ * Un componente interno simple para mostrar un ítem de requerimiento.
+ */
 @Composable
 private fun RequirementItem(
     text: String,
@@ -103,12 +118,12 @@ private fun RequirementItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(bottom = 8.dp)
+        modifier = modifier.padding(bottom = 8.dp) // Espacio entre ítems
     ) {
         Icon(
             imageVector = Icons.Default.CheckCircle,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary
+            tint = MaterialTheme.colorScheme.primary // Usa el color primario del tema
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
@@ -119,25 +134,42 @@ private fun RequirementItem(
     }
 }
 
+// --- Simulación de datos (Mock Data) ---
+// Actualizamos la data de muestra para que coincida
+// con la nueva estructura.
+
 private data class MockAppointment(
     val name: String,
-    val date: String,
-    val type: String,
-    val duration: Int,
+    val specialty: String, // <-- NUEVO
+    val time: String,      // <-- NUEVO
     val requirements: List<String>
 )
 
 private fun getMockAppointmentDetails(id: String): MockAppointment {
-    return MockAppointment(
-        name = "Oliver Queen", //
-        date = "2025-11-10", //
-        type = "PRESENCIAL", //
-        duration = 30, //
-        requirements = listOf(
-            "Presentarse con ayuno de 8 horas.",
-            "Traer resultados de laboratorio previos.",
-            "Beber 1 litro de agua 30 minutos antes.",
-            "Confirmar asistencia 24 horas antes."
+    // Dependiendo del ID que recibimos de AgendaTab.kt,
+    // mostramos un doctor u otro.
+    return if (id == "1") {
+        MockAppointment(
+            name = "Oliver Queen",
+            specialty = "Nefrología",
+            time = "10:30 AM",
+            requirements = listOf(
+                "Presentarse con ayuno de 8 horas.",
+                "Traer resultados de laboratorio previos.",
+                "Beber 1 litro de agua 30 minutos antes.",
+                "Confirmar asistencia 24 horas antes."
+            )
         )
-    )
+    } else {
+        MockAppointment(
+            name = "Barry Allen",
+            specialty = "Cardiología",
+            time = "11:00 AM",
+            requirements = listOf(
+                "Traer electrocardiograma reciente.",
+                "No tomar café 6 horas antes.",
+                "Presentarse con ropa cómoda."
+            )
+        )
+    }
 }

@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import com.example.nefrovida.presentation.screens.home.components.AgendaList
 
 @Suppress("ktlint:standard:function-naming")
-
 @Composable
 fun LaboratoryScreen(
     onBackClick: () -> Unit,
@@ -18,10 +17,13 @@ fun LaboratoryScreen(
     Box(
         modifier = modifier.fillMaxSize()
     )  {
-        //TODO: corregir a lo adecuado en su momento (lista de reportes de laboratorio)
+        // Corregimos la llamada a AgendaList
         AgendaList(
-            onCardClick = {
-                //TODO: navegar al detalle del reporte
+            // 👇 ¡La clave está aquí!
+            // Esto "recibe" el ID que AgendaList nos envía y lo
+            // nombra 'appointmentId' para que podamos usarlo.
+            onCardClick = { appointmentId ->
+                navController.navigate("appointment_detail/$appointmentId")
             }
         )
     }
