@@ -17,14 +17,10 @@ fun LaboratoryScreen(
     Box(
         modifier = modifier.fillMaxSize()
     )  {
-        // Corregimos la llamada a AgendaList
         AgendaList(
-            // 👇 ¡La clave está aquí!
-            // Esto "recibe" el ID que AgendaList nos envía y lo
-            // nombra 'appointmentId' para que podamos usarlo.
             onCardClick = { appointmentId ->
                 navController.navigate("appointment_detail/$appointmentId")
             }
-        )
+        )*/
     }
 }

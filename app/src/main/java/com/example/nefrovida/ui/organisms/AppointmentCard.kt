@@ -21,12 +21,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.nefrovida.domain.model.Appointment
+
 
 @Composable
 fun AppointmentCard(
     name: String,
-    specialty: String, // <-- Nuevo parámetro
-    time: String,      // <-- Nuevo parámetro
+    specialty: String,
+    time: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -45,10 +47,10 @@ fun AppointmentCard(
 
             // --- 1. Sección Izquierda: Icono de Perfil ---
             Icon(
-                imageVector = Icons.Default.AccountCircle, // Icono predeterminado
+                imageVector = Icons.Default.AccountCircle,
                 contentDescription = "Perfil de Doctor",
                 modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.primary // Color del tema
+                tint = MaterialTheme.colorScheme.primary
             )
 
             Spacer(modifier = Modifier.width(16.dp))
