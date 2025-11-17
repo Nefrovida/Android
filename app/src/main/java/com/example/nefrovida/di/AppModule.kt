@@ -7,9 +7,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Singleton // <-- El import correcto
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -18,7 +18,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.1.221:3001/api/")
+            .baseUrl("http://10.0.2.2:3000/api/") // IP del emulador para localhost
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -33,7 +33,7 @@ object AppModule {
     @Singleton
     fun provideAppointmentRepository(
         api: AppointmentApi
-    ) : AppointmentRepository {
+    ): AppointmentRepository {
         return AppointmentRepositoryImpl(api)
     }
 }

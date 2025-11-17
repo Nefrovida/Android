@@ -1,28 +1,10 @@
 package com.example.nefrovida.presentation.screens.agenda
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -38,17 +20,17 @@ import java.util.Locale
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppointmentDetailScreen(
-    // ...
+    // --- PARÁMETROS CORREGIDOS ---
+    appointmentId: String,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    // Llama al ViewModel RENOMBRADO
     viewModel: PatientAgendaViewModel = hiltViewModel()
 ) {
-    // Llama a la API solo una vez cuando la pantalla aparece
+    // --- LÓGICA CORREGIDA ---
     LaunchedEffect(key1 = appointmentId) {
         viewModel.loadAppointmentDetails(appointmentId)
     }
 
-    // Observamos el estado de 'detalles'
     val state by viewModel.detailState.collectAsState()
 
     Scaffold(
@@ -61,7 +43,7 @@ fun AppointmentDetailScreen(
                     navigationIconContentColor = MaterialTheme.colorScheme.onSurface
                 ),
                 navigationIcon = {
-                    IconButton(onClick = onBackClick) {
+                    IconButton(onClick = onBackClick) { // <-- Usa el parámetro
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Volver"
@@ -72,21 +54,17 @@ fun AppointmentDetailScreen(
         },
         modifier = modifier
     ) { paddingValues ->
-
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
             when {
-                // --- ESTADO DE CARGA ---
                 state.isLoading -> {
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
-                // --- ESTADO DE ERROR ---
                 state.error != null -> {
                     Text(
                         text = "Error al cargar detalles: ${state.error}",
                         modifier = Modifier.align(Alignment.Center)
                     )
                 }
-                // --- ESTADO DE ÉXITO ---
                 state.appointment != null -> {
                     val appointment = state.appointment!!
                     val doctor = appointment.doctor
@@ -101,7 +79,7 @@ fun AppointmentDetailScreen(
                             name = "${doctor.firstName} ${doctor.lastName}",
                             specialty = doctor.specialty,
                             time = appointment.date.toFormattedTime(),
-                            onClick = { } // No hace nada
+                            onClick = { }
                         )
 
                         Text(
@@ -118,10 +96,9 @@ fun AppointmentDetailScreen(
                             )
                         ) {
                             Column(modifier = Modifier.padding(16.dp)) {
-                                // Separamos los requerimientos (que vienen como un solo string)
                                 val requirementsList = appointment.requirements
                                     ?.split("\n") ?: listOf("No hay requerimientos.")
-                                
+
                                 requirementsList.forEach { requirement ->
                                     RequirementItem(text = requirement)
                                 }
@@ -134,6 +111,7 @@ fun AppointmentDetailScreen(
     }
 }
 
+// (Composable RequirementItem se queda igual)
 @Composable
 private fun RequirementItem(text: String, modifier: Modifier = Modifier) {
     Row(
@@ -154,7 +132,8 @@ private fun RequirementItem(text: String, modifier: Modifier = Modifier) {
     }
 }
 
-// Función de ayuda para formatear
+
+// (Función toFormattedTime se queda igual)
 private fun String.toFormattedTime(): String {
     return try {
         val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
