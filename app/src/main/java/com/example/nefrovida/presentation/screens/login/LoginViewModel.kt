@@ -1,17 +1,27 @@
 package com.example.nefrovida.presentation.screens.login
 
-import androidx.lifecycle.ViewModel
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.nefrovida.data.remote.api.NetworkModule
+import com.example.nefrovida.data.repository.AuthRepositoryImpl
+import com.example.nefrovida.domain.repository.Result
+import com.example.nefrovida.domain.usecase.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
+    // Initialize dependencies
+    private val authApiService = NetworkModule.provideAuthApiService(application)
+    private val authRepository = AuthRepositoryImpl(authApiService)
+    private val loginUseCase = LoginUseCase(authRepository)
 
     fun onEmailChange(email: String) {
         _uiState.update { it.copy(email = email, emailError = null, errorMessage = null) }
@@ -34,14 +44,29 @@ class LoginViewModel : ViewModel() {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             try {
-                // TODO: Implementar llamada al repositorio para login
-                // val result = loginUseCase(email, password)
-                // Simulación temporal
-                kotlinx.coroutines.delay(1500)
+                val result = loginUseCase(
+                    username = _uiState.value.email,
+                    password = _uiState.value.password
+                )
 
-                // Simulación de éxito
-                _uiState.update { it.copy(isLoading = false) }
-
+                when (result) {
+                    is Result.Success -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                loginSuccess = true
+                            )
+                        }
+                    }
+                    is Result.Error -> {
+                        _uiState.update {
+                            it.copy(
+                                isLoading = false,
+                                errorMessage = result.message
+                            )
+                        }
+                    }
+                }
             } catch (e: Exception) {
                 _uiState.update {
                     it.copy(
