@@ -52,7 +52,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.material.icons.extended) // Iconos
+    implementation(libs.androidx.material.icons.extended) // Icons
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
