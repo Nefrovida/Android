@@ -26,6 +26,7 @@ import com.example.nefrovida.domain.model.Appointment
 
 @Composable
 fun AppointmentCard(
+    appointment: Appointment,
     name: String,
     specialty: String,
     time: String,
