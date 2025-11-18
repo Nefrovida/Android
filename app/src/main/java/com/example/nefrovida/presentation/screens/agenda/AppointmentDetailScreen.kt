@@ -23,10 +23,10 @@ fun AppointmentDetailScreen(
     appointmentId: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
-    // --- ¡USA EL VIEWMODEL NUEVO! ---
+    // Use the new ViewModel
     viewModel: PatientAgendaViewModel = hiltViewModel()
 ) {
-    // Llama a la API
+    // Call the API
     LaunchedEffect(key1 = appointmentId) {
         viewModel.loadAppointmentDetails(appointmentId)
     }
@@ -37,7 +37,7 @@ fun AppointmentDetailScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Detalle de la Cita") },
-                // ... (el resto de la TopAppBar se queda igual) ...
+                // The rest of the TopAppBar remains the same
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
@@ -104,7 +104,7 @@ fun AppointmentDetailScreen(
     }
 }
 
-// (RequirementItem y toFormattedTime se quedan igual que en el paso anterior)
+// RequirementItem and toFormattedTime remain the same as in the previous step
 @Composable
 private fun RequirementItem(text: String, modifier: Modifier = Modifier) {
     Row(
