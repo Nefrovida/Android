@@ -45,6 +45,19 @@ fun AppointmentCard(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
+            Text (
+                text = appointment.name,
+                style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
+            )
+            Text(
+                text = "Cita: ${appointment.appointmentName}",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = "Fecha: ${appointment.date}",
+                style = MaterialTheme.typography.bodySmall,
+                
             // 1. Left Section: Profile Icon
             Icon(
                 imageVector = Icons.Default.AccountCircle, // Default icon
