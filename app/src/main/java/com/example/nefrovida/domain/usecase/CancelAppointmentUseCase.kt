@@ -12,17 +12,17 @@ import retrofit2.Response
 class CancelAppointmentUseCase @Inject constructor(
     private val repository: AppointmentRepository
 ) {
-    // --- CORRECCIÓN 1 ---
-    // La función ahora acepta el ID de la cita
+    // --- CORRECTION 1 ---
+    //Function now accepts appointment ID
     operator fun invoke(token: String, appointmentId: Int): Flow<Result<Unit>> = flow {
         try {
             emit(Result.Loading)
-            // --- CORRECCIÓN 2 ---
-            // Le pasamos el ID al repositorio
+            // --- CORRECTION 2 ---
+            // Pass the ID to the repository
             val response = repository.cancelAppointmentById(token, appointmentId)
 
-            // --- CORRECCIÓN 3 ---
-            // Manejamos la respuesta de la API
+            // --- CORRECTION 3 ---
+            // Handle the API response
             if (response.isSuccessful) {
                 emit(Result.Success(Unit))
             } else {
