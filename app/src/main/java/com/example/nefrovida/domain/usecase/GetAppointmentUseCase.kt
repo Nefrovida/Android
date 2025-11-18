@@ -3,6 +3,7 @@ package com.example.nefrovida.domain.usecase
 import com.example.nefrovida.data.network.dto.AppointmentDetailDto
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.common.Result.Loading
+import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.repository.AppointmentRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -13,23 +14,35 @@ import javax.inject.Inject
 class GetAppointmentUseCase @Inject constructor(
     private val repository: AppointmentRepository
 ) {
-    // --- CORRECTION 1 ---
-    // Accepts the appointment ID
+
+    // =================================================================
+    // VERSION 1: For Patient (feature-13)
+    // =================================================================
     operator fun invoke(token: String, appointmentId: Int): Flow<Result<AppointmentDetailDto>> = flow {
         try {
             emit(Result.Loading)
-            // --- CORRECTION 2 ---
-            // Passes the ID to the repository
-            val appointment = repository.getAppointmentById(token, appointmentId)
+            // Passes token and ID
+            val appointment = repository.getAppointmentDetails(token, appointmentId.toString())
             emit(Result.Success(appointment))
         } catch (e: HttpException) {
-            // --- CORRECTION 3 ---
-            // Passes the 'e' exception, no the 'e.message'
             emit(Result.Error(e))
         } catch (e: IOException) {
-            // --- CORRECTION 4 ---
-            // Passes the 'e' exception, no the string
             emit(Result.Error(e))
         }
+    }
+
+    // =================================================================
+    // VERSIÓN 2: For Secretary (feature-16)
+    // =================================================================
+    operator fun invoke(id: Int): Flow<Result<Appointment>> = flow {
+        try {
+            emit(Result.Loading)
+            val appointment = repository.getAppointmentByIdNoToken(id)
+            emit(Result.Success(appointment))
+        } catch (e: Exception) {
+            emit(Result.Error(e))
+        }
+    }
+}
     }
 }
