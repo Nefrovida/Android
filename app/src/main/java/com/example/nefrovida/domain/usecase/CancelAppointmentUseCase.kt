@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 
-class cancelAppointmentUseCase @Inject constructor(
+class CancelAppointmentUseCase @Inject constructor(
     private val repository: AppointmentRepository
 ) {
     operator fun invoke(id: Int): Flow<Result<Unit>> = flow {
