@@ -13,12 +13,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.example.nefrovida.domain.common.Result
-import com.example.nefrovida.domain.usecase.cancelAppointmentUseCase
+import com.example.nefrovida.domain.usecase.CancelAppointmentUseCase
 
 @HiltViewModel
 class AgendaViewModel @Inject constructor (
     private val getAppointmentUseCase : GetAppointmentUseCase,
-    private val cancelAppointmentUseCase : cancelAppointmentUseCase,
+    private val cancelAppointmentUseCase : CancelAppointmentUseCase,
     private val getAppointmentFilteredListUseCase : GetAppointmentFilteredListUseCase
     ) : ViewModel() {
     private val _uiState = MutableStateFlow(AgendaUiState())
