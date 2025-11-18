@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.presentation.screens.home.components.AgendaList
-import com.example.nefrovida.ui.atoms.FilterButton
+import com.example.nefrovida.ui.atoms.SimpleIconButton
 import com.example.nefrovida.ui.organisms.NfBottomNavigationBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -51,7 +51,7 @@ fun AgendaScreen(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                FilterButton(
+                SimpleIconButton(
                     modifier = Modifier.padding(8.dp),
                     onClick = { showDatePicker = true }
                 )

@@ -4,7 +4,7 @@ package com.example.nefrovida.domain.usecase
 import com.example.nefrovida.domain.model.Appointment
 
 import com.example.nefrovida.domain.repository.AppointmentRepository
-import jakarta.inject.Inject
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import com.example.nefrovida.domain.common.Result
