@@ -13,22 +13,22 @@ import javax.inject.Inject
 class GetAppointmentUseCase @Inject constructor(
     private val repository: AppointmentRepository
 ) {
-    // --- CORRECCIÓN 1 ---
-    // Acepta el ID de la cita
+    // --- CORRECTION 1 ---
+    // Accepts the appointment ID
     operator fun invoke(token: String, appointmentId: Int): Flow<Result<AppointmentDetailDto>> = flow {
         try {
             emit(Result.Loading)
-            // --- CORRECCIÓN 3 ---
-            // Pasa el ID al repositorio
+            // --- CORRECTION 2 ---
+            // Passes the ID to the repository
             val appointment = repository.getAppointmentById(token, appointmentId)
             emit(Result.Success(appointment))
         } catch (e: HttpException) {
-            // --- CORRECCIÓN 4 ---
-            // Pasa la excepción 'e', no el 'e.message'
+            // --- CORRECTION 3 ---
+            // Passes the 'e' exception, no the 'e.message'
             emit(Result.Error(e))
         } catch (e: IOException) {
-            // --- CORRECCIÓN 5 ---
-            // Pasa la excepción 'e', no el string
+            // --- CORRECTION 4 ---
+            // Passes the 'e' exception, no the string
             emit(Result.Error(e))
         }
     }
