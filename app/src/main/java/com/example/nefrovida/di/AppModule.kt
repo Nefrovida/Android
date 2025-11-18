@@ -1,6 +1,7 @@
 package com.example.nefrovida.di
 
 import com.example.nefrovida.data.remote.api.AppointmentApi
+import com.example.nefrovida.data.remote.api.ReportsApi
 import com.example.nefrovida.data.repository.AppointmentRepositoryImpl
 import com.example.nefrovida.domain.repository.AppointmentRepository
 import dagger.Module
@@ -18,7 +19,7 @@ object AppModule {
     @Singleton
     fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
-            .baseUrl("http://192.168.1.221:3001/api/")
+            .baseUrl("http://192.168.100.9:3001/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
@@ -28,6 +29,11 @@ object AppModule {
     fun provideAppointmentApi(retrofit: Retrofit): AppointmentApi {
         return retrofit.create(AppointmentApi::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun provideReportsApi(retrofit: Retrofit): ReportsApi =
+        retrofit.create(ReportsApi::class.java)
 
     @Provides
     @Singleton
