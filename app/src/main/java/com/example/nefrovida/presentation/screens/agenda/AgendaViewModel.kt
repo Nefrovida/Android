@@ -6,7 +6,6 @@ import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.domain.usecase.GetAppointmentFilteredListUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,6 +13,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.usecase.cancelAppointmentUseCase
+import javax.inject.Inject
 
 @HiltViewModel
 class AgendaViewModel @Inject constructor (

@@ -2,10 +2,10 @@ package com.example.nefrovida.domain.usecase
 
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.repository.AppointmentRepository
-import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
+import javax.inject.Inject
 
 class cancelAppointmentUseCase @Inject constructor(
     private val repository: AppointmentRepository

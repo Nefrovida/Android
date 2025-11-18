@@ -23,6 +23,8 @@ import androidx.navigation.NavController
 import com.example.nefrovida.presentation.screens.home.components.AgendaList
 import com.example.nefrovida.ui.molecules.Dialog
 import androidx.compose.material3.DatePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -32,11 +34,13 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 import kotlinx.coroutines.launch
 
+@Suppress("DEPRECATION")
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgendaScreen(
     onBackClick: () -> Unit,
