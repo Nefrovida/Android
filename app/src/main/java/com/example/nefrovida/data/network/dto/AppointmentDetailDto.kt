@@ -4,5 +4,5 @@ data class AppointmentDetailDto(
     val id: Int,
     val date: String,
     val doctor: DoctorDto,
-    val requirements: String? // La API lo devuelve como un string
+    val requirements: String? // API returns it as a string
 )
