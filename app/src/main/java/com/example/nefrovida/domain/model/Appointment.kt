@@ -13,7 +13,7 @@ data class Appointment (
     val link: String? = null,
     val place: String? = null,
     val status: AppointmentStatus
-) {/*
+) {
     companion object {
         fun getMockData(): List<Appointment> =
             listOf(
@@ -115,5 +115,5 @@ data class Appointment (
 
                     )
             )
-    }*/
+    }
 }

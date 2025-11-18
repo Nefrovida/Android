@@ -25,7 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.nefrovida.domain.model.Appointments
+import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.presentation.screens.home.components.AgendaList
 import com.example.nefrovida.ui.atoms.SimpleIconButton
@@ -59,9 +59,9 @@ fun LaboratoryScreen(
                 )
             }
             AgendaList(
-                appointmentList = Appointments.getMockData(),
+                appointmentList = Appointment.getMockData(),
                 onCardClick = { appointmentId ->
-                    navController.navigate(Screen.ReportDetail.route)
+                    navController.navigate(Screen.ReportDetail.createRoute(4))
                 })
         }
         //TODO: hacer del calendario una molécula
