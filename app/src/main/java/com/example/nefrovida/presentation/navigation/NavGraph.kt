@@ -53,7 +53,7 @@ fun NefrovidaNavGraph(
                 onBackClick = { navController.popBackStack() }
             )
         }
-        // Dentro de NavHost en NavGraph.kt
+        // Inside NavHost en NavGraph.kt
         composable(
             route = "appointment_detail/{appointmentId}",
             arguments = listOf(navArgument("appointmentId") { type = NavType.StringType })
