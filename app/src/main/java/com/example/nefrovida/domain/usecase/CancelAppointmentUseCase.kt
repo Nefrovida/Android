@@ -7,11 +7,14 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import javax.inject.Inject
 
-class CancelAppointmentUseCase @Inject constructor(
-    private val repository: AppointmentRepository
-) {
-    operator fun invoke(id: Int): Flow<Result<Unit>> = flow {
-        emit(Result.Loading)
+class cancelAppointmentUseCase
+    @Inject
+    constructor(
+        private val repository: AppointmentRepository,
+    ) {
+        operator fun invoke(id: Int): Flow<Result<Unit>> =
+            flow {
+                emit(Result.Loading)
 
                 try {
                     val response = repository.cancelAppointmentById(id)
