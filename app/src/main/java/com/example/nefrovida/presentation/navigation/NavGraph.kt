@@ -2,16 +2,24 @@ package com.example.nefrovida.presentation.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
 import com.example.nefrovida.presentation.screens.forum.ForumScreen
 import com.example.nefrovida.presentation.screens.home.HomeScreen
+import com.example.nefrovida.presentation.screens.laboratory.AnalysisDetailScreen
+import com.example.nefrovida.presentation.screens.laboratory.AnalysisHistoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.LaboratoryScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
     object Laboratory : Screen("labs")
+    object AnalysisHistory : Screen("labs/history")
+    object AnalysisDetail : Screen("labs/details/{analysisId}") {
+        fun createRoute(analysisId: Int) = "labs/details/$analysisId"
+    }
     object Agenda : Screen("agenda")
     object Forum : Screen ("forum")
 }
@@ -30,9 +38,17 @@ fun NefrovidaNavGraph(
             HomeScreen(navController = navController)
         }
         composable( route = Screen.Laboratory.route) {
-            LaboratoryScreen(
-                navController = navController,
-                onBackClick = { navController.popBackStack() })
+            AnalysisHistoryScreen(
+                navController = navController)
+        }
+        composable(
+            route = Screen.AnalysisDetail.route,
+            arguments = listOf(navArgument("analysisId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val analysisId = backStackEntry.arguments?.getInt("analysisId") ?: 0
+            AnalysisDetailScreen(
+                analysisId = analysisId,
+                navController = navController)
         }
         composable( route = Screen.Forum.route) {
             ForumScreen(
