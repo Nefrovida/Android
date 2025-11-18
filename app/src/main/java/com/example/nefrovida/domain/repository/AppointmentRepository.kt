@@ -9,7 +9,7 @@ interface AppointmentRepository {
 
     // --- Patient Section (feature-13) ---
     suspend fun getUserAppointments(token: String): List<AppointmentDto>
-    suspend fun getAppointmentDetails(token: String, appointmentId: String): AppointmentDetailDto
+    suspend fun getPatientAppointmentDetails(token: String, appointmentId: String): AppointmentDetailDto
 
     // --- Secretary Section (feature-16) ---
     suspend fun getAppointmentList(): List<Appointment>

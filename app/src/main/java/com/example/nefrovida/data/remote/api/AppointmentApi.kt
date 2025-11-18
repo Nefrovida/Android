@@ -19,8 +19,7 @@ interface AppointmentApi {
     suspend fun getUserAppointments(@Header("Authorization") token: String): List<AppointmentDto>
 
     @GET("agenda/appointment/{id}")
-    suspend fun getAppointmentDetails(@Header("Authorization") token: String, @Path("id") appointmentId: String): AppointmentDetailDto
-
+    suspend fun getAppointmentDetails(@Header("Authorization") token: String, @Path("id") id: String): AppointmentDetailDto
     // --- Flujo Secretaria ---
     @GET("secretary-agenda")
     suspend fun getAppointmentList(
