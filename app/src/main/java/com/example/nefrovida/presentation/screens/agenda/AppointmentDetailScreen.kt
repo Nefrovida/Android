@@ -1,49 +1,37 @@
-// Guarda esto en:
-// presentation/screens/agenda/AppointmentDetailScreen.kt
-
 package com.example.nefrovida.presentation.screens.agenda
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+// --- IMPORTACIONES AÑADIDAS ---
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nefrovida.ui.organisms.AppointmentCard
+import java.text.SimpleDateFormat
+import java.util.Locale
+// --- FIN DE IMPORTACIONES ---
 
-/**
- * Muestra los detalles de una cita específica, incluyendo los
- * requerimientos previos.
- */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppointmentDetailScreen(
     appointmentId: String,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: PatientAgendaViewModel = hiltViewModel() // Ahora sí lo encuentra
 ) {
-    // --- Simulación de datos ---
-    val appointment = getMockAppointmentDetails(appointmentId)
-    // --- Fin de simulación ---
+    LaunchedEffect(key1 = appointmentId) {
+        viewModel.loadAppointmentDetails(appointmentId) // Ahora sí lo encuentra
+    }
+
+    val state by viewModel.detailState.collectAsState() // Ahora sí lo encuentra
 
     Scaffold(
         topBar = {
@@ -66,41 +54,56 @@ fun AppointmentDetailScreen(
         },
         modifier = modifier
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp), // Padding general del contenido
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            when {
+                state.isLoading -> { // Ahora sí lo encuentra
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
+                state.error != null -> { // Ahora sí lo encuentra
+                    Text(
+                        text = "Error al cargar detalles: ${state.error}", // Ahora sí lo encuentra
+                        modifier = Modifier.align(Alignment.Center)
+                    )
+                }
+                state.appointment != null -> { // Ahora sí lo encuentra
+                    val appointment = state.appointment!! // Ahora sí lo encuentra
+                    val doctor = appointment.doctor // Ahora sí lo encuentra
 
-            // --- 👇 AQUÍ ESTÁ LA CORRECCIÓN 👇 ---
-            // Usamos los nuevos parámetros: specialty y time
-            AppointmentCard(
-                name = appointment.name,
-                specialty = appointment.specialty, // <-- NUEVO
-                time = appointment.time,           // <-- NUEVO
-                onClick = { } // No se necesita acción de click aquí
-            )
-            // --- FIN DE LA CORRECCIÓN ---
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        AppointmentCard(
+                            name = "${doctor.firstName} ${doctor.lastName}",
+                            specialty = doctor.specialty,
+                            time = appointment.date.toFormattedTime(), // Ahora sí lo encuentra
+                            onClick = { }
+                        )
 
-            // 2. Esta es la sección de "Requerimientos"
-            Text(
-                text = "Requerimientos Previos",
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.padding(top = 8.dp) // Un espacio extra arriba
-            )
+                        Text(
+                            text = "Requerimientos Previos",
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(top = 8.dp)
+                        )
 
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                )
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    appointment.requirements.forEach { requirement ->
-                        RequirementItem(text = requirement)
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(16.dp)) {
+                                val requirementsList = appointment.requirements // Ahora sí lo encuentra
+                                    ?.split("\n") ?: listOf("No hay requerimientos.")
+
+                                requirementsList.forEach { requirement ->
+                                    RequirementItem(text = requirement)
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -108,22 +111,16 @@ fun AppointmentDetailScreen(
     }
 }
 
-/**
- * Un componente interno simple para mostrar un ítem de requerimiento.
- */
 @Composable
-private fun RequirementItem(
-    text: String,
-    modifier: Modifier = Modifier
-) {
+private fun RequirementItem(text: String, modifier: Modifier = Modifier) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        modifier = modifier.padding(bottom = 8.dp) // Espacio entre ítems
+        modifier = modifier.padding(bottom = 8.dp)
     ) {
         Icon(
             imageVector = Icons.Default.CheckCircle,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary // Usa el color primario del tema
+            tint = MaterialTheme.colorScheme.primary
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
@@ -134,42 +131,13 @@ private fun RequirementItem(
     }
 }
 
-// --- Simulación de datos (Mock Data) ---
-// Actualizamos la data de muestra para que coincida
-// con la nueva estructura.
-
-private data class MockAppointment(
-    val name: String,
-    val specialty: String, // <-- NUEVO
-    val time: String,      // <-- NUEVO
-    val requirements: List<String>
-)
-
-private fun getMockAppointmentDetails(id: String): MockAppointment {
-    // Dependiendo del ID que recibimos de AgendaTab.kt,
-    // mostramos un doctor u otro.
-    return if (id == "1") {
-        MockAppointment(
-            name = "Oliver Queen",
-            specialty = "Nefrología",
-            time = "10:30 AM",
-            requirements = listOf(
-                "Presentarse con ayuno de 8 horas.",
-                "Traer resultados de laboratorio previos.",
-                "Beber 1 litro de agua 30 minutos antes.",
-                "Confirmar asistencia 24 horas antes."
-            )
-        )
-    } else {
-        MockAppointment(
-            name = "Barry Allen",
-            specialty = "Cardiología",
-            time = "11:00 AM",
-            requirements = listOf(
-                "Traer electrocardiograma reciente.",
-                "No tomar café 6 horas antes.",
-                "Presentarse con ropa cómoda."
-            )
-        )
+private fun String.toFormattedTime(): String {
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val date = inputFormat.parse(this)
+        outputFormat.format(date)
+    } catch (e: Exception) {
+        "Hora no disponible"
     }
 }
