@@ -13,7 +13,7 @@ class AppointmentRepositoryImpl @Inject constructor(
     private val api: AppointmentApi
 ) : AppointmentRepository {
 
-    // --- Flujo Paciente ---
+    // --- Patient Section ---
     override suspend fun getUserAppointments(token: String): List<AppointmentDto> {
         return api.getUserAppointments(token)
     }
@@ -22,7 +22,7 @@ class AppointmentRepositoryImpl @Inject constructor(
         return api.getAppointmentDetails(token, appointmentId)
     }
 
-    // --- Flujo Secretaria (Implementaciones Corregidas) ---
+    // --- Secretary Section (Corrected Implementations) ---
     override suspend fun getAppointmentList(): List<Appointment>{
         val response = api.getAppointmentList()
         return response.map { it.toDomain() }
