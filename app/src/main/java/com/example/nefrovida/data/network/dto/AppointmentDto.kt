@@ -4,5 +4,5 @@ data class AppointmentDto(
     val id: Int,
     val date: String,
     val doctor: DoctorDto
-    // puedes añadir "appointment_type" y "status" si los necesitas
+    // "appointment_type" and "status" can be added if needed
 )
