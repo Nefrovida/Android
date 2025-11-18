@@ -21,18 +21,18 @@ class AppointmentRepositoryImpl @Inject constructor(
         return api.getAppointmentDetails(token, appointmentId)
     }
 
-    // --- Flujo Secretaria (Implementaciones nuevas) ---
+    // --- Flujo Secretaria (Implementaciones Corregidas) ---
     override suspend fun getAppointmentListByDate(token: String, date: String): List<Appointment> {
         return api.getAppointmentListByDate(token, date)
     }
 
     override suspend fun cancelAppointmentById(token: String, appointmentId: Int): Response<Unit> {
-        // Convertimos Int a String para la API
+        // Convertimos el Int a String para la API
         return api.cancelAppointmentById(token, appointmentId.toString())
     }
 
     override suspend fun getAppointmentById(token: String, appointmentId: Int): AppointmentDetailDto {
-        // Convertimos Int a String para la API
+        // Convertimos el Int a String para la API
         return api.getAppointmentById(token, appointmentId.toString())
     }
 }

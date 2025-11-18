@@ -27,6 +27,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.Icons
 
 
 @Suppress("ktlint:standard:function-naming")
@@ -51,7 +53,9 @@ fun AgendaScreen(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                 horizontalArrangement = Arrangement.End
             ) {
-                SimpleIconButton(
+                SimpleIconButton( // <-- Renombrado
+                    icon = Icons.Default.FilterAlt, // <-- Añadido
+                    contentDescription = "Filtrar por día", // <-- Añadido
                     modifier = Modifier.padding(8.dp),
                     onClick = { showDatePicker = true }
                 )
@@ -65,6 +69,13 @@ fun AgendaScreen(
                     tonalElevation = 6.dp
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
+
+                        SimpleIconButton( // <-- Renombrado
+                            icon = Icons.Default.FilterAlt, // <-- Añadido
+                            contentDescription = "Filtrar por día", // <-- Añadido
+                            modifier = Modifier.padding(8.dp),
+                            onClick = { showDatePicker = true }
+                        )
 
                         DatePicker(
                             state = datePickerState,

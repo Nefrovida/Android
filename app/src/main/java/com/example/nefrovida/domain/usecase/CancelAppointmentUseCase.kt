@@ -2,29 +2,35 @@ package com.example.nefrovida.domain.usecase
 
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.repository.AppointmentRepository
-import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import retrofit2.Response
+import retrofit2.HttpException
+import java.io.IOException
+import javax.inject.Inject
 
-class cancelAppointmentUseCase @Inject constructor(
+class CancelAppointmentUseCase @Inject constructor(
     private val repository: AppointmentRepository
 ) {
-    operator fun invoke(id: Int): Flow<Result<Unit>> = flow {
-        emit(Result.Loading)
-
+    // --- CORRECCIÓN 1 ---
+    // La función ahora acepta el ID de la cita
+    operator fun invoke(token: String, appointmentId: Int): Flow<Result<Unit>> = flow {
         try {
-            val response = repository.cancelAppointmentById(id)
+            emit(Result.Loading)
+            // --- CORRECCIÓN 2 ---
+            // Le pasamos el ID al repositorio
+            val response = repository.cancelAppointmentById(token, appointmentId)
 
+            // --- CORRECCIÓN 3 ---
+            // Manejamos la respuesta de la API
             if (response.isSuccessful) {
                 emit(Result.Success(Unit))
             } else {
-                emit(Result.Error(Exception("HTTP ${response.code()}: ${response.message()}")))
+                emit(Result.Error(HttpException(response)))
             }
-
-        } catch (e: Exception) {
+        } catch (e: HttpException) {
+            emit(Result.Error(e))
+        } catch (e: IOException) {
             emit(Result.Error(e))
         }
     }
 }
-

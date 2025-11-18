@@ -11,8 +11,11 @@ interface AppointmentRepository {
     suspend fun getUserAppointments(token: String): List<AppointmentDto>
     suspend fun getAppointmentDetails(token: String, appointmentId: String): AppointmentDetailDto
 
-    // --- Flujo Secretaria (feature-16, los que faltaban) ---
+    // --- Flujo Secretaria (feature-16) ---
+    // Acepta 'date'
     suspend fun getAppointmentListByDate(token: String, date: String): List<Appointment>
+    // Acepta 'Int'
     suspend fun cancelAppointmentById(token: String, appointmentId: Int): Response<Unit>
+    // Acepta 'Int'
     suspend fun getAppointmentById(token: String, appointmentId: Int): AppointmentDetailDto
 }
