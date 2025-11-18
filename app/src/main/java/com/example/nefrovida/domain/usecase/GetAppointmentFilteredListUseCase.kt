@@ -13,13 +13,13 @@ import javax.inject.Inject
 class GetAppointmentFilteredListUseCase @Inject constructor(
     private val repository: AppointmentRepository
 ) {
-    // --- CORRECCIÓN 1 ---
-    // La función ahora acepta la fecha
+    // --- CORRECTION 1 ---
+    // Function now accpets date
     operator fun invoke(token: String, date: String): Flow<Result<List<Appointment>>> = flow {
         try {
             emit(Result.Loading)
-            // --- CORRECCIÓN 2 ---
-            // Le pasamos la fecha al repositorio
+            // --- CORRECTION 2 ---
+            // Pass the date to the repository
             val appointments = repository.getAppointmentListByDate(token, date)
             emit(Result.Success(appointments))
         } catch (e: HttpException) {
