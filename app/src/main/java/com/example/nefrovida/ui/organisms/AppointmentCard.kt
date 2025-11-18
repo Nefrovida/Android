@@ -33,51 +33,51 @@ fun AppointmentCard(
     modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = modifier.fillMaxWidth(), // <-- Ya no es clickeable aquí
+        modifier = modifier.fillMaxWidth(), // <-- It's not clickable here anymore
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 12.dp, vertical = 12.dp) // Ajustamos el padding
+                .padding(horizontal = 12.dp, vertical = 12.dp) // Adjust the padding
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
 
-            // --- 1. Sección Izquierda: Icono de Perfil ---
+            // 1. Left Section: Profile Icon
             Icon(
-                imageVector = Icons.Default.AccountCircle, // Icono predeterminado
+                imageVector = Icons.Default.AccountCircle, // Default icon
                 contentDescription = "Perfil de Doctor",
                 modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.primary // Color del tema
+                tint = MaterialTheme.colorScheme.primary // Theme color
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // --- 2. Sección Media: Información ---
-            // Usamos 'weight(1f)' para que ocupe todo el espacio disponible
+            // 2. Middle Section: Information
+            // Use 'weight(1f)' to use all the available space
             Column(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = "Dr. $name", // Añadimos "Dr."
+                    text = "Dr. $name", // Add "Dr."
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = specialty, // Nueva info
+                    text = specialty, // New info
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
-                    text = time, // Nueva info
+                    text = time, // New info
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
 
-            // --- 3. Sección Derecha: Botón de Navegación ---
-            IconButton(onClick = onClick) { // <-- El onClick ahora vive aquí
+            // 3. Right Section: Navigation Button
+            IconButton(onClick = onClick) { // <-- The onClick now resides here
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
                     contentDescription = "Ver detalles"
