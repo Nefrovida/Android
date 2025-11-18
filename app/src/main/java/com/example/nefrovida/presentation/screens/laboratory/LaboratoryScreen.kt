@@ -1,6 +1,5 @@
 package com.example.nefrovida.presentation.screens.laboratory
 
-// --- IMPORTACIONES AÑADIDAS ---
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -12,37 +11,39 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.nefrovida.presentation.screens.agenda.PatientAgendaViewModel // <-- La clave
-import com.example.nefrovida.presentation.screens.home.components.PatientAppointmentList // <-- La clave
-// --- FIN DE IMPORTACIONES ---
+// --- ¡IMPORTA LOS ARCHIVOS NUEVOS! ---
+import com.example.nefrovida.presentation.screens.agenda.PatientAgendaViewModel
+import com.example.nefrovida.presentation.screens.home.components.PatientAppointmentList
 
 @Composable
 fun LaboratoryScreen(
     onBackClick: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: PatientAgendaViewModel = hiltViewModel() // Ahora sí lo encuentra
+    // --- ¡USA EL VIEWMODEL NUEVO! ---
+    viewModel: PatientAgendaViewModel = hiltViewModel()
 ) {
-    val state by viewModel.listState.collectAsState() // Ahora sí lo encuentra
+    val state by viewModel.listState.collectAsState()
 
     Box(
         modifier = modifier.fillMaxSize()
     ) {
         when {
-            state.isLoading -> { // Ahora sí lo encuentra
+            state.isLoading -> {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
-            state.error != null -> { // Ahora sí lo encuentra
+            state.error != null -> {
                 Text(
-                    text = "Error: ${state.error}", // Ahora sí lo encuentra
+                    text = "Error: ${state.error}",
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
             else -> {
-                PatientAppointmentList( // Ahora sí lo encuentra
-                    appointments = state.appointments, // Ahora sí lo encuentra
+                // --- ¡USA LA LISTA NUEVA! ---
+                PatientAppointmentList(
+                    appointments = state.appointments,
                     onCardClick = { appointment ->
-                        navController.navigate("appointment_detail/${appointment.id}") // Ahora sí lo encuentra
+                        navController.navigate("appointment_detail/${appointment.id}")
                     }
                 )
             }
