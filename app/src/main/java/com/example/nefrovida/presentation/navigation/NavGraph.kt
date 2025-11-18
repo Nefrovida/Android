@@ -43,6 +43,19 @@ fun NefrovidaNavGraph(
                 navController = navController,
                 onBackClick = { navController.popBackStack() })
         }
+        composable(
+            route = Screen.ReportDetail.route,
+            arguments = listOf(
+                navArgument("patientAnalysisId") { type = NavType.IntType }
+            )
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("patientAnalysisId") ?: 0
+            ReportDetailScreen(
+                navController = navController,
+                onBackClick = { navController.popBackStack() },
+                patientAnalysisId = id
+            )
+        }
         composable( route = Screen.Forum.route) {
             ForumScreen(
                 navController = navController,
