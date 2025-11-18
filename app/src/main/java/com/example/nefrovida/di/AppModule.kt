@@ -3,6 +3,7 @@ package com.example.nefrovida.di
 import com.example.nefrovida.data.remote.api.AnalysisHistoryApi
 import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.repository.AnalysisHistoryRepositoryImpl
+import com.example.nefrovida.data.remote.api.ReportsApi
 import com.example.nefrovida.data.repository.AppointmentRepositoryImpl
 import com.example.nefrovida.domain.repository.AnalysisHistoryRepository
 import com.example.nefrovida.domain.repository.AppointmentRepository
@@ -41,4 +42,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideAnalysisHistoryRepository(api: AnalysisHistoryApi): AnalysisHistoryRepository = AnalysisHistoryRepositoryImpl(api)
+}
+    
+    @Provides
+    @Singleton
+    fun provideReportsApi(retrofit: Retrofit): ReportsApi =
+        retrofit.create(ReportsApi::class.java)
 }

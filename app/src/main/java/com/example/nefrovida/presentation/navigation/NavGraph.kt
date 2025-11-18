@@ -12,6 +12,7 @@ import com.example.nefrovida.presentation.screens.home.HomeScreen
 import com.example.nefrovida.presentation.screens.laboratory.AnalysisDetailScreen
 import com.example.nefrovida.presentation.screens.laboratory.AnalysisHistoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.LaboratoryScreen
+import com.example.nefrovida.presentation.screens.laboratory.ReportDetailScreen
 
 sealed class Screen(val route: String) {
     object Home : Screen("home")
@@ -19,6 +20,8 @@ sealed class Screen(val route: String) {
     object AnalysisHistory : Screen("labs/history")
     object AnalysisDetail : Screen("labs/details/{analysisId}") {
         fun createRoute(analysisId: Int) = "labs/details/$analysisId"
+    object ReportDetail : Screen("reportDetail/{patientAnalysisId}"){
+        fun createRoute(id: Int) = "reportDetail/$id"
     }
     object Agenda : Screen("agenda")
     object Forum : Screen ("forum")
@@ -58,6 +61,21 @@ fun NefrovidaNavGraph(
         composable(route = Screen.Agenda.route) {
             AgendaScreen( navController = navController,
                 onBackClick = { navController.popBackStack() }
+            )
+        }
+        composable(
+            route = Screen.ReportDetail.route,
+            arguments = listOf(
+                navArgument("patientAnalysisId"){type = NavType.IntType}
+            )
+        ) {
+            backStackEntry ->
+            val id = backStackEntry.arguments?.getInt("patientAnalysisId") ?: 0
+
+            ReportDetailScreen(
+                navController = navController,
+                onBackClick = { navController.popBackStack() },
+                patientAnalysisId = id
             )
         }
     }

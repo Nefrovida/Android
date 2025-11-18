@@ -1,6 +1,5 @@
 package com.example.nefrovida.presentation.screens.agenda
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -163,8 +162,6 @@ fun AgendaScreen(
                                                 timeZone = java.util.TimeZone.getTimeZone("UTC")
                                             }
                                         val formattedDate = sdf.format(java.util.Date(selectedDate))
-                                        Log.d("AgendaScreen", "selectedDateMillis=$selectedDate formattedDate(UTC)=$formattedDate")
-
                                         viewModel.loadAgendaList(formattedDate)
                                     }
                                     showDatePicker = false

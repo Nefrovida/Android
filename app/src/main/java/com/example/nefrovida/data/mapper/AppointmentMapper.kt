@@ -17,6 +17,7 @@ fun AppointmentDto.toDomain(): Appointment {
         duration = duration,
         link = link,
         place = place,
-        status = status
+        status = status,
+        appointmentName = appointmentName,
     )
 }

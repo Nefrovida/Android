@@ -41,15 +41,11 @@ fun AppointmentCard (
                 textAlign = TextAlign.Center,
             )
             Text(
+                text = "Cita: ${appointment.appointmentName}",
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
                 text = "Fecha: ${appointment.date}",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                text = appointment.type.name,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                text = "Duración: ${appointment.duration} minutos",
                 style = MaterialTheme.typography.bodySmall,
             )
         }
