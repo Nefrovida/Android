@@ -12,10 +12,8 @@ interface AppointmentRepository {
     suspend fun getAppointmentDetails(token: String, appointmentId: String): AppointmentDetailDto
 
     // --- Flujo Secretaria (feature-16) ---
-    // Acepta 'date'
-    suspend fun getAppointmentListByDate(token: String, date: String): List<Appointment>
-    // Acepta 'Int'
-    suspend fun cancelAppointmentById(token: String, appointmentId: Int): Response<Unit>
-    // Acepta 'Int'
-    suspend fun getAppointmentById(token: String, appointmentId: Int): AppointmentDetailDto
+    suspend fun getAppointmentList(): List<Appointment>
+    suspend fun getAppointmentListByDate(date: String): List<Appointment>
+    suspend fun getAppointmentById(id: Int): Appointment
+    suspend fun cancelAppointmentById(id: Int): Response<Unit>
 }

@@ -21,12 +21,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.example.nefrovida.domain.model.Appointment
+
 
 @Composable
 fun AppointmentCard(
     name: String,
-    specialty: String, // <-- Nuevo parámetro
-    time: String,      // <-- Nuevo parámetro
+    specialty: String,
+    time: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {

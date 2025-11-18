@@ -2,8 +2,6 @@ package com.example.nefrovida.domain.usecase
 
 import com.example.nefrovida.data.network.dto.AppointmentDetailDto
 import com.example.nefrovida.domain.common.Result
-// --- CORRECCIÓN 2 ---
-// Importamos el 'Loading' que faltaba
 import com.example.nefrovida.domain.common.Result.Loading
 import com.example.nefrovida.domain.repository.AppointmentRepository
 import kotlinx.coroutines.flow.Flow

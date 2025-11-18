@@ -22,6 +22,7 @@ data class AppointmentDto (
     @SerializedName("place") val place: String?,
     @SerializedName("appointment_status") val status: AppointmentStatus,
     @SerializedName("appointment_type") val type: AppointmentTypes,
+    @SerializedName("appointment_name") val appointmentName: String?,
 
     ){
 
