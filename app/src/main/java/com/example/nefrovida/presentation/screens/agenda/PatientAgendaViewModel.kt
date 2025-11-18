@@ -13,27 +13,27 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
-// --- El ViewModel ---
+// --- ViewModel ---
 
 @HiltViewModel
 class PatientAgendaViewModel @Inject constructor(
-    private val repository: AppointmentRepository // Inyecta el Repositorio
+    private val repository: AppointmentRepository // Injects the repository
 ) : ViewModel() {
 
-    // --- Lógica para la LISTA de citas ---
+    // Logic for the LIST of appointments
     private val _listState = MutableStateFlow(AgendaListState())
     val listState: StateFlow<AgendaListState> = _listState.asStateFlow()
 
-    // --- Lógica para los DETALLES de citas ---
+    // Logic for the DETAILS of appointments
     private val _detailState = MutableStateFlow(AgendaDetailState())
     val detailState: StateFlow<AgendaDetailState> = _detailState.asStateFlow()
 
-    // Token de prueba.
-    // TODO: Reemplaza esto con un token de login real
+    // Test token.
+    // TODO: Replace this with a real login token
     private val FAKE_TOKEN = "Bearer TU_TOKEN_DE_PRUEBA_AQUI"
 
     init {
-        // Carga la lista de citas tan pronto se crea el ViewModel
+        // Loads the list of appointments as soon as the ViewModel is created
         loadAppointments()
     }
 
@@ -42,7 +42,7 @@ class PatientAgendaViewModel @Inject constructor(
             _listState.value = AgendaListState(isLoading = true)
             try {
                 _listState.value = AgendaListState(
-                    // Llama a la función del paciente en el repo
+                    // Calls the patient function in the repository
                     appointments = repository.getUserAppointments(FAKE_TOKEN)
                 )
             } catch (e: Exception) {
@@ -56,7 +56,7 @@ class PatientAgendaViewModel @Inject constructor(
             _detailState.value = AgendaDetailState(isLoading = true)
             try {
                 _detailState.value = AgendaDetailState(
-                    // Llama a la función del paciente en el repo
+                    // Calls the patient function in the repository
                     appointment = repository.getAppointmentDetails(FAKE_TOKEN, id)
                 )
             } catch (e: Exception) {
