@@ -9,9 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.nefrovida.domain.model.Report
 import com.example.nefrovida.ui.molecules.AnalysisNotFoundMessage
+
+private val Report.pdfUrl: Any
 
 @Suppress("ktlint:standard:function-naming")
 
@@ -62,9 +66,9 @@ fun ReportDetailScreen(
             ReportDetailContent(
                 title = report.patientAnalysis.analysis.name,
                 date = report.date,
-                interpretation = report.interpretation
+                interpretation = report.interpretation,
 
-                onDownloadClick = { openPdfViewer(pdfUrl) }
+                onDownloadClick = { openPdfViewer(pdfUrl) },
                 onBackClick = onBackClick
             )
         }
