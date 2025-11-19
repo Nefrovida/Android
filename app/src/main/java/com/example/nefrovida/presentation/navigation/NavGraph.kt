@@ -6,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.nefrovida.presentation.screens.NotificationsScreen
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
 import com.example.nefrovida.presentation.screens.forum.ForumScreen
 import com.example.nefrovida.presentation.screens.home.HomeScreen
@@ -20,6 +21,7 @@ sealed class Screen(val route: String) {
     }
     object Agenda : Screen("agenda")
     object Forum : Screen ("forum")
+    object Notifications : Screen ("notifications")
 }
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -63,6 +65,11 @@ fun NefrovidaNavGraph(
                 navController = navController,
                 onBackClick = { navController.popBackStack() },
                 patientAnalysisId = id
+            )
+        }
+        composable(route = Screen.Notifications.route) {
+            NotificationsScreen( navController = navController,
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
