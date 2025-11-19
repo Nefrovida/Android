@@ -36,7 +36,7 @@ fun NefrovidaTextField(
     onTrailingIconClick: (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    singleLine: Boolean = true
+    singleLine: Boolean = true,
 ) {
     OutlinedTextField(
         value = value,
@@ -45,15 +45,17 @@ fun NefrovidaTextField(
         modifier = modifier,
         singleLine = singleLine,
         isError = isError,
-        visualTransformation = if (isPassword && !isPasswordVisible)
-            PasswordVisualTransformation()
-        else
-            VisualTransformation.None,
+        visualTransformation =
+            if (isPassword && !isPasswordVisible) {
+                PasswordVisualTransformation()
+            } else {
+                VisualTransformation.None
+            },
         supportingText = {
             errorMessage?.let {
                 Text(
                     text = it,
-                    color = ErrorRed
+                    color = ErrorRed,
                 )
             }
         },
@@ -62,14 +64,18 @@ fun NefrovidaTextField(
                 isPassword && onPasswordVisibilityToggle != null -> {
                     IconButton(onClick = onPasswordVisibilityToggle) {
                         Icon(
-                            imageVector = if (isPasswordVisible)
-                                Icons.Filled.VisibilityOff
-                            else
-                                Icons.Filled.Visibility,
-                            contentDescription = if (isPasswordVisible)
-                                "Hide password"
-                            else
-                                "Show password"
+                            imageVector =
+                                if (isPasswordVisible) {
+                                    Icons.Filled.VisibilityOff
+                                } else {
+                                    Icons.Filled.Visibility
+                                },
+                            contentDescription =
+                                if (isPasswordVisible) {
+                                    "Hide password"
+                                } else {
+                                    "Show password"
+                                },
                         )
                     }
                 }
@@ -77,7 +83,7 @@ fun NefrovidaTextField(
                     IconButton(onClick = { onValueChange("") }) {
                         Icon(
                             imageVector = Icons.Filled.Clear,
-                            contentDescription = "Clear text"
+                            contentDescription = "Clear text",
                         )
                     }
                 }
@@ -85,7 +91,7 @@ fun NefrovidaTextField(
                     IconButton(onClick = onTrailingIconClick) {
                         Icon(
                             imageVector = trailingIcon,
-                            contentDescription = "Trailing icon"
+                            contentDescription = "Trailing icon",
                         )
                     }
                 }
@@ -93,12 +99,12 @@ fun NefrovidaTextField(
         },
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = NavyBlue,
-            unfocusedBorderColor = TextGray,
-            focusedLabelColor = NavyBlue,
-        ),
-        shape = RoundedCornerShape(8.dp)
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = NavyBlue,
+                unfocusedBorderColor = TextGray,
+                focusedLabelColor = NavyBlue,
+            ),
+        shape = RoundedCornerShape(8.dp),
     )
 }
-

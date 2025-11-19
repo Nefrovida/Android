@@ -17,29 +17,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 object AppModule {
     @Provides
     @Singleton
-    fun provideRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl("http://10.25.83.225:3001/api/")
+    fun provideRetrofit(): Retrofit =
+        Retrofit
+            .Builder()
+            .baseUrl("http://192.168.1.69:3001/api/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-    }
 
     @Provides
     @Singleton
-    fun provideAppointmentApi(retrofit: Retrofit): AppointmentApi {
-        return retrofit.create(AppointmentApi::class.java)
-    }
+    fun provideAppointmentApi(retrofit: Retrofit): AppointmentApi = retrofit.create(AppointmentApi::class.java)
 
     @Provides
     @Singleton
-    fun provideReportsApi(retrofit: Retrofit): ReportsApi =
-        retrofit.create(ReportsApi::class.java)
+    fun provideReportsApi(retrofit: Retrofit): ReportsApi = retrofit.create(ReportsApi::class.java)
 
     @Provides
     @Singleton
-    fun provideAppointmentRepository(
-        api: AppointmentApi
-    ) : AppointmentRepository {
-        return AppointmentRepositoryImpl(api)
-    }
+    fun provideAppointmentRepository(api: AppointmentApi): AppointmentRepository = AppointmentRepositoryImpl(api)
 }
