@@ -23,12 +23,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import formatDateToDDMMYYYY
+import androidx.compose.foundation.clickable
 
 @Composable
 fun ReportDetailContent(
     title: String,
     date: String,
     interpretation: String
+    onDownloadClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
 
     Column(
@@ -62,6 +65,7 @@ fun ReportDetailContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(12.dp),
+                .clickable { onDownloadClick() },
             shape = RoundedCornerShape(12.dp),
             colors = CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.background
