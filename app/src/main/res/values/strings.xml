@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Nefrovida</string>
+
+    <!-- Login Screen -->
+    <string name="welcome">¡Bienvenid@!</string>
+    <string name="username">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="forgot_password">¿Olvidaste tu contraseña?</string>
+    <string name="login_button">Iniciar Sesión</string>
+    <string name="new_user">¿Nuevo? Crea tu cuenta aquí</string>
+
+    <!-- Errors -->
+    <string name="error_empty_email">El usuario no puede estar vacío</string>
+    <string name="error_invalid_email">Usuario inválido</string>
+    <string name="error_empty_password">La contraseña no puede estar vacía</string>
+    <string name="error_login_failed">Error al iniciar sesión. Verifica tus credenciales</string>
 </resources>

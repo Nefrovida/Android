@@ -5,33 +5,40 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.ui.graphics.vector.ImageVector
 
-sealed class BottomNavDestination (
+sealed class NavDestination (
     val route: String,
     val label: String,
     val icon: ImageVector,
-    val filledIcon: ImageVector
+    val filledIcon: ImageVector? = null
 ){
-    object Home : BottomNavDestination(
+    object Home : NavDestination(
         route = "home",
         label = "Inicio",
         icon = Icons.Outlined.Home,
         filledIcon = Icons.Filled.Home)
-    object Lab : BottomNavDestination(
+    object Lab : NavDestination(
         route = "labs",
         label = "Análisis",
         icon = Icons.Outlined.Science,
         filledIcon = Icons.Filled.Science)
-    object Forum : BottomNavDestination(
+    object Forum : NavDestination(
         route = "forum",
         label = "Foro",
         icon = Icons.Outlined.Forum,
         filledIcon = Icons.Filled.Forum)
-    object Agenda : BottomNavDestination(
+    object Agenda : NavDestination(
         route = "agenda",
         label = "Agenda",
         icon = Icons.Outlined.CalendarMonth,
         filledIcon = Icons.Filled.CalendarMonth)
+
+    object Notifications : NavDestination(
+        route = "notifications",
+        label = "Notificaciones",
+        icon = Icons.Outlined.Notifications
+    )
     companion object {
-        val items = listOf(Home, Lab, Forum, Agenda)
+        val bottomNavItems = listOf(Home, Lab, Forum, Agenda)
+        val topNavItems = listOf(Notifications)
     }
 }
