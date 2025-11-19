@@ -1,5 +1,9 @@
 package com.example.nefrovida.presentation.screens.laboratory
 
+import android.content.Intent
+import android.net.Uri
+import android.util.Log
+
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,7 +22,24 @@ fun ReportDetailScreen(
     patientAnalysisId: Int,
     viewModel: ReportDetailViewModel = hiltViewModel()
 ){
+
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
+
+    val openPdfViewer = { pdfUrl: String ->
+        val intent = Intent(Intent.ACTION_VIEW).apply {
+            data = Uri.parse(pdfUrl)
+            type = "application/pdf"
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        try {
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            
+            Log.e("PDF_VIEWER", "Fallo al abrir PDF: ${e.message}")
+           
+        }
+    }
 
     LaunchedEffect(patientAnalysisId){
         viewModel.loadReport(patientAnalysisId)
@@ -36,10 +57,15 @@ fun ReportDetailScreen(
         is ReportDetailUiState.Success -> {
             val report = (uiState as ReportDetailUiState.Success).data
 
+            val pdfUrl = report.pdfUrl
+
             ReportDetailContent(
                 title = report.patientAnalysis.analysis.name,
                 date = report.date,
                 interpretation = report.interpretation
+
+                onDownloadClick = { openPdfViewer(pdfUrl) }
+                onBackClick = onBackClick
             )
         }
     }
