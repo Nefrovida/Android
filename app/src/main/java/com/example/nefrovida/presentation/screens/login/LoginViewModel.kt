@@ -3,8 +3,8 @@ package com.example.nefrovida.presentation.screens.login
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nefrovida.data.remote.api.NetworkModule
 import com.example.nefrovida.data.repository.AuthRepositoryImpl
+import com.example.nefrovida.di.NetworkModule
 import com.example.nefrovida.domain.repository.Result
 import com.example.nefrovida.domain.usecase.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,8 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class LoginViewModel(application: Application) : AndroidViewModel(application) {
-
+class LoginViewModel(
+    application: Application,
+) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
@@ -44,17 +45,18 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             try {
-                val result = loginUseCase(
-                    username = _uiState.value.email,
-                    password = _uiState.value.password
-                )
+                val result =
+                    loginUseCase(
+                        username = _uiState.value.email,
+                        password = _uiState.value.password,
+                    )
 
                 when (result) {
                     is Result.Success -> {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                loginSuccess = true
+                                loginSuccess = true,
                             )
                         }
                     }
@@ -62,7 +64,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
-                                errorMessage = result.message
+                                errorMessage = result.message,
                             )
                         }
                     }
@@ -71,7 +73,7 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = e.message ?: "Error desconocido"
+                        errorMessage = e.message ?: "Error desconocido",
                     )
                 }
             }
@@ -99,4 +101,3 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
         _uiState.update { it.copy(errorMessage = null) }
     }
 }
-

@@ -1,28 +1,58 @@
-package com.example.nefrovida.data.remote.api
+package com.example.nefrovida.di
 
 import android.content.Context
+import com.example.nefrovida.data.remote.api.AppointmentApi
+import com.example.nefrovida.data.remote.api.AuthApiService
+import com.example.nefrovida.data.remote.api.RefreshAuthenticator
+import com.example.nefrovida.data.remote.api.ReportsApi
+import com.example.nefrovida.data.repository.AppointmentRepositoryImpl
+import com.example.nefrovida.domain.repository.AppointmentRepository
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import jakarta.inject.Singleton
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
+@Module
+@InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "http://192.168.1.69:3001/api/" // Android emulator localhost
+    private const val BASE_URL = "http://10.25.106.180:3001/api/" // Android emulator localhost
 
     // For physical device, use your computer's IP: "http://192.168.x.x:3001/api/"
     private var retrofit: Retrofit? = null
     private var cookieJar: PersistentCookieJar? = null
 
-    fun provideRetrofit(context: Context): Retrofit {
+    @Provides
+    @Singleton
+    fun provideRetrofit(
+        @ApplicationContext context: Context,
+    ): Retrofit {
         if (retrofit == null) {
             retrofit = createRetrofit(context)
         }
         return retrofit!!
     }
+
+    @Provides
+    @Singleton
+    fun provideAppointmentApi(retrofit: Retrofit): AppointmentApi = retrofit.create(AppointmentApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideReportsApi(retrofit: Retrofit): ReportsApi = retrofit.create(ReportsApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAppointmentRepository(api: AppointmentApi): AppointmentRepository = AppointmentRepositoryImpl(api)
 
     private fun createRetrofit(context: Context): Retrofit {
         // Create persistent cookie jar
