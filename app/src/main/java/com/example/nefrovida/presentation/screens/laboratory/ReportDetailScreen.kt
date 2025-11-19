@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.nefrovida.ui.molecules.AnalysisNotFoundMessage
@@ -56,15 +57,13 @@ fun ReportDetailScreen(
 
         is ReportDetailUiState.Success -> {
             val report = (uiState as ReportDetailUiState.Success).data
-
-            val pdfUrl = report.pdfUrl
+            val pdfUrl = report.path
 
             ReportDetailContent(
                 title = report.patientAnalysis.analysis.name,
                 date = report.date,
-                interpretation = report.interpretation
-
-                onDownloadClick = { openPdfViewer(pdfUrl) }
+                interpretation = report.interpretation,
+                onDownloadClick = { openPdfViewer(pdfUrl) },
                 onBackClick = onBackClick
             )
         }

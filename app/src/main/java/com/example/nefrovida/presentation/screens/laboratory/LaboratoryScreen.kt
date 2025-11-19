@@ -2,7 +2,6 @@ package com.example.nefrovida.presentation.screens.laboratory
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,13 +38,13 @@ fun LaboratoryScreen(
     modifier: Modifier = Modifier
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
-    // TODO: pasar este estado al back
     val datePickerState = rememberDatePickerState()
 
-    Scaffold { _ ->
+    Scaffold { paddingValues ->
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .padding(paddingValues)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -64,9 +63,8 @@ fun LaboratoryScreen(
                     navController.navigate(Screen.ReportDetail.createRoute(4))
                 })
         }
-        //TODO: hacer del calendario una molécula
         if (showDatePicker) {
-            androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
+            androidx.compose.ui.window.Dialog(onDismissRequest = { }) {
                 androidx.compose.material3.Surface(
                     color = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.medium,
@@ -104,7 +102,7 @@ fun LaboratoryScreen(
                                 .padding(horizontal = 8.dp, vertical = 4.dp),
                             horizontalArrangement = Arrangement.End
                         ) {
-                            TextButton(onClick = { showDatePicker = false }) {
+                            TextButton(onClick = { }) {
                                 Text(
                                     "Cancelar",
                                     color = MaterialTheme.colorScheme.onSurface
@@ -112,7 +110,6 @@ fun LaboratoryScreen(
                             }
                             TextButton(onClick = {
                                 val selectedDate = datePickerState.selectedDateMillis
-                                showDatePicker = false
                                 println("Fecha seleccionada: $selectedDate")
                             }) {
                                 Text(

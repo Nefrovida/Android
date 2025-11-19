@@ -21,15 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import formatDateToDDMMYYYY
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun ReportDetailContent(
     title: String,
     date: String,
-    interpretation: String
+    interpretation: String,
     onDownloadClick: () -> Unit,
     onBackClick: () -> Unit
 ) {
@@ -64,12 +64,12 @@ fun ReportDetailContent(
         Card(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
+                .padding(12.dp)
                 .clickable { onDownloadClick() },
-            shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.background
-            ),
+                shape = RoundedCornerShape(12.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.background
+                ),
             elevation = CardDefaults.cardElevation(4.dp)
         ) {
             Row(
