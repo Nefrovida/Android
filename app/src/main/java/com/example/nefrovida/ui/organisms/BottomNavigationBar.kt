@@ -3,10 +3,9 @@ package com.example.nefrovida.ui.organisms
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.nefrovida.presentation.navigation.BottomNavDestination
+import com.example.nefrovida.presentation.navigation.NavDestination
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -26,7 +25,7 @@ fun NfBottomNavigationBar(
         containerColor = MaterialTheme.colorScheme.surface,
         contentColor = MaterialTheme.colorScheme.onSurface
     ) {
-        BottomNavDestination.items.forEach { destination ->
+        NavDestination.bottomNavItems.forEach { destination ->
             val selected = currentRoute == destination.route
 
             NavigationBarItem(
@@ -42,7 +41,10 @@ fun NfBottomNavigationBar(
                 },
                 icon = {
                     Icon(
-                        imageVector = if (selected) destination.filledIcon else destination.icon,
+                        imageVector = if (selected)
+                            (destination.filledIcon ?: destination.icon)
+                        else
+                            destination.icon,
                         contentDescription = destination.label
                     )
                 },

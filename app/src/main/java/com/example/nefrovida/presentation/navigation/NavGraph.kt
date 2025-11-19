@@ -1,5 +1,4 @@
 package com.example.nefrovida.presentation.navigation
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -7,6 +6,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.nefrovida.presentation.screens.NotificationsScreen
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
 import com.example.nefrovida.presentation.screens.forum.ForumScreen
 import com.example.nefrovida.presentation.screens.home.HomeScreen
@@ -26,10 +26,11 @@ sealed class Screen(
     object ReportDetail : Screen("reportDetail/{patientAnalysisId}") {
         fun createRoute(id: Int) = "reportDetail/$id"
     }
-
     object Agenda : Screen("agenda")
 
-    object Forum : Screen("forum")
+    object Forum : Screen ("forum")
+
+    object Notifications : Screen ("notifications")
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -52,7 +53,6 @@ fun NefrovidaNavGraph(
                     // TODO: Navegar a pantalla de recuperación de contraseña
                 },
                 onLoginSuccess = {
-                    Log.d("Success", "loginSuccess")
                     navController.navigate(Screen.Home.route) {
                         launchSingleTop = true
                         restoreState = true
@@ -63,37 +63,39 @@ fun NefrovidaNavGraph(
         composable(route = Screen.Home.route) {
             HomeScreen(navController = navController)
         }
-        composable(route = Screen.Laboratory.route) {
+        composable( route = Screen.Laboratory.route) {
             LaboratoryScreen(
                 navController = navController,
-                onBackClick = { navController.popBackStack() },
-            )
+                onBackClick = { navController.popBackStack() })
         }
-        composable(route = Screen.Forum.route) {
+        composable( route = Screen.Forum.route) {
             ForumScreen(
                 navController = navController,
-                onBackClick = { navController.popBackStack() },
-            )
+                onBackClick = { navController.popBackStack() })
         }
         composable(route = Screen.Agenda.route) {
-            AgendaScreen(
-                navController = navController,
-                onBackClick = { navController.popBackStack() },
+            AgendaScreen( navController = navController,
+                onBackClick = { navController.popBackStack() }
             )
         }
         composable(
             route = Screen.ReportDetail.route,
-            arguments =
-                listOf(
-                    navArgument("patientAnalysisId") { type = NavType.IntType },
-                ),
-        ) { backStackEntry ->
+            arguments = listOf(
+                navArgument("patientAnalysisId"){type = NavType.IntType}
+            )
+        ) {
+            backStackEntry ->
             val id = backStackEntry.arguments?.getInt("patientAnalysisId") ?: 0
 
             ReportDetailScreen(
                 navController = navController,
                 onBackClick = { navController.popBackStack() },
-                patientAnalysisId = id,
+                patientAnalysisId = id
+            )
+        }
+        composable(route = Screen.Notifications.route) {
+            NotificationsScreen( navController = navController,
+                onBackClick = { navController.popBackStack() }
             )
         }
     }
