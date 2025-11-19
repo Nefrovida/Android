@@ -1,4 +1,5 @@
-package com.example.nefrovida.presentation.screens.forum
+package com.example.nefrovida.presentation.screens
+
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,12 +9,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.nefrovida.presentation.screens.home.components.AgendaList
 
 @Suppress("ktlint:standard:function-naming")
 
 @Composable
-fun ForumScreen(
+fun NotificationsScreen(
     onBackClick: () -> Unit,
     navController : NavController,
     modifier: Modifier = Modifier
@@ -24,11 +24,11 @@ fun ForumScreen(
         contentAlignment = Alignment.Center
     ) {
         Text(
-            text = "🚧 En construcción 🚧",
+            text = "🚧 Próximamente 🚧",
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineMedium,
 
             )
     }
-    }
+}
 
