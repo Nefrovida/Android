@@ -14,9 +14,15 @@ import com.example.nefrovida.presentation.screens.laboratory.AnalysisDetailScree
 import com.example.nefrovida.presentation.screens.laboratory.AnalysisHistoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.LaboratoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.ReportDetailScreen
+import com.example.nefrovida.presentation.screens.login.LoginScreen
 
-sealed class Screen(val route: String) {
+sealed class Screen(
+    val route: String,
+) {
+    object Login : Screen("login")
+
     object Home : Screen("home")
+
     object Laboratory : Screen("labs")
 
     object AnalysisHistory : Screen("labs/history")
@@ -28,10 +34,14 @@ sealed class Screen(val route: String) {
     object ReportDetail : Screen("reportDetail/{patientAnalysisId}") {
         fun createRoute(id: Int) = "reportDetail/$id"
     }
+
     object Agenda : Screen("agenda")
-    object Forum : Screen ("forum")
-    object Notifications : Screen ("notifications")
+
+    object Forum : Screen("forum")
+
+    object Notifications : Screen("notifications")
 }
+
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun NefrovidaNavGraph(
@@ -40,30 +50,34 @@ fun NefrovidaNavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
-        modifier = modifier
+        startDestination = Screen.Login.route,
+        modifier = modifier,
     ) {
+        composable(route = Screen.Login.route) {
+            LoginScreen(
+                onNavigateToRegister = {
+                    // TODO: Navegar a pantalla de registro
+                },
+                onNavigateToForgotPassword = {
+                    // TODO: Navegar a pantalla de recuperación de contraseña
+                },
+                onLoginSuccess = {
+                    navController.navigate(Screen.Home.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+            )
+        }
         composable(route = Screen.Home.route) {
             HomeScreen(navController = navController)
         }
-        composable( route = Screen.Laboratory.route) {
+        composable(route = Screen.Laboratory.route) {
             LaboratoryScreen(
                 navController = navController,
-                onBackClick = { navController.popBackStack() })
-        }
-        /* composable(route = Screen.Laboratory.route) {
-            AnalysisHistoryScreen(navController = navController)
-        }
-        composable(
-            route = Screen.AnalysisDetail.route,
-            arguments = listOf(navArgument("analysisId") { type = NavType.IntType }),
-        ) { backStackEntry ->
-            val analysisId = backStackEntry.arguments?.getInt("analysisId") ?: 0
-            AnalysisDetailScreen(
-                analysisId = analysisId,
-                navController = navController,
+                onBackClick = { navController.popBackStack() },
             )
-        } */
+        }
         composable(route = Screen.Forum.route) {
             ForumScreen(
                 navController = navController,
@@ -76,6 +90,20 @@ fun NefrovidaNavGraph(
                 onBackClick = { navController.popBackStack() },
             )
         }
+        composable(route = Screen.Laboratory.route) {
+            AnalysisHistoryScreen(navController = navController)
+        }
+        composable(
+            route = Screen.AnalysisDetail.route,
+            arguments = listOf(navArgument("analysisId") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            val analysisId = backStackEntry.arguments?.getInt("analysisId") ?: 0
+            AnalysisDetailScreen(
+                analysisId = analysisId,
+                navController = navController,
+            )
+        }
+
         composable(
             route = Screen.ReportDetail.route,
             arguments =
@@ -92,8 +120,9 @@ fun NefrovidaNavGraph(
             )
         }
         composable(route = Screen.Notifications.route) {
-            NotificationsScreen( navController = navController,
-                onBackClick = { navController.popBackStack() }
+            NotificationsScreen(
+                navController = navController,
+                onBackClick = { navController.popBackStack() },
             )
         }
     }
