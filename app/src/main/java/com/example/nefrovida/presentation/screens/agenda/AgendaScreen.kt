@@ -1,6 +1,5 @@
 package com.example.nefrovida.presentation.screens.agenda
 
-
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,11 +25,11 @@ import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+// import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 import kotlinx.coroutines.launch
 import com.example.nefrovida.ui.molecules.DatePickerDialog
-
 
 @Composable
 fun AgendaScreen(
@@ -56,22 +55,21 @@ fun AgendaScreen(
         }
     }
 
-
-    Scaffold (
-        snackbarHost = {SnackbarHost(snackbarHostState)}
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { _ ->
         Column(
-            modifier = modifier.fillMaxSize()
+            modifier = modifier.fillMaxSize(),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.End,
             ) {
                 SimpleIconButton(
                     icon = Icons.Default.FilterAlt,
                     contentDescription = "Filtrar por día",
                     modifier = Modifier.padding(8.dp),
-                    onClick = { showDatePicker = true }
+                    onClick = { showDatePicker = true },
                 )
             }
             AgendaList(
@@ -79,26 +77,27 @@ fun AgendaScreen(
                 onCardClick = { appointment ->
                     viewModel.getAppointment(appointment.id)
                     showDialog = true
-                }
+                },
             )
             if (showDialog) {
                 uiState.selectedAppointment?.let { appointment ->
                     Dialog(
                         title = "Doctor: ${appointment.name}",
-                        text = """
+                        text =
+                            """
                             Fecha: ${appointment.date}
                             Hora: ${appointment.time}
                             ${appointment.type}
 
                             ¿Deseas cancelar esta cita?
-                        """.trimIndent(),
+                            """.trimIndent(),
                         confirmText = "Sí, cancelar",
                         dismissText = "No",
                         onConfirm = {
                             viewModel.cancelAppointment(appointment.id)
                             showDialog = false
                         },
-                        onDismiss = { showDialog = false }
+                        onDismiss = { showDialog = false },
                     )
                 }
             }
@@ -107,10 +106,9 @@ fun AgendaScreen(
                     onDismiss = { showDatePicker = false },
                     onDateSelected = { date ->
                         viewModel.loadAgendaList(date)
-                    }
+                    },
                 )
             }
         }
     }
 }
-
