@@ -5,8 +5,16 @@ import retrofit2.Response
 
 interface AppointmentRepository {
     suspend fun getAppointmentList(): List<Appointment>
+
     suspend fun getAppointmentListByDate(date: String): List<Appointment>
+
     suspend fun getAppointmentById(id: Int): Appointment
+
     suspend fun cancelAppointmentById(id: Int): Response<Unit>
 
+    suspend fun rescheduleAppointment(
+        id: Int,
+        reason: String,
+        dateHour: String,
+    ): Response<Unit>
 }
