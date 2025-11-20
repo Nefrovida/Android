@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import javax.inject.Inject
 
-class cancelAppointmentUseCase
+class CancelAppointmentUseCase
     @Inject
     constructor(
         private val repository: AppointmentRepository,

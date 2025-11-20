@@ -1,5 +1,6 @@
 package com.example.nefrovida.di
 
+import com.example.nefrovida.data.remote.api.AnalysisHistoryApi
 import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.api.ReportsApi
 import com.example.nefrovida.data.repository.AnalysisHistoryRepositoryImpl
