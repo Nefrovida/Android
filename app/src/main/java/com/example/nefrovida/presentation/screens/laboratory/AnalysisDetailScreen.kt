@@ -147,20 +147,6 @@ fun AnalysisDetailScreen(
                                     }
                                 }
                             }
-
-                            // Specialty
-//                            Text(
-//                                text = "Especialidad: ${analysis.specialty}",
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                            )
-
-                            // Doctor
-//                            Text(
-//                                text = analysis.doctorName,
-//                                style = MaterialTheme.typography.bodyMedium,
-//                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                            )
                         }
                     }
 
@@ -182,14 +168,6 @@ fun AnalysisDetailScreen(
                                 content = analysis.recommendations,
                             )
                         }
-
-                        // Treatment Section
-//                        if (!analysis.treatment.isNullOrBlank()) {
-//                            DetailSection(
-//                                header = "Tratamiento",
-//                                content = analysis.treatment,
-//                            )
-//                        }
                     }
                 }
             }
