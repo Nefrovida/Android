@@ -68,43 +68,6 @@ fun AnalysisDetailScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "NEFROVida",
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { /* Navigate to profile */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "User profile",
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* Navigate to notifications */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
-                        )
-                    }
-                },
-                colors =
-                    TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        titleContentColor = MaterialTheme.colorScheme.onSurface,
-                    ),
-            )
-        },
-        bottomBar = {
-            NfBottomNavigationBar(
-                navController = navController,
-            )
-        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
         when {
@@ -186,18 +149,18 @@ fun AnalysisDetailScreen(
                             }
 
                             // Specialty
-                            Text(
-                                text = "Especialidad: ${analysis.specialty}",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+//                            Text(
+//                                text = "Especialidad: ${analysis.specialty}",
+//                                style = MaterialTheme.typography.bodyMedium,
+//                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                            )
 
                             // Doctor
-                            Text(
-                                text = analysis.doctorName,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+//                            Text(
+//                                text = analysis.doctorName,
+//                                style = MaterialTheme.typography.bodyMedium,
+//                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                            )
                         }
                     }
 
@@ -221,12 +184,12 @@ fun AnalysisDetailScreen(
                         }
 
                         // Treatment Section
-                        if (!analysis.treatment.isNullOrBlank()) {
-                            DetailSection(
-                                header = "Tratamiento",
-                                content = analysis.treatment,
-                            )
-                        }
+//                        if (!analysis.treatment.isNullOrBlank()) {
+//                            DetailSection(
+//                                header = "Tratamiento",
+//                                content = analysis.treatment,
+//                            )
+//                        }
                     }
                 }
             }

@@ -69,18 +69,18 @@ fun AnalysisHistoryCard(
             }
 
             // Specialty
-            Text(
-                text = "Especialidad: ${analysisHistory.specialty}",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+//            Text(
+//                text = "Especialidad: ${analysisHistory.specialty}",
+//                style = MaterialTheme.typography.bodyMedium,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant,
+//            )
 
             // Doctor
-            Text(
-                text = analysisHistory.doctorName,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+//            Text(
+//                text = analysisHistory.doctorName,
+//                style = MaterialTheme.typography.bodyMedium,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant,
+//            )
 
             // Action Button
             Row(
