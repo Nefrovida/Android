@@ -27,9 +27,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.Icons
-
-
-@Suppress("ktlint:standard:function-naming")
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
@@ -37,6 +34,10 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 import kotlinx.coroutines.launch
 import com.example.nefrovida.ui.molecules.DatePickerDialog
+
+
+@Suppress("ktlint:standard:function-naming")
+
 
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
