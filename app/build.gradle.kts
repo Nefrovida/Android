@@ -65,6 +65,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
 
     //Hilt
     implementation(libs.hilt.android)

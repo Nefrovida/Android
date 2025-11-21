@@ -1,21 +1,13 @@
 package com.example.nefrovida.presentation.screens.laboratory
 
-import android.content.Intent
-import android.net.Uri
-import android.util.Log
 
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.*
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.nefrovida.ui.molecules.AnalysisNotFoundMessage
 
 @Suppress("ktlint:standard:function-naming")
-
 @Composable
 fun ReportDetailScreen(
     navController: NavController,
@@ -23,28 +15,25 @@ fun ReportDetailScreen(
     patientAnalysisId: Int,
     viewModel: ReportDetailViewModel = hiltViewModel()
 ){
-
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
-    val openPdfViewer = { pdfUrl: String ->
-        val intent = Intent(Intent.ACTION_VIEW).apply {
-            data = Uri.parse(pdfUrl)
-            type = "application/pdf"
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        }
-        try {
-            context.startActivity(intent)
-        } catch (e: Exception) {
-            
-            Log.e("PDF_VIEWER", "Fallo al abrir PDF: ${e.message}")
-           
-        }
-    }
+
+    var showPdfViewer by remember { mutableStateOf(false) }
+    var currentPdfPath by remember { mutableStateOf("") }
 
     LaunchedEffect(patientAnalysisId){
         viewModel.loadReport(patientAnalysisId)
     }
+
+
+    if (showPdfViewer) {
+        PdfViewerScreen(
+            relativePath = currentPdfPath,
+            onBackClick = { showPdfViewer = false }
+        )
+        return
+    }
+
 
     when (val state = uiState) {
         ReportDetailUiState.Loading -> {
@@ -56,18 +45,18 @@ fun ReportDetailScreen(
         }
 
         is ReportDetailUiState.Success -> {
-            val report = (uiState as ReportDetailUiState.Success).data
-            val pdfUrl = report.path
+            val report = state.data
 
             ReportDetailContent(
                 title = report.patientAnalysis.analysis.name,
                 date = report.date,
                 interpretation = report.interpretation,
-                onDownloadClick = { openPdfViewer(pdfUrl) },
+                onDownloadClick = {
+                    currentPdfPath = report.path
+                    showPdfViewer = true
+                },
                 onBackClick = onBackClick
             )
         }
     }
-
-
 }
