@@ -7,22 +7,29 @@ import retrofit2.Response
 import retrofit2.http.*
 
 interface AppointmentApi {
-
     // --- Patient methods (Feature 13) ---
     @GET("appointments")
     suspend fun getUserAppointments(): List<AppointmentDto>
 
     @GET("agenda/appointment/{id}")
-    suspend fun getAppointmentDetails(@Path("id") id: String): AppointmentDetailDto
+    suspend fun getAppointmentDetails(
+        @Path("id") appointmentId: String,
+    ): AppointmentDetailDto
 
     // --- Secretary methods (Feature 16) ---
 
     @GET("agenda/appointments/{date}")
-    suspend fun getAppointmentListByDate(@Path("date") date: String): List<Appointment>
+    suspend fun getAppointmentListByDate(
+        @Path("date") date: String,
+    ): List<Appointment>
 
     @PATCH("agenda/cancel/{id}")
-    suspend fun cancelAppointmentById(@Path("id") appointmentId: String): Response<Unit>
+    suspend fun cancelAppointmentById(
+        @Path("id") appointmentId: String,
+    ): Response<Unit>
 
     @GET("agenda/appointment/{id}")
-    suspend fun getAppointmentById(@Path("id") appointmentId: String): AppointmentDetailDto
+    suspend fun getAppointmentById(
+        @Path("id") appointmentId: String,
+    ): AppointmentDetailDto
 }

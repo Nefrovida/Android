@@ -2,8 +2,8 @@ package com.example.nefrovida.presentation.screens.agenda
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nefrovida.data.network.dto.AppointmentDetailDto
-import com.example.nefrovida.data.network.dto.AppointmentDto
+// Importamos el modelo de DOMINIO, no el DTO
+import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.repository.AppointmentRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,55 +12,65 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+data class PatientAgendaListState(
+    val appointments: List<Appointment> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
+)
+
+data class PatientAgendaDetailState(
+    val appointment: Appointment? = null,
+    val isLoading: Boolean = false,
+    val error: String? = null,
+)
 
 // --- ViewModel ---
 
 @HiltViewModel
-class PatientAgendaViewModel @Inject constructor(
-    private val repository: AppointmentRepository // Injects the repository
-) : ViewModel() {
+class PatientAgendaViewModel
+    @Inject
+    constructor(
+        private val repository: AppointmentRepository,
+    ) : ViewModel() {
+        private val _listState = MutableStateFlow(PatientAgendaListState())
+        val listState: StateFlow<PatientAgendaListState> = _listState.asStateFlow()
 
-    // Logic for the LIST of appointments
-    private val _listState = MutableStateFlow(AgendaListState())
-    val listState: StateFlow<AgendaListState> = _listState.asStateFlow()
+        private val _detailState = MutableStateFlow(PatientAgendaDetailState())
+        val detailState: StateFlow<PatientAgendaDetailState> = _detailState.asStateFlow()
 
-    // Logic for the DETAILS of appointments
-    private val _detailState = MutableStateFlow(AgendaDetailState())
-    val detailState: StateFlow<AgendaDetailState> = _detailState.asStateFlow()
+        init {
+            loadAppointments()
+        }
 
-    // Test token.
-    // TODO: Replace this with a real login token
-    private val FAKE_TOKEN = "Bearer TU_TOKEN_DE_PRUEBA_AQUI"
+        fun loadAppointments() {
+            viewModelScope.launch {
+                _listState.value = PatientAgendaListState(isLoading = true)
+                try {
+                    val result = repository.getUserAppointments()
 
-    init {
-        // Loads the list of appointments as soon as the ViewModel is created
-        loadAppointments()
-    }
+                    _listState.value =
+                        PatientAgendaListState(
+                            appointments = result,
+                        )
+                } catch (e: Exception) {
+                    _listState.value = PatientAgendaListState(error = e.message)
+                }
+            }
+        }
 
-    fun loadAppointments() {
-        viewModelScope.launch {
-            _listState.value = PatientAgendaListState(isLoading = true)
-            try {
-                _listState.value = PatientAgendaListState(
-                    appointments = repository.getUserAppointments()
-                )
-            } catch (e: Exception) {
-                // ...
+        fun loadAppointmentDetails(id: String) {
+            viewModelScope.launch {
+                _detailState.value = PatientAgendaDetailState(isLoading = true)
+                try {
+                    val result = repository.getAppointmentDetails(id)
+
+                    _detailState.value =
+                        PatientAgendaDetailState(
+                            appointment = result,
+                        )
+                } catch (e: Exception) {
+                    _detailState.value = PatientAgendaDetailState(error = e.message)
+                }
             }
         }
     }
-
-    fun loadAppointmentDetails(id: String) {
-        viewModelScope.launch {
-            _detailState.value = AgendaDetailState(isLoading = true)
-            try {
-                _detailState.value = AgendaDetailState(
-                    // Calls the patient function in the repository
-                    appointment = repository.getAppointmentDetails(FAKE_TOKEN, id)
-                )
-            } catch (e: Exception) {
-                _detailState.value = AgendaDetailState(error = e.message)
-            }
-        }
-    }
-}

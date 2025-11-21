@@ -1,23 +1,25 @@
 package com.example.nefrovida.data.mapper
 
-import com.example.nefrovida.data.remote.dto.AppointmentDto
+import com.example.nefrovida.data.network.dto.AppointmentDetailDto
+import com.example.nefrovida.data.network.dto.AppointmentDto
 import com.example.nefrovida.domain.model.Appointment
 
-fun AppointmentDto.toDomain(): Appointment {
-    val dateTimeParts = dateHour.split("T")
-    val date = dateTimeParts[0]
-    val time = dateTimeParts.getOrNull(1)?.substring(0,5) ?: ""
-
-    return Appointment(
-        id = id,
-        name = name,
-        date = date,
-        time = time,
-        type = type,
-        duration = duration,
-        link = link,
-        place = place,
-        status = status,
-        appointmentName = appointmentName,
+fun AppointmentDto.toAppointment(): Appointment =
+    Appointment(
+        id = this.id,
+        date = this.date,
+        doctorFirstName = this.doctor.firstName,
+        doctorLastName = this.doctor.lastName,
+        specialty = this.doctor.specialty,
+        requirements = null,
     )
-}
+
+fun AppointmentDetailDto.toAppointment(): Appointment =
+    Appointment(
+        id = this.id,
+        date = this.date,
+        doctorFirstName = this.doctor.firstName,
+        doctorLastName = this.doctor.lastName,
+        specialty = this.doctor.specialty,
+        requirements = this.requirements,
+    )
