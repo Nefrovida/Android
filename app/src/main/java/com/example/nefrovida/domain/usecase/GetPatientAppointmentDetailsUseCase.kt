@@ -12,15 +12,6 @@ import javax.inject.Inject
 class GetPatientAppointmentDetailsUseCase @Inject constructor(
     private val repository: AppointmentRepository
 ) {
-    operator fun invoke(token: String, appointmentId: Int): Flow<Result<AppointmentDetailDto>> = flow {
-        try {
-            emit(Result.Loading)
-            val appointment = repository.getPatientAppointmentDetails(token, appointmentId.toString())
-            emit(Result.Success(appointment))
-        } catch (e: HttpException) {
-            emit(Result.Error(e))
-        } catch (e: IOException) {
-            emit(Result.Error(e))
-        }
+    operator fun invoke(appointmentId: String): Flow<Result<AppointmentDetailDto>> = flow {
     }
 }

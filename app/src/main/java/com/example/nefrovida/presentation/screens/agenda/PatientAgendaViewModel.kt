@@ -39,14 +39,13 @@ class PatientAgendaViewModel @Inject constructor(
 
     fun loadAppointments() {
         viewModelScope.launch {
-            _listState.value = AgendaListState(isLoading = true)
+            _listState.value = PatientAgendaListState(isLoading = true)
             try {
-                _listState.value = AgendaListState(
-                    // Calls the patient function in the repository
-                    appointments = repository.getUserAppointments(FAKE_TOKEN)
+                _listState.value = PatientAgendaListState(
+                    appointments = repository.getUserAppointments()
                 )
             } catch (e: Exception) {
-                _listState.value = AgendaListState(error = e.message)
+                // ...
             }
         }
     }
