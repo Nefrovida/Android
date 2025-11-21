@@ -75,7 +75,6 @@ fun LaboratoryScreen(
     modifier: Modifier = Modifier
 ) {
     var showDatePicker by remember { mutableStateOf(false) }
-    // TODO: pasar este estado al back
     val datePickerState = rememberDatePickerState()
 
     Scaffold { _ ->
@@ -100,7 +99,6 @@ fun LaboratoryScreen(
                     navController.navigate(Screen.ReportDetail.createRoute(4))
                 })
         }
-        //TODO: hacer del calendario una molécula
         if (showDatePicker) {
             androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
                 androidx.compose.material3.Surface(

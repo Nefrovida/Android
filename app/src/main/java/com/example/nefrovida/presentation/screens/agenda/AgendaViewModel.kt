@@ -1,5 +1,6 @@
 package com.example.nefrovida.presentation.screens.agenda
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.domain.repository.AppointmentRepository 
@@ -96,6 +97,7 @@ class AgendaViewModel @Inject constructor (
                 _uiState.update { state ->
                     when (result) {
                         is Result.Loading -> {
+                            Log.d("AgendaVM", "Agenda List is loading")
                             state.copy(
                             isLoading = true,
                                 selectedDate = date
@@ -103,6 +105,7 @@ class AgendaViewModel @Inject constructor (
                         )}
 
                         is Result.Success -> {
+                            Log.d("AgendaVM", "Agenda List succeded")
                             state.copy(
                             appointmentFilteredList = result.data,
                             isLoading = false,

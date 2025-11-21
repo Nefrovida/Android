@@ -16,13 +16,10 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.nefrovida.domain.model.Appointment
-
 
 @Composable
 fun AppointmentCard(
@@ -32,7 +29,15 @@ fun AppointmentCard(
     time: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
+fun SimpleCard(
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    content: @Composable () -> Unit
 ) {
+    val clickableModifier = if (onClick != null) {
+        modifier.clickable { onClick() }
+    } else modifier
+
     Card(
         modifier = modifier.fillMaxWidth(), // <-- It's not clickable here anymore
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
