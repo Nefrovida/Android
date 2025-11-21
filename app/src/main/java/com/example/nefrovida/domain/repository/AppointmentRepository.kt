@@ -5,6 +5,7 @@ import retrofit2.Response
 
 interface AppointmentRepository {
     // Patient methods
+    // Returns Domain Object (Appointment), NOT DTO
     suspend fun getUserAppointments(): List<Appointment>
 
     suspend fun getAppointmentDetails(appointmentId: String): Appointment

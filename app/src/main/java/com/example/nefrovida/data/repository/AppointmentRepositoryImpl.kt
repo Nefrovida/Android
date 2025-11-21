@@ -13,16 +13,19 @@ class AppointmentRepositoryImpl
         private val api: AppointmentApi,
     ) : AppointmentRepository {
         override suspend fun getUserAppointments(): List<Appointment> {
-            val dtos = api.getUserAppointments()
-            return dtos.map { it.toAppointment() }
+            // Maps DTO to Domain
+            return api.getUserAppointments().map { it.toAppointment() }
         }
 
         override suspend fun getAppointmentDetails(appointmentId: String): Appointment {
-            val dto = api.getAppointmentDetails(appointmentId)
-            return dto.toAppointment()
+            // Maps DTO to Domain
+            return api.getAppointmentDetails(appointmentId).toAppointment()
         }
 
-        override suspend fun getAppointmentById(id: Int): Appointment = api.getAppointmentById(id.toString()).toAppointment()
+        override suspend fun getAppointmentById(id: Int): Appointment {
+            // Reusing the API call and mapping
+            return api.getAppointmentById(id.toString()).toAppointment()
+        }
 
         override suspend fun getAppointmentListByDate(date: String): List<Appointment> = api.getAppointmentListByDate(date)
 

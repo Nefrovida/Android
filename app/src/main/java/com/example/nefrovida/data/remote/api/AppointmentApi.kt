@@ -4,20 +4,21 @@ import com.example.nefrovida.data.network.dto.AppointmentDetailDto
 import com.example.nefrovida.data.network.dto.AppointmentDto
 import com.example.nefrovida.domain.model.Appointment
 import retrofit2.Response
-import retrofit2.http.*
+import retrofit2.http.GET
+import retrofit2.http.PATCH
+import retrofit2.http.Path
 
 interface AppointmentApi {
-    // --- Patient methods (Feature 13) ---
+    // --- Patient Methods ---
     @GET("appointments")
-    suspend fun getUserAppointments(): List<AppointmentDto>
+    suspend fun getUserAppointments(): List<AppointmentDto> // Token removed
 
     @GET("agenda/appointment/{id}")
     suspend fun getAppointmentDetails(
-        @Path("id") appointmentId: String,
-    ): AppointmentDetailDto
+        @Path("id") id: String,
+    ): AppointmentDetailDto // Token removed
 
-    // --- Secretary methods (Feature 16) ---
-
+    // --- Secretary Methods
     @GET("agenda/appointments/{date}")
     suspend fun getAppointmentListByDate(
         @Path("date") date: String,

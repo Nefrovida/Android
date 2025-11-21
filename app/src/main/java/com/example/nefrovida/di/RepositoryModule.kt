@@ -1,7 +1,7 @@
 package com.example.nefrovida.di
 
-import com.example.nefrovida.data.repository.*
-import com.example.nefrovida.domain.repository.*
+import com.example.nefrovida.data.repository.AppointmentRepositoryImpl
+import com.example.nefrovida.domain.repository.AppointmentRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -11,11 +11,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class RepositoryModule {
-
-
     @Binds
     @Singleton
-    abstract fun bindAppointmentRepository(
-        appointmentRepositoryImpl: AppointmentRepositoryImpl
-    ): AppointmentRepository
+    abstract fun bindAppointmentRepository(appointmentRepositoryImpl: AppointmentRepositoryImpl): AppointmentRepository
 }
