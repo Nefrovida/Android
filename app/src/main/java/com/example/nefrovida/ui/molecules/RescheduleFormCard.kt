@@ -75,27 +75,39 @@ fun RescheduleFormCard(
             modifier = Modifier.padding(top = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            OutlinedTextField(
-                value = date,
-                onValueChange = {},
-                label = { Text("Nueva fecha") },
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .clickable { showDatePicker = true },
-                enabled = false,
-            )
+            Box(modifier = Modifier.weight(1f)) {
+                OutlinedTextField(
+                    value = date,
+                    onValueChange = {},
+                    label = { Text("Nueva fecha") },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                )
+                // Invisible clickable layer on top
+                Box(
+                    modifier =
+                        Modifier
+                            .matchParentSize()
+                            .clickable { showDatePicker = true },
+                )
+            }
 
-            OutlinedTextField(
-                value = time,
-                onValueChange = {},
-                label = { Text("Nueva hora") },
-                modifier =
-                    Modifier
-                        .weight(1f)
-                        .clickable { showTimePicker = true },
-                enabled = false,
-            )
+            Box(modifier = Modifier.weight(1f)) {
+                OutlinedTextField(
+                    value = time,
+                    onValueChange = {},
+                    label = { Text("Nueva hora") },
+                    modifier = Modifier.fillMaxWidth(),
+                    readOnly = true,
+                )
+                // Invisible clickable layer on top
+                Box(
+                    modifier =
+                        Modifier
+                            .matchParentSize()
+                            .clickable { showTimePicker = true },
+                )
+            }
         }
 
         // --- Date Picker ---

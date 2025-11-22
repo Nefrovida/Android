@@ -29,6 +29,19 @@ class AppointmentRepositoryImpl
 
         override suspend fun cancelAppointmentById(id: Int): Response<Unit> = api.cancelAppointment(id)
 
+        override suspend fun getDateAvailability(
+            appointmentName: String,
+            date: String,
+        ): List<String> {
+            val response = api.getDateAvailability(appointmentName, date)
+
+            if (response.isSuccessful) {
+                return response.body() ?: emptyList()
+            } else {
+                throw Exception("HTTP ${response.code()}: ${response.message()}")
+            }
+        }
+
         override suspend fun rescheduleAppointment(
             id: Int,
             reason: String,

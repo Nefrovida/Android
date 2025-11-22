@@ -19,13 +19,8 @@ class GetDateAvailabilityUseCase
             flow {
                 try {
                     emit(Result.Loading)
-                    val response = repository.getDateAvailability(appointmentName, date)
-
-                    if (response.isSuccessful) {
-                        emit(Result.Success(response.body() ?: emptyList()))
-                    } else {
-                        emit(Result.Error(Exception("HTTP ${response.code()}: ${response.message()}")))
-                    }
+                    val data = repository.getDateAvailability(appointmentName, date)
+                    emit(Result.Success(data))
                 } catch (e: Exception) {
                     emit(Result.Error(e))
                 }

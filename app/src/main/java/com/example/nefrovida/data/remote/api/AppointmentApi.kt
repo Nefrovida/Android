@@ -34,6 +34,12 @@ interface AppointmentApi {
         @Path("id") id: Int,
     ): Response<Unit>
 
+    @GET("agenda/appointments/date-availability")
+    suspend fun getDateAvailability(
+        @Query("appointmentName") appointmentName: String,
+        @Query("date") date: String,
+    ): Response<List<String>>
+
     @PUT("appointments/{id}/reschedule")
     suspend fun rescheduleAppointment(
         @Path("id") id: Int,

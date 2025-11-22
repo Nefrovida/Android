@@ -14,13 +14,26 @@ fun formatDateToDDMMYYYY(dateString: String): String {
 }
 
 fun checkValidDate(dateString: String): Boolean {
-    // Parse the input ISO date
-    val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.getDefault())
-    inputFormat.timeZone = TimeZone.getTimeZone("UTC")
+    val formats =
+        listOf(
+            "yyyy-MM-dd",
+            "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
+            "yyyy-MM-dd'T'HH:mm:ss'Z'",
+        )
 
-    val date = inputFormat.parse(dateString) ?: return false
+    val date =
+        formats.firstNotNullOfOrNull { pattern ->
+            try {
+                SimpleDateFormat(pattern, Locale.getDefault())
+                    .apply {
+                        timeZone = TimeZone.getTimeZone("UTC")
+                    }.parse(dateString)
+            } catch (e: Exception) {
+                null
+            }
+        } ?: return false // no format matched → invalid date
 
-    val calendar = Calendar.getInstance() // local timezone
+    val calendar = Calendar.getInstance()
 
     // Today (local)
     val today = calendar.clone() as Calendar
@@ -36,10 +49,7 @@ fun checkValidDate(dateString: String): Boolean {
     val cDate = Calendar.getInstance()
     cDate.time = date
 
-    // Must be >= tomorrow
     if (cDate.before(tomorrow)) return false
-
-    // Must be <= 4 months ahead
     if (cDate.after(maxLimit)) return false
 
     return true
