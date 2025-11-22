@@ -30,6 +30,7 @@ private val LightColorScheme =
      */
     )
 
+@Suppress("ktlint:standard:function-naming")
 @Composable
 fun NefrovidaTheme(content: @Composable () -> Unit) {
     MaterialTheme(
