@@ -151,15 +151,25 @@ class AgendaViewModel
         suspend fun getDateAvailability(
             appointmentName: String,
             date: String,
-        ): List<String> =
-            getDateAvailabilityUseCase(appointmentName, date)
-                .first() // ← first emitted Result
-                .let { result ->
-                    when (result) {
-                        is Result.Success -> result.data
-                        else -> emptyList()
+        ): List<String> {
+            var result: List<String> = emptyList()
+            
+            getDateAvailabilityUseCase(appointmentName, date).collect { state ->
+                when (state) {
+                    is Result.Loading -> {
+                        // Loading state
+                    }
+                    is Result.Success -> {
+                        result = state.data
+                    }
+                    is Result.Error -> {
+                        result = emptyList()
                     }
                 }
+            }
+            
+            return result
+        }
 
         fun rescheduleAppointment(
             id: Int,
