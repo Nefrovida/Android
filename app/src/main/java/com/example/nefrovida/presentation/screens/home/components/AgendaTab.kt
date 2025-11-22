@@ -13,40 +13,41 @@ import androidx.compose.ui.unit.dp
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.ui.organisms.SimpleCard
 
-
+@Suppress("ktlint:standard:function-naming")
 @Composable
-fun AgendaList(appointmentList: List<Appointment>,
-               onCardClick: (Appointment) -> Unit){
+fun AgendaList(
+    appointmentList: List<Appointment>,
+    onCardClick: (Appointment) -> Unit,
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
+    ) {
         items(
             items = appointmentList,
-            key = { it.id }
+            key = { it.id },
         ) { appointment ->
 
             SimpleCard(
-                onClick = { onCardClick(appointment) }
+                onClick = { onCardClick(appointment) },
             ) {
                 Text(
                     text = appointment.name,
                     style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
 
                 Text(
                     text = "Cita: ${appointment.appointmentName}",
-                    style = MaterialTheme.typography.bodyMedium
+                    style = MaterialTheme.typography.bodyMedium,
                 )
 
                 Text(
                     text = "Fecha: ${appointment.date}",
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }
-
     }
 }

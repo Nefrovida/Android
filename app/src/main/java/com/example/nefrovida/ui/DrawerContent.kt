@@ -12,17 +12,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
+@Suppress("ktlint:standard:function-naming")
 @Composable
 fun DrawerContent(onItemSelected: (String) -> Unit) {
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text("Mi Perfil", style =
-            MaterialTheme.typography.titleLarge)
+        Text(
+            "Mi Perfil",
+            style =
+                MaterialTheme.typography.titleLarge,
+        )
         Spacer(Modifier.height(16.dp))
 
         NavigationDrawerItem(
             label = { Text("🚧 En construcción 🚧") },
             selected = false,
-            onClick = { onItemSelected("home") }
+            onClick = { onItemSelected("home") },
         )
     }
 }
