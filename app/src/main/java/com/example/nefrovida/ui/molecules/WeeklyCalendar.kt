@@ -1,5 +1,6 @@
 package com.example.nefrovida.ui.molecules
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -30,6 +32,7 @@ import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.Locale
 
+@SuppressLint("UnrememberedMutableState")
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun WeeklyCalendarView(
@@ -53,18 +56,22 @@ fun WeeklyCalendarView(
         rememberWeekCalendarState(
             startDate = startDate,
             endDate = endDate,
-            firstVisibleWeekDate = selectedDate,
+            firstVisibleWeekDate = LocalDate.now(),
             firstDayOfWeek = firstDayOfWeek,
         )
-    val visibleMonth by remember {
-        derivedStateOf {
-            val firstDay =
-                calendarState.firstVisibleWeek.days
-                    .first()
-                    .date
-            val monthName = firstDay.month.getDisplayName(TextStyle.FULL, Locale("es", "ES"))
-            monthName.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
-        }
+
+    LaunchedEffect(selectedDate) {
+        calendarState.animateScrollToWeek(selectedDate)
+    }
+
+    val visibleMonth by derivedStateOf {
+        val firstDay =
+            calendarState.firstVisibleWeek.days
+                .first()
+                .date
+        val monthName =
+            firstDay.month.getDisplayName(TextStyle.FULL, Locale("es", "ES"))
+        monthName.replaceFirstChar { it.uppercase(Locale.getDefault()) }
     }
 
     Column(
