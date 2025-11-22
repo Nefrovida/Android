@@ -39,6 +39,7 @@ fun AgendaScreen(
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    var showAgendaList by remember { mutableStateOf(true) }
     var showReschedulePrompt by remember { mutableStateOf(false) }
     var showRescheduleForm by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
@@ -63,24 +64,26 @@ fun AgendaScreen(
         Column(
             modifier = modifier.fillMaxSize(),
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
-                horizontalArrangement = Arrangement.End,
-            ) {
-                SimpleIconButton(
-                    icon = Icons.Default.FilterAlt,
-                    contentDescription = "Filtrar por día",
-                    modifier = Modifier.padding(8.dp),
-                    onClick = { showDatePicker = true },
+            if (showAgendaList) {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(8.dp),
+                    horizontalArrangement = Arrangement.End,
+                ) {
+                    SimpleIconButton(
+                        icon = Icons.Default.FilterAlt,
+                        contentDescription = "Filtrar por día",
+                        modifier = Modifier.padding(8.dp),
+                        onClick = { showDatePicker = true },
+                    )
+                }
+                AgendaList(
+                    appointmentList = appointments ?: emptyList(),
+                    onCardClick = { appointment ->
+                        viewModel.getAppointment(appointment.id)
+                        showDialog = true
+                    },
                 )
             }
-            AgendaList(
-                appointmentList = appointments ?: emptyList(),
-                onCardClick = { appointment ->
-                    viewModel.getAppointment(appointment.id)
-                    showDialog = true
-                },
-            )
             if (showDialog) {
                 uiState.selectedAppointment?.let { appointment ->
                     Dialog(
@@ -119,6 +122,7 @@ fun AgendaScreen(
                     confirmText = "Sí",
                     dismissText = "No",
                     onConfirm = {
+                        showAgendaList = false
                         showReschedulePrompt = false
                         showRescheduleForm = true
                     },
@@ -129,6 +133,7 @@ fun AgendaScreen(
                 val appt = uiState.selectedAppointment
                 RescheduleFormCard(
                     appointment = appt,
+                    getDateAvailability = { name, date -> viewModel.getDateAvailability(name, date) },
                     onCancel = { showRescheduleForm = false },
                     onReschedule = { reason, date, time ->
                         if (appt != null) {
@@ -140,6 +145,7 @@ fun AgendaScreen(
                             )
                         }
                         showRescheduleForm = false
+                        showAgendaList = true
                     },
                 )
             }

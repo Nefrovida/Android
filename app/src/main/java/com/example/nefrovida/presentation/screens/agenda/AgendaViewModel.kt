@@ -8,12 +8,14 @@ import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.usecase.CancelAppointmentUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentFilteredListUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentUseCase
+import com.example.nefrovida.domain.usecase.GetDateAvailabilityUseCase
 import com.example.nefrovida.domain.usecase.RescheduleAppointmentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -24,6 +26,7 @@ class AgendaViewModel
         private val getAppointmentUseCase: GetAppointmentUseCase,
         private val cancelAppointmentUseCase: CancelAppointmentUseCase,
         private val getAppointmentFilteredListUseCase: GetAppointmentFilteredListUseCase,
+        private val getDateAvailabilityUseCase: GetDateAvailabilityUseCase,
         private val rescheduleAppointmentUseCase: RescheduleAppointmentUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(AgendaUiState())
@@ -144,6 +147,19 @@ class AgendaViewModel
         fun resetCancelSuccess() {
             _uiState.update { it.copy(showCancelSuccess = false) }
         }
+
+        suspend fun getDateAvailability(
+            appointmentName: String,
+            date: String,
+        ): List<String> =
+            getDateAvailabilityUseCase(appointmentName, date)
+                .first() // ← first emitted Result
+                .let { result ->
+                    when (result) {
+                        is Result.Success -> result.data
+                        else -> emptyList()
+                    }
+                }
 
         fun rescheduleAppointment(
             id: Int,

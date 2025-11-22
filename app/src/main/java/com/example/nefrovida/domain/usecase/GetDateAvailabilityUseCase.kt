@@ -1,32 +1,28 @@
 package com.example.nefrovida.domain.usecase
 
 import com.example.nefrovida.domain.common.Result
+import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.repository.AppointmentRepository
+import jakarta.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
-class RescheduleAppointmentUseCase
+class GetDateAvailabilityUseCase
     @Inject
     constructor(
         private val repository: AppointmentRepository,
     ) {
         operator fun invoke(
-            id: Int,
-            reason: String,
+            appointmentName: String,
             date: String,
-            time: String,
-        ): Flow<Result<Unit>> =
+        ): Flow<Result<List<String>>> =
             flow {
-                emit(Result.Loading)
-
-                val dateHour = "$date $time"
-
                 try {
-                    val response = repository.rescheduleAppointment(id, reason, dateHour)
+                    emit(Result.Loading)
+                    val response = repository.getDateAvailability(appointmentName, date)
 
                     if (response.isSuccessful) {
-                        emit(Result.Success(Unit))
+                        emit(Result.Success(response.body() ?: emptyList()))
                     } else {
                         emit(Result.Error(Exception("HTTP ${response.code()}: ${response.message()}")))
                     }

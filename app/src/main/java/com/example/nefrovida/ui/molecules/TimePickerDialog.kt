@@ -11,6 +11,7 @@ import androidx.compose.ui.window.Dialog
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TimePickerDialog(
+    availability: List<String>,
     onDismiss: () -> Unit,
     onTimeSelected: (String) -> Unit,
 ) {
@@ -30,7 +31,7 @@ fun TimePickerDialog(
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
-                    text = "Selecciona la hora",
+                    text = "Horarios Disponibles",
                     style = MaterialTheme.typography.titleLarge,
                 )
 

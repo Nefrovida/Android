@@ -12,6 +12,11 @@ interface AppointmentRepository {
 
     suspend fun cancelAppointmentById(id: Int): Response<Unit>
 
+    suspend fun getDateAvailability(
+        appointmentName: String,
+        date: String,
+    ): List<String>
+
     suspend fun rescheduleAppointment(
         id: Int,
         reason: String,
