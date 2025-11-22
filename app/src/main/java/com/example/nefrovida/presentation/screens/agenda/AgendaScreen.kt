@@ -39,7 +39,6 @@ fun AgendaScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
-    // Nueva fecha seleccionada
     var selectedDate by remember { mutableStateOf(LocalDate.now()) }
 
     if (uiState.showCancelSuccess) {
@@ -53,25 +52,23 @@ fun AgendaScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { paddingValues ->
+    ) { _ ->
         Column(
             modifier =
                 modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(),
         ) {
-            // --- CALENDARIO SEMANAL ---
             WeeklyCalendarView(
                 selectedDate = selectedDate,
                 onDateSelected = { date ->
                     selectedDate = date
-                    val formattedDate = date.toString() // <- convierte LocalDate a String
+                    val formattedDate = date.toString()
                     viewModel.loadAgendaList(formattedDate)
                 },
                 modifier = Modifier.padding(8.dp),
             )
 
-            // --- LISTA DE CITAS ---
             AgendaList(
                 appointmentList = appointments ?: emptyList(),
                 onCardClick = { appointment ->
@@ -80,7 +77,6 @@ fun AgendaScreen(
                 },
             )
 
-            // --- DIALOGO PARA CANCELAR ---
             if (showDialog) {
                 uiState.selectedAppointment?.let { appointment ->
                     Dialog(
