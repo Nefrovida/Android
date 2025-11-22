@@ -65,12 +65,10 @@ fun WeeklyCalendarView(
     }
 
     val visibleMonth by derivedStateOf {
-        val firstDay =
-            calendarState.firstVisibleWeek.days
-                .first()
-                .date
+        val days = calendarState.firstVisibleWeek.days
+        val middleDay = days[days.size / 2].date
         val monthName =
-            firstDay.month.getDisplayName(TextStyle.FULL, Locale("es", "ES"))
+            middleDay.month.getDisplayName(TextStyle.FULL, Locale("es", "ES"))
         monthName.replaceFirstChar { it.uppercase(Locale.getDefault()) }
     }
 
