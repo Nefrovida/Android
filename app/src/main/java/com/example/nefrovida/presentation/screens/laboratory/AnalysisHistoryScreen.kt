@@ -31,12 +31,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.nefrovida.presentation.common.ErrorView
 import com.example.nefrovida.ui.organisms.AnalysisHistoryCard
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
 
+@Suppress("ktlint:standard:function-naming")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisHistoryScreen(
@@ -88,10 +91,10 @@ fun AnalysisHistoryScreen(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
                     ) {
-                        Text(
-                            text = "No hay análisis disponibles",
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        ErrorView(
+                            message = "No hay análisis disponibles",
+                            onRetry = { viewModel.loadAnalysisHistory() },
+                            modifier = Modifier,
                         )
                     }
                 }
