@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.nefrovida.data.remote.dto.AppointmentTypes
 import com.example.nefrovida.presentation.screens.home.components.AgendaList
 import com.example.nefrovida.ui.molecules.Dialog
 import com.example.nefrovida.ui.molecules.WeeklyCalendarView
@@ -100,21 +101,36 @@ fun AgendaScreen(
 
             if (showDialog) {
                 uiState.selectedAppointment?.let { appointment ->
+
+                    val placeOrLink =
+                        when (appointment.type) {
+                            AppointmentTypes.VIRTUAL -> {
+                                val link = appointment.link
+                                if (!link.isNullOrBlank()) "Link: $link" else ""
+                            }
+                            AppointmentTypes.PRESENCIAL -> {
+                                val place = appointment.place
+                                if (!place.isNullOrBlank()) "Lugar: $place" else ""
+                            }
+                            else -> ""
+                        }
+
                     Dialog(
                         title = "Doctor: ${appointment.name}",
                         text =
                             """
+                            ${appointment.appointmentName}
                             Fecha: ${appointment.date}
                             Hora: ${appointment.time}
-                            ${appointment.type}
-
-                            ¿Deseas cancelar esta cita?
+                            Tipo: ${appointment.type}
+                            $placeOrLink
+                            
+                            ¿Desea cancelar la cita?
                             """.trimIndent(),
                         confirmText = "Sí, cancelar",
                         dismissText = "No",
                         onConfirm = {
                             viewModel.cancelAppointment(appointment.id)
-                            Log.d("AgendaScreen", "appointment id: ${appointment.id}")
                             showDialog = false
                         },
                         onDismiss = { showDialog = false },
