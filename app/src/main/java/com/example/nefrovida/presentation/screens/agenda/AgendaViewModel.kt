@@ -42,7 +42,6 @@ class AgendaViewModel
                     _uiState.update { state ->
                         when (result) {
                             is Result.Loading -> {
-                                Log.d("AgendaVM", "Agenda List is loading")
                                 state.copy(
                                     isLoading = true,
                                     selectedDate = date,
@@ -50,7 +49,6 @@ class AgendaViewModel
                             }
 
                             is Result.Success -> {
-                                Log.d("AgendaVM", "Agenda List succeded")
                                 state.copy(
                                     appointmentFilteredList = result.data,
                                     isLoading = false,

@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.nefrovida"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -62,29 +62,31 @@ dependencies {
     implementation(libs.persistent.cookie.jar)
     implementation(libs.androidx.compose.foundation)
     implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.compose.runtime)
-    kapt(libs.androidx.room.compiler)
-
-    // Room
     implementation(libs.androidx.room.ktx)
-
-    // Testing
-
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.runtime)
+    kapt(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
-    debugImplementation(libs.androidx.compose.ui.tooling)
-    debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation("androidx.compose.material:material-icons-extended")
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
 
     // Hilt
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
-
-    // Coil
     implementation(libs.coil.compose)
+
+    // Calendar library
+    implementation("com.kizitonwose.calendar:compose:2.9.0")
 }

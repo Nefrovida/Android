@@ -1,12 +1,22 @@
 package com.example.nefrovida.ui.organisms
 
-import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Person
-import com.example.nefrovida.presentation.navigation.NavDestination
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.nefrovida.R
+import com.example.nefrovida.presentation.navigation.NavDestination
 
+@Suppress("ktlint:standard:function-naming")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NfTopAppBar(
@@ -14,11 +24,21 @@ fun NfTopAppBar(
     onProfileClick: () -> Unit,
 ) {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
+        colors =
+            TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surface,
+            ),
         title = {
-            // TODO: ADD nefrovida logo
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.nefrovidalogo),
+                    contentDescription = "Logo",
+                    modifier = Modifier.height(32.dp),
+                )
+            }
         },
         navigationIcon = {
             IconButton(onClick = {
@@ -26,7 +46,7 @@ fun NfTopAppBar(
             }) {
                 Icon(
                     imageVector = Icons.Outlined.Person,
-                    contentDescription = "Perfil"
+                    contentDescription = "Perfil",
                 )
             }
         },
@@ -36,13 +56,13 @@ fun NfTopAppBar(
                     navController.navigate(NavDestination.Notifications.route) {
                         launchSingleTop = true
                     }
-                }
+                },
             ) {
                 Icon(
                     imageVector = NavDestination.Notifications.icon,
-                    contentDescription = NavDestination.Notifications.label
+                    contentDescription = NavDestination.Notifications.label,
                 )
             }
-        }
+        },
     )
 }
