@@ -5,8 +5,8 @@ import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.dto.RescheduleAppointmentDto
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.repository.AppointmentRepository
-import jakarta.inject.Inject
-import jakarta.inject.Singleton
+import javax.inject.Inject
+import javax.inject.Singleton
 import retrofit2.Response
 
 @Singleton
