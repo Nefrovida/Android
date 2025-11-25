@@ -12,4 +12,7 @@ interface ReportsApi {
     suspend fun getReportResult(
         @Path("patient_analysis_id") analysisId: Int
     ): ApiResponse<ResultResponse>
+
+    @GET@GET("analysis/download-report")
+    suspend fun getDownloadableReports(): ApiResponse<List<AnalysisResultDto>>
 }

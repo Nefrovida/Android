@@ -44,6 +44,13 @@ data class AnalysisInfo(
     val description: String
 )
 
+data class AnalysisDownloadDto(
+    val id: Int,
+    val name: String,
+    val date: String,
+    val pdfURL: String?
+)
+
 enum class AnalysisStatus {
     LAB, PENDING, SENT, REQUESTED
 }
