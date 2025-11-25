@@ -1,5 +1,4 @@
 package com.example.nefrovida.presentation.screens.laboratory
-
 import android.content.ContentValues
 import android.os.Environment
 import android.provider.MediaStore
@@ -109,7 +108,7 @@ fun PdfViewerScreen(
             if (isLoading) {
                 CircularProgressIndicator()
             } else if (localFile != null) {
-                // 3. El Visor de la librería
+
                 AndroidView(
                     modifier = Modifier.fillMaxSize(),
                     factory = { ctx ->
