@@ -13,16 +13,22 @@ interface AppointmentApi {
     @GET("secretary-agenda")
     suspend fun getAppointmentList(
         @Query("limit") limit: Int = 20,
-        @Query("offset") offset: Int = 0
-    ) : List<AppointmentDto>
-    @GET("agenda/appointments-per-day")
+        @Query("offset") offset: Int = 0,
+    ): List<AppointmentDto>
+
+    @GET("agenda/appointments-per-patient")
     suspend fun getAppointmentListByDate(
-        @Query("date") date:String
+        @Query("date") date: String,
+        @Query("id") id: String,
     ): List<AppointmentDto>
 
     @GET("agenda/appointment/{id}")
-    suspend fun getAppointmentById(@Path("id") id: Int): AppointmentDto
-    @POST("agenda/appointments/{id}/cancel")
-    suspend fun cancelAppointment(@Path("id") id:Int): Response<Unit>
+    suspend fun getAppointmentById(
+        @Path("id") id: Int,
+    ): AppointmentDto
 
+    @POST("agenda/appointments/{id}/cancel")
+    suspend fun cancelAppointment(
+        @Path("id") id: Int,
+    ): Response<Unit>
 }

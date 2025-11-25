@@ -1,4 +1,4 @@
-package com.example.nefrovida.presentation.screens.home.components
+package com.example.nefrovida.presentation.screens.agenda
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues

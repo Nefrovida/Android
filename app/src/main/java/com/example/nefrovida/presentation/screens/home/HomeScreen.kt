@@ -15,21 +15,23 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.ui.organisms.NfBottomNavigationBar
 
+@Suppress("ktlint:standard:function-naming")
 @Composable
-fun HomeScreen(navController: NavController,
-               modifier: Modifier = Modifier,
-) { //TODO: Crear HomePage
+fun HomeScreen(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+) { // TODO: Crear HomePage
     Scaffold { _ ->
         Box(
-            modifier = modifier
-                .fillMaxSize(),
-            contentAlignment = Alignment.Center
+            modifier =
+                modifier
+                    .fillMaxSize(),
+            contentAlignment = Alignment.Center,
         ) {
             Text(
                 text = "🚧 En construcción 🚧",
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.headlineMedium,
-
             )
         }
     }

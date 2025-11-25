@@ -1,6 +1,5 @@
 package com.example.nefrovida.presentation.screens.agenda
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +24,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.nefrovida.data.remote.dto.AppointmentTypes
-import com.example.nefrovida.presentation.screens.home.components.AgendaList
 import com.example.nefrovida.ui.molecules.Dialog
 import com.example.nefrovida.ui.molecules.WeeklyCalendarView
 import kotlinx.coroutines.launch
@@ -65,12 +63,22 @@ fun AgendaScreen(
                     .fillMaxSize()
                     .padding(),
         ) {
+            // to call a suspend function (that calls API or repository), in this case, loadAgendaList
+            val scope = rememberCoroutineScope()
+            // collectAsState changes userId from StateFlow to State to obtain its value
+            val userId by viewModel.userId.collectAsState()
+
             WeeklyCalendarView(
                 selectedDate = selectedDate,
                 onDateSelected = { date ->
                     selectedDate = date
                     val formattedDate = date.toString()
-                    viewModel.loadAgendaList(formattedDate)
+
+                    if (userId.isNotEmpty()) {
+                        scope.launch {
+                            viewModel.loadAgendaList(formattedDate, userId)
+                        }
+                    }
                 },
                 modifier = Modifier.padding(8.dp),
             )
@@ -103,7 +111,7 @@ fun AgendaScreen(
                 uiState.selectedAppointment?.let { appointment ->
 
                     val placeOrLink =
-                        when (appointment.type) {
+                        when (appointment.appointmentType) {
                             AppointmentTypes.VIRTUAL -> {
                                 val link = appointment.link
                                 if (!link.isNullOrBlank()) "Link: $link" else ""
@@ -122,7 +130,7 @@ fun AgendaScreen(
                             ${appointment.appointmentName}
                             Fecha: ${appointment.date}
                             Hora: ${appointment.time}
-                            Tipo: ${appointment.type}
+                            Tipo: ${appointment.appointmentType}
                             $placeOrLink
                             
                             ¿Desea cancelar la cita?

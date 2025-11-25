@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.domain.common.Result
+import com.example.nefrovida.domain.repository.UserPreferencesRepository
 import com.example.nefrovida.domain.usecase.CancelAppointmentUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentFilteredListUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentUseCase
@@ -13,6 +14,7 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,22 +25,33 @@ class AgendaViewModel
         private val getAppointmentUseCase: GetAppointmentUseCase,
         private val cancelAppointmentUseCase: CancelAppointmentUseCase,
         private val getAppointmentFilteredListUseCase: GetAppointmentFilteredListUseCase,
+        private val userPreferencesRepository: UserPreferencesRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(AgendaUiState())
         val uiState: StateFlow<AgendaUiState> = _uiState.asStateFlow()
+        private val _userId = MutableStateFlow("")
+
+        // expose variable as readOnly, updates automatically every time _userId changes
+        val userId = _userId.asStateFlow()
 
         init {
-            val today =
-                java.text
-                    .SimpleDateFormat("yyyy-MM-dd")
-                    .format(java.util.Date())
+            // get userId value from dataStore as coroutine
+            viewModelScope.launch {
+                _userId.value = userPreferencesRepository.userIdFlow.firstOrNull() ?: ""
+            }
 
-            loadAgendaList(today)
+            val today = java.text.SimpleDateFormat("yyyy-MM-dd").format(java.util.Date())
+            loadAgendaList(today, _userId.value)
         }
 
-        fun loadAgendaList(date: String) {
+        fun loadAgendaList(
+            date: String,
+            userId: String,
+        ) {
+            // another coroutine, takes the value of userId previously loaded
             viewModelScope.launch {
-                getAppointmentFilteredListUseCase(date).collect { result ->
+                val currentUserId = _userId.value
+                getAppointmentFilteredListUseCase(date, currentUserId).collect { result ->
                     _uiState.update { state ->
                         when (result) {
                             is Result.Loading -> {
@@ -109,8 +122,11 @@ class AgendaViewModel
 
                         is Result.Success -> {
                             _uiState.value.selectedDate?.let { selected ->
-                                loadAgendaList(selected)
+                                _userId.value?.let { userId ->
+                                    loadAgendaList(selected, userId)
+                                }
                             }
+
                             _uiState.update { state ->
                                 state.copy(
                                     selectedAppointment =

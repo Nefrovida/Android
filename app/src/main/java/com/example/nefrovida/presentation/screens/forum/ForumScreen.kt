@@ -8,27 +8,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.nefrovida.presentation.screens.home.components.AgendaList
 
 @Suppress("ktlint:standard:function-naming")
-
 @Composable
 fun ForumScreen(
     onBackClick: () -> Unit,
-    navController : NavController,
-    modifier: Modifier = Modifier
-){
+    navController: NavController,
+    modifier: Modifier = Modifier,
+) {
     Box(
-        modifier = modifier
-            .fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier =
+            modifier
+                .fillMaxSize(),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = "🚧 En construcción 🚧",
             color = MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.headlineMedium,
-
-            )
+        )
     }
-    }
-
+}
