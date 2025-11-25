@@ -3,10 +3,13 @@ package com.example.nefrovida.di
 import android.content.Context
 import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.api.AuthApiService
+import com.example.nefrovida.data.remote.api.ForumApiService
 import com.example.nefrovida.data.remote.api.RefreshAuthenticator
 import com.example.nefrovida.data.remote.api.ReportsApi
 import com.example.nefrovida.data.repository.AppointmentRepositoryImpl
+import com.example.nefrovida.data.repository.ForumRepositoryImpl
 import com.example.nefrovida.domain.repository.AppointmentRepository
+import com.example.nefrovida.domain.repository.ForumRepository
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
@@ -25,7 +28,7 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "http://192.168.1.221:3001/api/" // Android emulator localhost
+    private const val BASE_URL = "http://192.168.100.21:3001/api/" // Android emulator localhost
 
     // For physical device, use your computer's IP: "http://192.168.x.x:3001/api/"
     private var retrofit: Retrofit? = null
@@ -52,7 +55,15 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideForumApi(retrofit: Retrofit): ForumApiService = retrofit.create(ForumApiService::class.java)
+
+    @Provides
+    @Singleton
     fun provideAppointmentRepository(api: AppointmentApi): AppointmentRepository = AppointmentRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideForumRepository(api: ForumApiService): ForumRepository = ForumRepositoryImpl(api)
 
     private fun createRetrofit(context: Context): Retrofit {
         // Create persistent cookie jar
