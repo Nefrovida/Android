@@ -10,17 +10,16 @@ import androidx.navigation.NavController
 import com.example.nefrovida.ui.molecules.AnalysisNotFoundMessage
 
 @Suppress("ktlint:standard:function-naming")
-
 @Composable
 fun ReportDetailScreen(
     navController: NavController,
     onBackClick: () -> Unit,
     patientAnalysisId: Int,
-    viewModel: ReportDetailViewModel = hiltViewModel()
-){
+    viewModel: ReportDetailViewModel = hiltViewModel(),
+) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(patientAnalysisId){
+    LaunchedEffect(patientAnalysisId) {
         viewModel.loadReport(patientAnalysisId)
     }
 
@@ -37,12 +36,10 @@ fun ReportDetailScreen(
             val report = (uiState as ReportDetailUiState.Success).data
 
             ReportDetailContent(
-                title = report.patientAnalysis.analysis.name,
+                title = report.patientAnalysis.analysis?.name ?: "Sin nombre",
                 date = report.date,
-                interpretation = report.interpretation
+                interpretation = report.interpretation,
             )
         }
     }
-
-
 }

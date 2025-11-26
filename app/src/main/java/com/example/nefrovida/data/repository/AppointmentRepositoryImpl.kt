@@ -2,7 +2,9 @@ package com.example.nefrovida.data.repository
 
 import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.AppointmentApi
+import com.example.nefrovida.data.remote.dto.AppointmentsResponse
 import com.example.nefrovida.domain.model.Appointment
+import com.example.nefrovida.domain.model.AppointmentsResult
 import com.example.nefrovida.domain.repository.AppointmentRepository
 import jakarta.inject.Inject
 import jakarta.inject.Singleton
@@ -22,9 +24,12 @@ class AppointmentRepositoryImpl
         override suspend fun getAppointmentListByDate(
             date: String,
             userId: String,
-        ): List<Appointment> {
+        ): AppointmentsResult {
             val response = api.getAppointmentListByDate(date, userId)
-            return response.map { it.toDomain() }
+            return AppointmentsResult(
+                appointments = response.appointments.map { it.toDomain() },
+                analysis = response.analysis.map { it.toDomain() },
+            )
         }
 
         override suspend fun getAppointmentById(id: Int): Appointment = api.getAppointmentById(id).toDomain()

@@ -1,6 +1,7 @@
 package com.example.nefrovida.domain.repository
 
 import com.example.nefrovida.domain.model.Appointment
+import com.example.nefrovida.domain.model.AppointmentsResult
 import retrofit2.Response
 
 interface AppointmentRepository {
@@ -9,7 +10,7 @@ interface AppointmentRepository {
     suspend fun getAppointmentListByDate(
         date: String,
         userId: String,
-    ): List<Appointment>
+    ): AppointmentsResult
 
     suspend fun getAppointmentById(id: Int): Appointment
 

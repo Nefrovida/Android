@@ -9,6 +9,7 @@ fun AppointmentDto.toDomain(): Appointment {
     val time = dateTimeParts.getOrNull(1)?.substring(0, 5) ?: ""
 
     return Appointment(
+        type = type,
         id = id,
         name = name,
         date = date,

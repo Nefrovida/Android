@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.nefrovida.data.remote.dto.AppointmentTypes
+import com.example.nefrovida.domain.model.AgendaItem
 import com.example.nefrovida.ui.molecules.Dialog
 import com.example.nefrovida.ui.molecules.WeeklyCalendarView
 import kotlinx.coroutines.launch
@@ -39,7 +40,14 @@ fun AgendaScreen(
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsState()
-    val appointments = uiState.appointmentFilteredList
+
+    // NORMALIZAMOS LAS LISTAS (si vienen null → se vuelven listas vacías)
+    val appointments = uiState.appointmentFilteredList?.appointments ?: emptyList()
+    val analysis = uiState.appointmentFilteredList?.analysis ?: emptyList()
+    val unifiedList: List<AgendaItem> =
+        appointments.map { AgendaItem.AppointmentItem(it) } +
+            analysis.map { AgendaItem.AnalysisItem(it) }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -63,9 +71,7 @@ fun AgendaScreen(
                     .fillMaxSize()
                     .padding(),
         ) {
-            // to call a suspend function (that calls API or repository), in this case, loadAgendaList
             val scope = rememberCoroutineScope()
-            // collectAsState changes userId from StateFlow to State to obtain its value
             val userId by viewModel.userId.collectAsState()
 
             WeeklyCalendarView(
@@ -83,30 +89,32 @@ fun AgendaScreen(
                 modifier = Modifier.padding(8.dp),
             )
 
-            if (appointments.isNullOrEmpty()) {
+            if (unifiedList.isEmpty()) {
                 Box(
-                    modifier =
-                        Modifier
-                            .fillMaxSize(),
+                    modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
                     Text(
-                        text = "No hay citas para este día.",
+                        text = "No hay citas ni análisis para este día.",
                         modifier = Modifier.padding(16.dp),
                         fontSize = 14.sp,
                         color = Color.Gray,
                     )
                 }
             } else {
-                AgendaList(
-                    appointmentList = appointments,
-                    onCardClick = { appointment ->
+                AgendaUnifiedList(
+                    items = unifiedList,
+                    onAppointmentClick = { appointment ->
                         viewModel.getAppointment(appointment.id)
                         showDialog = true
+                    },
+                    onAnalysisClick = { analysis ->
+                        // TODO lo que quieras hacer con análisis
                     },
                 )
             }
 
+            // 🔵 DIALOG PARA APPOINTMENTS (igual que antes)
             if (showDialog) {
                 uiState.selectedAppointment?.let { appointment ->
 

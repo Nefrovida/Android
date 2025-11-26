@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.presentation.navigation.Screen
-import com.example.nefrovida.presentation.screens.agenda.AgendaList
+import com.example.nefrovida.presentation.screens.agenda.AgendaUnifiedList
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 
 @Suppress("ktlint:standard:function-naming")
@@ -56,12 +56,13 @@ fun LaboratoryScreen(
                     onClick = { showDatePicker = true },
                 )
             }
-            AgendaList(
-                appointmentList = Appointment.getMockData(),
-                onCardClick = { appointmentId ->
-                    navController.navigate(Screen.ReportDetail.createRoute(4))
-                },
-            )
+            /*AgendaUnifiedList(
+                    items = unifiedList,
+                    onAppointmentClick = { appointment ->
+                        viewModel.getAppointment(appointment.id)
+                        showDialog = true
+                    },
+            )*/
         }
         if (showDatePicker) {
             androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {

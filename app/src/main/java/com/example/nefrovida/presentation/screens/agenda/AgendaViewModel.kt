@@ -42,6 +42,7 @@ class AgendaViewModel
 
             val today = java.text.SimpleDateFormat("yyyy-MM-dd").format(java.util.Date())
             loadAgendaList(today, _userId.value)
+            Log.d("AgendaVMPrim", "fecha y user id: $today, ${_userId.value}")
         }
 
         fun loadAgendaList(
@@ -55,6 +56,7 @@ class AgendaViewModel
                     _uiState.update { state ->
                         when (result) {
                             is Result.Loading -> {
+                                Log.d("AgendaVMLoad", "$date, $currentUserId")
                                 state.copy(
                                     isLoading = true,
                                     selectedDate = date,
@@ -62,6 +64,7 @@ class AgendaViewModel
                             }
 
                             is Result.Success -> {
+                                Log.d("AgendaVM", "${result.data}")
                                 state.copy(
                                     appointmentFilteredList = result.data,
                                     isLoading = false,
@@ -71,6 +74,7 @@ class AgendaViewModel
                             }
 
                             is Result.Error -> {
+                                Log.e("AgendaVM", "ERROR: ${result.exception}")
                                 state.copy(
                                     error = result.exception.message,
                                     isLoading = false,

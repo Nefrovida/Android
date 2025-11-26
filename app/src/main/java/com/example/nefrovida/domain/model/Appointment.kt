@@ -4,6 +4,7 @@ import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.data.remote.dto.AppointmentTypes
 
 data class Appointment(
+    val type: String,
     val id: Int,
     val name: String,
     val date: String,
@@ -19,6 +20,7 @@ data class Appointment(
         fun getMockData(): List<Appointment> =
             listOf(
                 Appointment(
+                    type = "Appointment",
                     id = 1,
                     name = "Oliver Queen",
                     date = "2025-11-10",

@@ -10,43 +10,41 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.example.nefrovida.domain.model.AgendaItem
 import com.example.nefrovida.domain.model.Appointment
+import com.example.nefrovida.domain.model.AppointmentsResult
+import com.example.nefrovida.domain.model.PatientAnalysis
 import com.example.nefrovida.ui.organisms.SimpleCard
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun AgendaList(
-    appointmentList: List<Appointment>,
-    onCardClick: (Appointment) -> Unit,
+fun AgendaUnifiedList(
+    items: List<AgendaItem>,
+    onAppointmentClick: (Appointment) -> Unit,
+    onAnalysisClick: (PatientAnalysis) -> Unit,
 ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        items(
-            items = appointmentList,
-            key = { it.id },
-        ) { appointment ->
+        items(items) { item ->
+            when (item) {
+                is AgendaItem.AppointmentItem -> {
+                    SimpleCard(onClick = { onAppointmentClick(item.appointment) }) {
+                        Text(item.appointment.name, style = MaterialTheme.typography.titleMedium)
+                        Text("Cita: ${item.appointment.appointmentName}")
+                        Text("Fecha: ${item.appointment.date}")
+                    }
+                }
 
-            SimpleCard(
-                onClick = { onCardClick(appointment) },
-            ) {
-                Text(
-                    text = appointment.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                )
-
-                Text(
-                    text = "Cita: ${appointment.appointmentName}",
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-
-                Text(
-                    text = "Fecha: ${appointment.date}",
-                    style = MaterialTheme.typography.bodySmall,
-                )
+                is AgendaItem.AnalysisItem -> {
+                    SimpleCard(onClick = { onAnalysisClick(item.analysis) }) {
+                        Text(item.analysis.analysisName, style = MaterialTheme.typography.titleMedium)
+                        Text("Lugar: ${item.analysis.place}")
+                        Text("Fecha: ${item.analysis.analysisDate}")
+                    }
+                }
             }
         }
     }
