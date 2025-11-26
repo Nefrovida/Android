@@ -3,7 +3,6 @@ package com.example.nefrovida.presentation.screens.forum
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
@@ -15,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.nefrovida.data.remote.dto.ForumComplete
-import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.SimpleForumInfo
 import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.ui.molecules.SearchBar
@@ -28,7 +26,7 @@ fun ForumScreen(
     modifier: Modifier = Modifier,
     viewModel: ForumViewModel = hiltViewModel()
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
     val navyBlue = Color(0xFF000080)
 

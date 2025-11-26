@@ -1,12 +1,12 @@
 package com.example.nefrovida.presentation.screens.forum
 
 import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.Message
-import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.SimpleForumInfo
 import com.example.nefrovida.domain.usecase.GetAllForumsUseCase
 import com.example.nefrovida.domain.usecase.GetForumFeedUseCase
@@ -57,8 +57,7 @@ class ForumViewModel @Inject constructor(
 
     // --- State for "Todos los Foros" ---
     private val _allForums = MutableStateFlow<List<ForumComplete>>(emptyList())
-    val allForums: StateFlow<List<ForumComplete>> = _allForums.asStateFlow()
-    private val _allForumsPage = mutableStateOf(1) // Page is 1-indexed
+    private val _allForumsPage = mutableIntStateOf(1) // Page is 1-indexed
     private var _canAllForumsPaginate = true
     private val _allForumsSearchQuery = MutableStateFlow("")
     val allForumsSearchQuery: StateFlow<String> = _allForumsSearchQuery.asStateFlow()
