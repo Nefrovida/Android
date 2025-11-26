@@ -9,19 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.nefrovida.data.remote.dto.ForumMessageDto
+import com.example.nefrovida.data.remote.dto.Message
 
 @Composable
 fun ForumPostCard(
     modifier: Modifier = Modifier,
-    post: ForumMessageDto
+    post: Message
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = post.forums.name, style = MaterialTheme.typography.titleSmall)
+            Text(text = post.forum.name, style = MaterialTheme.typography.titleSmall)
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = post.content, style = MaterialTheme.typography.bodyMedium)
             Spacer(modifier = Modifier.height(16.dp))

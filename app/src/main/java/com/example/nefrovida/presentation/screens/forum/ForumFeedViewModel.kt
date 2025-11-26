@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nefrovida.data.remote.dto.ForumMessageDto
+import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.domain.usecase.GetForumFeedUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -17,8 +17,8 @@ class ForumFeedViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _forumFeed = mutableStateOf<List<ForumMessageDto>>(emptyList())
-    val forumFeed: State<List<ForumMessageDto>> = _forumFeed
+    private val _forumFeed = mutableStateOf<List<Message>>(emptyList())
+    val forumFeed: State<List<Message>> = _forumFeed
 
     private val _isLoading = mutableStateOf(false)
     val isLoading: State<Boolean> = _isLoading
