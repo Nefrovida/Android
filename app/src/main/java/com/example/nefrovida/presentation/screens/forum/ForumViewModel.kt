@@ -121,7 +121,8 @@ class ForumViewModel @Inject constructor(
             _isMyForumsLoading.value = true
             val response = getMyForumsUseCase()
             if (response.isSuccessful) {
-                _myForums.value = response.body()?.map { it.forum } ?: emptyList()
+                // Filtramos elementos donde 'forum' es nulo
+                _myForums.value = response.body()?.mapNotNull { it.forum } ?: emptyList()
             }
             _isMyForumsLoading.value = false
         }
