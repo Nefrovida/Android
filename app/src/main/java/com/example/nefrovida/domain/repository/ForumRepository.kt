@@ -8,7 +8,22 @@ import retrofit2.Response
 interface ForumRepository {
     suspend fun getMyForums(): Response<List<MyForumItem>>
 
-    suspend fun getForumFeed(page: Int, forumId: Int?): Response<List<Message>>
+    suspend fun getForumFeed(
+        page: Int,
+        forumId: Int?,
+    ): Response<List<Message>>
 
-    suspend fun getAllForums(page: Int, limit: Int, search: String?, isPublic: Boolean?): Response<List<ForumComplete>>
+    suspend fun getAllForums(
+        page: Int,
+        limit: Int,
+        search: String?,
+        isPublic: Boolean?,
+    ): Response<List<ForumComplete>>
+
+    suspend fun getMessageReplies(
+        forumId: Int,
+        messageId: Int,
+        page: Int,
+        limit: Int,
+    ): Response<List<Message>>
 }
