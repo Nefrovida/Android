@@ -136,7 +136,7 @@ class ForumViewModel @Inject constructor(
         if (_isAllForumsLoading.value || (!_canAllForumsPaginate && !reset)) return
 
         if (reset) {
-            _allForumsPage.value = 1 // 1-indexed for this endpoint
+            _allForumsPage.intValue = 1 // 1-indexed for this endpoint
             _allForums.value = emptyList()
             _canAllForumsPaginate = true
         }
@@ -144,14 +144,14 @@ class ForumViewModel @Inject constructor(
         viewModelScope.launch {
             _isAllForumsLoading.value = true
             val response = getAllForumsUseCase(
-                page = _allForumsPage.value,
+                page = _allForumsPage.intValue,
                 search = _allForumsSearchQuery.value.ifBlank { null }
             )
             if (response.isSuccessful) {
                 val newForums = response.body() ?: emptyList()
                 if (newForums.isNotEmpty()) {
-                    _allForums.value = _allForums.value + newForums
-                    _allForumsPage.value++
+                    _allForums.value += newForums
+                    _allForumsPage.intValue++
                 } else {
                     _canAllForumsPaginate = false
                 }
