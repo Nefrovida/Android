@@ -66,6 +66,15 @@ fun AgendaScreen(
         }
     }
 
+    if (uiState.showRescheduleSuccess) {
+        LaunchedEffect(Unit) {
+            scope.launch {
+                snackbarHostState.showSnackbar("Cita reprogramada con éxito")
+                viewModel.resetRescheduleSuccess()
+            }
+        }
+    }
+
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { _ ->

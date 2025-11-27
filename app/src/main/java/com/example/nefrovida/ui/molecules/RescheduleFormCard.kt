@@ -8,6 +8,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.presentation.utils.checkValidDate
@@ -46,7 +47,7 @@ fun RescheduleFormCard(
             Modifier
                 .fillMaxWidth()
                 .padding(12.dp)
-                .padding(top = 16.dp)
+                .padding(top = 8.dp)
                 .verticalScroll(rememberScrollState()),
     ) {
         Text(
@@ -168,6 +169,13 @@ fun RescheduleFormCard(
                 onClick = { onReschedule(reason, date, time) },
                 modifier = Modifier.weight(1f),
                 enabled = formReady,
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary, // keep default
+                        contentColor = Color.White, // strong white
+                        disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                        disabledContentColor = Color.White.copy(alpha = 0.4f),
+                    ),
             ) {
                 Text("Reprogramar")
             }

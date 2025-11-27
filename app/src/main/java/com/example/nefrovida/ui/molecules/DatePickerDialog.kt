@@ -62,8 +62,9 @@ fun DatePickerDialog(
                     TextButton(onClick = {
                         val selectedMillis = datePickerState.selectedDateMillis
                         if (selectedMillis != null) {
-                            // Format date in local timezone to match checkValidDate expectations
-                            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
+                                timeZone = TimeZone.getTimeZone("UTC")
+                            }
                             val formatted = sdf.format(Date(selectedMillis))
                             onDateSelected(formatted)
                         }

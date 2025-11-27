@@ -124,6 +124,7 @@ class AgendaViewModel
                                         state.selectedAppointment?.copy(
                                             status = AppointmentStatus.CANCELED,
                                         ),
+                                    showCancelSuccess = true,
                                     isLoading = false,
                                     error = null,
                                 )
@@ -145,6 +146,10 @@ class AgendaViewModel
 
         fun resetCancelSuccess() {
             _uiState.update { it.copy(showCancelSuccess = false) }
+        }
+
+        fun resetRescheduleSuccess() {
+            _uiState.update { it.copy(showRescheduleSuccess = false) }
         }
 
         suspend fun getDateAvailability(
@@ -204,6 +209,7 @@ class AgendaViewModel
                                         ),
                                     isLoading = false,
                                     error = null,
+                                    showRescheduleSuccess = true,
                                 )
                             }
                         }
