@@ -1,9 +1,11 @@
 package com.example.nefrovida.data.repository
 
+import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.ForumApiService
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
+import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository
 import retrofit2.Response
 import javax.inject.Inject
@@ -32,11 +34,16 @@ class ForumRepositoryImpl
             messageId: Int,
             page: Int,
             limit: Int,
-        ): Response<List<Message>> =
-            api.getMessageReplies(
-                forumId = forumId,
-                messageId = messageId,
-                page = page,
-                limit = limit,
-            )
+        ): List<MessageObj> {
+            val response =
+                api.getMessageReplies(
+                    forumId,
+                    messageId,
+                    page,
+                    limit,
+                )
+            return response.map { result ->
+                return result.toDomain()
+            }
+        }
     }

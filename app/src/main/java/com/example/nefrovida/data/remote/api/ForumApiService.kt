@@ -1,6 +1,7 @@
 package com.example.nefrovida.data.remote.api
 
 import com.example.nefrovida.data.remote.dto.ForumComplete
+import com.example.nefrovida.data.remote.dto.ForumMessageDto
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import retrofit2.Response
@@ -32,5 +33,5 @@ interface ForumApiService {
         @Path("messageId") messageId: Int,
         @Query("page") page: Int = 0,
         @Query("limit") limit: Int,
-    ): Response<List<Message>>
+    ): List<Message>
 }

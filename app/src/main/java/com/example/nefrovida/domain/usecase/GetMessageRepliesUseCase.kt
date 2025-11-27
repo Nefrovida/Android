@@ -1,8 +1,10 @@
 package com.example.nefrovida.domain.usecase
 
-import com.example.nefrovida.data.remote.dto.Message
+import com.example.nefrovida.domain.common.Result
+import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository
-import retrofit2.Response
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetMessageRepliesUseCase
@@ -10,16 +12,25 @@ class GetMessageRepliesUseCase
     constructor(
         private val forumRepository: ForumRepository,
     ) {
-        suspend operator fun invoke(
+        operator fun invoke(
             forumId: Int,
             messageId: Int,
             page: Int = 0,
             limit: Int = 10,
-        ): Response<List<Message>> =
-            forumRepository.getMessageReplies(
-                forumId = TODO(),
-                messageId = TODO(),
-                page = TODO(),
-                limit = TODO(),
-            )
+        ): Flow<Result<List<MessageObj>>> =
+            flow {
+                try {
+                    emit(Result.Loading)
+                    val responseList =
+                        forumRepository.getMessageReplies(
+                            forumId,
+                            messageId,
+                            page,
+                            limit,
+                        )
+                    emit(Result.Success(responseList))
+                } catch (e: Exception) {
+                    emit(Result.Error(e))
+                }
+            }
     }

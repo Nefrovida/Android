@@ -3,6 +3,7 @@ package com.example.nefrovida.domain.repository
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
+import com.example.nefrovida.domain.model.MessageObj
 import retrofit2.Response
 
 interface ForumRepository {
@@ -25,5 +26,5 @@ interface ForumRepository {
         messageId: Int,
         page: Int,
         limit: Int,
-    ): Response<List<Message>>
+    ): List<MessageObj>
 }
