@@ -22,89 +22,90 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import formatDateToDDMMYYYY
+import com.example.nefrovida.presentation.utils.formatDateToDDMMYYYY
 
 @Composable
 fun ReportDetailContent(
     title: String,
     date: String,
-    interpretation: String
+    interpretation: String,
 ) {
-
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .verticalScroll(rememberScrollState())
-            .background(
-                color = MaterialTheme.colorScheme.surface,
-                shape = RoundedCornerShape(12.dp)
-            )
-            .padding(20.dp)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState())
+                .background(
+                    color = MaterialTheme.colorScheme.surface,
+                    shape = RoundedCornerShape(12.dp),
+                ).padding(20.dp),
     ) {
-
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge.copy(
-                color = MaterialTheme.colorScheme.secondary,
-                fontWeight = FontWeight.Bold
-            )
+            style =
+                MaterialTheme.typography.titleLarge.copy(
+                    color = MaterialTheme.colorScheme.secondary,
+                    fontWeight = FontWeight.Bold,
+                ),
         )
 
         Text(
             text = formatDateToDDMMYYYY(date),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp)
+            modifier = Modifier.padding(top = 4.dp, bottom = 12.dp),
         )
 
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
             shape = RoundedCornerShape(12.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.background
-            ),
-            elevation = CardDefaults.cardElevation(4.dp)
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.background,
+                ),
+            elevation = CardDefaults.cardElevation(4.dp),
         ) {
             Row(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(text = "ARCHIVO", fontWeight = FontWeight.Bold)
 
                 Icon(
                     imageVector = Icons.Filled.Download,
-                    contentDescription = "Descargar"
+                    contentDescription = "Descargar",
                 )
             }
         }
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 12.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.tertiary,
-                    RoundedCornerShape(10.dp)
-                )
-                .padding(12.dp)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.tertiary,
+                        RoundedCornerShape(10.dp),
+                    ).padding(12.dp),
         ) {
-
             Text(
                 text = "Interpretación",
                 fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurface,
             )
 
             Text(
                 text = interpretation,
                 fontSize = 14.sp,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }
