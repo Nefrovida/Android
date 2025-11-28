@@ -23,10 +23,6 @@ class AnalysisHistoryViewModel
         private val _uiState = MutableStateFlow(AnalysisHistoryUiState())
         val uiState: StateFlow<AnalysisHistoryUiState> = _uiState.asStateFlow()
 
-        init {
-            loadAnalysisHistory()
-        }
-
         fun loadAnalysisHistory() {
             viewModelScope.launch {
                 getAnalysisHistoryUseCase().collect { result ->

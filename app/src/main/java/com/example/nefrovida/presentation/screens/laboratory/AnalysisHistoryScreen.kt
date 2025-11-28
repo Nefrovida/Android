@@ -31,7 +31,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.nefrovida.presentation.common.ErrorView
 import com.example.nefrovida.ui.organisms.AnalysisHistoryCard
@@ -49,6 +48,11 @@ fun AnalysisHistoryScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+
+    // Load analysis history when screen is first displayed
+    LaunchedEffect(Unit) {
+        viewModel.loadAnalysisHistory()
+    }
 
     // Show error messages
     LaunchedEffect(uiState.error) {
@@ -111,7 +115,6 @@ fun AnalysisHistoryScreen(
                             AnalysisHistoryCard(
                                 analysisHistory = analysis,
                                 onViewAnalysisClick = {
-                                    viewModel.loadAnalysisDetails(analysis.id)
                                     navController.navigate("labs/details/${analysis.id}")
                                 },
                             )

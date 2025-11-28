@@ -7,7 +7,13 @@ fun AnalysisHistoryDto.toDomain(): AnalysisHistory =
     AnalysisHistory(
         id = id,
         name = name,
-        date = date,
+        date = formatDate(date),
+        interpretations = interpretations,
         recommendations = recommendations,
         downloadUrl = downloadUrl,
     )
+
+fun formatDate(date: String): String {
+    val formattedDate = date.substring(0, 10)
+    return formattedDate
+}

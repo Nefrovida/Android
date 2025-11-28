@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Person
@@ -70,72 +71,98 @@ fun AnalysisDetailScreen(
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
     ) { paddingValues ->
-        when {
-            uiState.isLoading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator()
+
+        Column(
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .padding(paddingValues),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Start,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = { navController.popBackStack() }) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Regresar a Historial",
+//                        tint = MaterialTheme.colorScheme.primary,
+                    )
                 }
+                Text(
+                    text = "Regresar",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
             }
 
-            uiState.selectedAnalysis != null -> {
-                val analysis = uiState.selectedAnalysis!!
-
-                Column(
-                    modifier =
-                        modifier
-                            .fillMaxSize()
-                            .padding(paddingValues)
-                            .verticalScroll(rememberScrollState())
-                            .padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    // Summary Card
-                    Card(
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(12.dp),
-                        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
-                        colors =
-                            CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surface,
-                            ),
-                        elevation =
-                            CardDefaults.cardElevation(
-                                defaultElevation = 2.dp,
-                            ),
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        Column(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                        CircularProgressIndicator()
+                    }
+                }
+
+                uiState.selectedAnalysis != null -> {
+                    val analysis = uiState.selectedAnalysis!!
+
+                    Column(
+                        modifier =
+                            modifier
+                                .fillMaxSize()
+                                .padding(paddingValues)
+                                .verticalScroll(rememberScrollState())
+                                .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                    ) {
+                        // Summary Card
+                        Card(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.3f)),
+                            colors =
+                                CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                ),
+                            elevation =
+                                CardDefaults.cardElevation(
+                                    defaultElevation = 2.dp,
+                                ),
                         ) {
-                            // Header Row: Title, Date, and Download Icon
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.Top,
+                            Column(
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(16.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
-                                Column(modifier = Modifier.weight(1f)) {
+                                // Header Row: Title, Date, and Download Icon
+                                Column(
+                                    modifier = Modifier.fillMaxWidth(),
+//                                    horizontalArrangement = Arrangement.Start,
+//                                    verticalAlignment = Alignment.Top,
+                                ) {
                                     Text(
                                         text = analysis.name,
-                                        style = MaterialTheme.typography.titleLarge,
+                                        style = MaterialTheme.typography.titleMedium,
                                         fontWeight = FontWeight.Bold,
                                     )
-                                }
-                                Row(
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
                                     Text(
                                         text = analysis.date,
                                         style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Bold,
+//                                        fontWeight = FontWeight.Bold,
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     )
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
                                     if (analysis.downloadUrl != null) {
                                         IconButton(onClick = { /* Handle download */ }) {
                                             Icon(
@@ -148,40 +175,46 @@ fun AnalysisDetailScreen(
                                 }
                             }
                         }
-                    }
 
-                    // Detail Sections
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    color = Color(0xFFE4F0F7),
-                                    shape = RoundedCornerShape(12.dp),
-                                ).padding(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) {
-                        // Recommendations Section
-                        if (!analysis.recommendations.isNullOrBlank()) {
-                            DetailSection(
-                                header = "Recomendaciones",
-                                content = analysis.recommendations,
-                            )
+                        // Detail Sections
+                        Column(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        color = Color(0xFFE4F0F7),
+                                        shape = RoundedCornerShape(12.dp),
+                                    ).padding(16.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp),
+                        ) {
+                            if (!analysis.interpretations.isNullOrBlank()) {
+                                DetailSection(
+                                    header = "Interpretaciones",
+                                    content = analysis.interpretations,
+                                )
+                            }
+                            // Recommendations Section
+                            if (!analysis.recommendations.isNullOrBlank()) {
+                                DetailSection(
+                                    header = "Recomendaciones",
+                                    content = analysis.recommendations,
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            else -> {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "No se pudo cargar el análisis",
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                else -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = "No se pudo cargar el análisis",
+                            style = MaterialTheme.typography.bodyLarge,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
                 }
             }
         }
