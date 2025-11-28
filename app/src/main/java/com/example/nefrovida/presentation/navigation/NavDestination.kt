@@ -26,6 +26,14 @@ sealed class NavDestination (
         label = "Foro",
         icon = Icons.Outlined.Forum,
         filledIcon = Icons.Filled.Forum)
+    object ForumFeed : NavDestination(
+        route = "forumFeed/{forumId}",
+        label = "Feed del Foro",
+        icon = Icons.Outlined.Forum,
+        filledIcon = Icons.Filled.Forum // Puedes usar un icono diferente si lo deseas
+    ) {
+        fun createRoute(forumId: Int) = "forumFeed/$forumId"
+    }
     object Agenda : NavDestination(
         route = "agenda",
         label = "Agenda",
