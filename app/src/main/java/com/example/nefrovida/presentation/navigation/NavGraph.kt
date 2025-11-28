@@ -10,6 +10,8 @@ import com.example.nefrovida.presentation.screens.NotificationsScreen
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
 import com.example.nefrovida.presentation.screens.forum.ForumScreen
 import com.example.nefrovida.presentation.screens.home.HomeScreen
+import com.example.nefrovida.presentation.screens.laboratory.AnalysisDetailScreen
+import com.example.nefrovida.presentation.screens.laboratory.AnalysisHistoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.LaboratoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.ReportDetailScreen
 import com.example.nefrovida.presentation.screens.login.LoginScreen
@@ -23,14 +25,21 @@ sealed class Screen(
 
     object Laboratory : Screen("labs")
 
+    object AnalysisHistory : Screen("labs/history")
+
+    object AnalysisDetail : Screen("labs/details/{analysisId}") {
+        fun createRoute(analysisId: Int) = "labs/details/$analysisId"
+    }
+
     object ReportDetail : Screen("reportDetail/{patientAnalysisId}") {
         fun createRoute(id: Int) = "reportDetail/$id"
     }
+
     object Agenda : Screen("agenda")
 
-    object Forum : Screen ("forum")
+    object Forum : Screen("forum")
 
-    object Notifications : Screen ("notifications")
+    object Notifications : Screen("notifications")
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -63,39 +72,57 @@ fun NefrovidaNavGraph(
         composable(route = Screen.Home.route) {
             HomeScreen(navController = navController)
         }
-        composable( route = Screen.Laboratory.route) {
+        composable(route = Screen.Laboratory.route) {
             LaboratoryScreen(
                 navController = navController,
-                onBackClick = { navController.popBackStack() })
+                onBackClick = { navController.popBackStack() },
+            )
         }
-        composable( route = Screen.Forum.route) {
+        composable(route = Screen.Forum.route) {
             ForumScreen(
                 navController = navController,
-                onBackClick = { navController.popBackStack() })
+                onBackClick = { navController.popBackStack() },
+            )
         }
         composable(route = Screen.Agenda.route) {
-            AgendaScreen( navController = navController,
-                onBackClick = { navController.popBackStack() }
+            AgendaScreen(
+                navController = navController,
+                onBackClick = { navController.popBackStack() },
             )
         }
+        composable(route = Screen.Laboratory.route) {
+            AnalysisHistoryScreen(navController = navController)
+        }
+        composable(
+            route = Screen.AnalysisDetail.route,
+            arguments = listOf(navArgument("analysisId") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            val analysisId = backStackEntry.arguments?.getInt("analysisId") ?: 0
+            AnalysisDetailScreen(
+                analysisId = analysisId,
+                navController = navController,
+            )
+        }
+
         composable(
             route = Screen.ReportDetail.route,
-            arguments = listOf(
-                navArgument("patientAnalysisId"){type = NavType.IntType}
-            )
-        ) {
-            backStackEntry ->
+            arguments =
+                listOf(
+                    navArgument("patientAnalysisId") { type = NavType.IntType },
+                ),
+        ) { backStackEntry ->
             val id = backStackEntry.arguments?.getInt("patientAnalysisId") ?: 0
 
             ReportDetailScreen(
                 navController = navController,
                 onBackClick = { navController.popBackStack() },
-                patientAnalysisId = id
+                patientAnalysisId = id,
             )
         }
         composable(route = Screen.Notifications.route) {
-            NotificationsScreen( navController = navController,
-                onBackClick = { navController.popBackStack() }
+            NotificationsScreen(
+                navController = navController,
+                onBackClick = { navController.popBackStack() },
             )
         }
     }

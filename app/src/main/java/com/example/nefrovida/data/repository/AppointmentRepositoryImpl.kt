@@ -28,6 +28,7 @@ class AppointmentRepositoryImpl
         override suspend fun getAppointmentById(id: Int): Appointment = api.getAppointmentById(id).toDomain()
 
         override suspend fun cancelAppointmentById(id: Int): Response<Unit> = api.cancelAppointment(id)
+<<<<<<< HEAD
 
         override suspend fun getDateAvailability(
             appointmentName: String,
@@ -50,4 +51,6 @@ class AppointmentRepositoryImpl
             val body = RescheduleAppointmentDto(reason, dateHour)
             return api.rescheduleAppointment(id, body)
         }
+=======
+>>>>>>> feat/21-historial-front
     }
