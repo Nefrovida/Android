@@ -5,9 +5,9 @@ import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.dto.RescheduleAppointmentDto
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.repository.AppointmentRepository
+import retrofit2.Response
 import javax.inject.Inject
 import javax.inject.Singleton
-import retrofit2.Response
 
 @Singleton
 class AppointmentRepositoryImpl
@@ -28,7 +28,6 @@ class AppointmentRepositoryImpl
         override suspend fun getAppointmentById(id: Int): Appointment = api.getAppointmentById(id).toDomain()
 
         override suspend fun cancelAppointmentById(id: Int): Response<Unit> = api.cancelAppointment(id)
-<<<<<<< HEAD
 
         override suspend fun getDateAvailability(
             appointmentName: String,
@@ -51,6 +50,4 @@ class AppointmentRepositoryImpl
             val body = RescheduleAppointmentDto(reason, dateHour)
             return api.rescheduleAppointment(id, body)
         }
-=======
->>>>>>> feat/21-historial-front
     }
