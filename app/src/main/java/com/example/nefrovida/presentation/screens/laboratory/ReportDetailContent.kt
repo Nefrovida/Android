@@ -1,6 +1,7 @@
 package com.example.nefrovida.presentation.screens.laboratory
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,6 +30,8 @@ fun ReportDetailContent(
     title: String,
     date: String,
     interpretation: String,
+    onDownloadClick: () -> Unit,
+    onBackClick: () -> Unit,
 ) {
     Column(
         modifier =
@@ -61,7 +64,8 @@ fun ReportDetailContent(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
+                    .padding(12.dp)
+                    .clickable { onDownloadClick() },
             shape = RoundedCornerShape(12.dp),
             colors =
                 CardDefaults.cardColors(
