@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.nefrovida.presentation.screens.NotificationsScreen
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
+import com.example.nefrovida.presentation.screens.forum.ForumFeedScreen
 import com.example.nefrovida.presentation.screens.forum.ForumScreen
 import com.example.nefrovida.presentation.screens.home.HomeScreen
 import com.example.nefrovida.presentation.screens.laboratory.AnalysisDetailScreen
@@ -38,6 +39,10 @@ sealed class Screen(
     object Agenda : Screen("agenda")
 
     object Forum : Screen("forum")
+
+    object ForumFeed : Screen("forumFeed/{forumId}") {
+        fun createRoute(forumId: Int) = "forumFeed/$forumId"
+    }
 
     object Notifications : Screen("notifications")
 }
@@ -81,7 +86,14 @@ fun NefrovidaNavGraph(
         composable(route = Screen.Forum.route) {
             ForumScreen(
                 navController = navController,
-                onBackClick = { navController.popBackStack() },
+            )
+        }
+        composable(
+            route = Screen.ForumFeed.route,
+            arguments = listOf(navArgument("forumId") { type = NavType.IntType }),
+        ) {
+            ForumFeedScreen(
+                navController = navController,
             )
         }
         composable(route = Screen.Agenda.route) {
