@@ -5,6 +5,7 @@ import com.example.nefrovida.data.remote.api.ForumApiService
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
+import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
 import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository
@@ -59,6 +60,8 @@ class ForumRepositoryImpl
                     page,
                     limit,
                 )
-            return response.data
+            return response.data.map { r ->
+                r.toDomain()
+            }
         }
     }

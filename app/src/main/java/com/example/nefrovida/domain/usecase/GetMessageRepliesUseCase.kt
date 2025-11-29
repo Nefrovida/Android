@@ -1,6 +1,7 @@
 package com.example.nefrovida.domain.usecase
 
 import com.example.nefrovida.data.remote.dto.Message
+import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository

@@ -1,5 +1,6 @@
 package com.example.nefrovida.presentation.screens.forum
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -113,9 +114,10 @@ fun ForumMessageScreen(
                             post = reply,
                             modifier = Modifier.padding(8.dp),
                             onClick = {
+                                Log.d("ForumClick", "forumId = ${pMI.forumId}, replyId = ${reply.messageId}")
                                 navController.navigate(
                                     Screen.Message.createRoute(
-                                        forumId = reply.forum.forumId,
+                                        forumId = pMI.forumId,
                                         messageId = reply.messageId,
                                     ),
                                 )

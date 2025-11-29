@@ -1,6 +1,7 @@
 package com.example.nefrovida.presentation.screens.forum
 
 import com.example.nefrovida.data.remote.dto.Message
+import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.domain.model.MessageObj
 
 data class MessageReplyUiState(
