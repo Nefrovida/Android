@@ -41,7 +41,6 @@ fun AgendaScreen(
     var showDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsState()
 
-    // NORMALIZAMOS LAS LISTAS (si vienen null → se vuelven listas vacías)
     val appointments = uiState.appointmentFilteredList?.appointments ?: emptyList()
     val analysis = uiState.appointmentFilteredList?.analysis ?: emptyList()
     val unifiedList: List<AgendaItem> =
@@ -114,7 +113,6 @@ fun AgendaScreen(
                 )
             }
 
-            // 🔵 DIALOG PARA APPOINTMENTS (igual que antes)
             if (showDialog) {
                 uiState.selectedAppointment?.let { appointment ->
 
