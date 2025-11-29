@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.domain.common.Result
+import com.example.nefrovida.domain.model.AgendaItem
 import com.example.nefrovida.domain.repository.UserPreferencesRepository
 import com.example.nefrovida.domain.usecase.CancelAppointmentUseCase
+import com.example.nefrovida.domain.usecase.GetAnalysisUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentFilteredListUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +30,7 @@ class AgendaViewModel
         private val cancelAppointmentUseCase: CancelAppointmentUseCase,
         private val getAppointmentFilteredListUseCase: GetAppointmentFilteredListUseCase,
         private val userPreferencesRepository: UserPreferencesRepository,
+        private val getAnalysisUseCase: GetAnalysisUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(AgendaUiState())
         val uiState: StateFlow<AgendaUiState> = _uiState.asStateFlow()
@@ -120,6 +123,34 @@ class AgendaViewModel
             }
         }
 
+        fun getAnalysis(id: Int) {
+            viewModelScope.launch {
+                getAnalysisUseCase(id).collect { result ->
+                    _uiState.update { state ->
+                        when (result) {
+                            is Result.Loading -> {
+                                state.copy(isLoading = true)
+                            }
+                            is Result.Success -> {
+                                state.copy(
+                                    selectedAnalysis = result.data,
+                                    isLoading = false,
+                                    error = null,
+                                )
+                            }
+
+                            is Result.Error -> {
+                                state.copy(
+                                    error = result.exception.message,
+                                    isLoading = false,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         fun cancelAppointment(id: Int) {
             viewModelScope.launch {
                 cancelAppointmentUseCase(id).collect { result ->
@@ -165,5 +196,19 @@ class AgendaViewModel
 
         fun resetCancelSuccess() {
             _uiState.update { it.copy(showCancelSuccess = false) }
+        }
+
+        fun selectItem(item: AgendaItem) {
+            _uiState.update { it.copy(selectedItem = item) }
+        }
+
+        fun clearSelectedItem() {
+            _uiState.update {
+                it.copy(
+                    selectedItem = null,
+                    selectedAppointment = null,
+                    selectedAnalysis = null,
+                )
+            }
         }
     }

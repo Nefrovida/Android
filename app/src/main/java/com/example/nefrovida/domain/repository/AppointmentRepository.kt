@@ -2,6 +2,7 @@ package com.example.nefrovida.domain.repository
 
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.model.AppointmentsResult
+import com.example.nefrovida.domain.model.PatientAnalysis
 import retrofit2.Response
 
 interface AppointmentRepository {
@@ -14,7 +15,7 @@ interface AppointmentRepository {
 
     suspend fun getAppointmentById(id: Int): Appointment
 
-    // suspend fun getAnalysisById(id: Int): PatientAnalysis
+    suspend fun getAnalysisById(id: Int): PatientAnalysis
 
     suspend fun cancelAppointmentById(id: Int): Response<Unit>
 

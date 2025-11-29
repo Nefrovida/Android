@@ -3,6 +3,7 @@ package com.example.nefrovida.data.remote.api
 import com.example.nefrovida.data.remote.dto.AppointmentDto
 import com.example.nefrovida.data.remote.dto.AppointmentListDto
 import com.example.nefrovida.data.remote.dto.AppointmentsResponse
+import com.example.nefrovida.data.remote.dto.PatientAnalysisDetail
 import com.example.nefrovida.domain.model.Appointment
 import retrofit2.Response
 import retrofit2.http.GET
@@ -28,7 +29,10 @@ interface AppointmentApi {
         @Path("id") id: Int,
     ): AppointmentDto
 
-    // TODO: hacer otra ruta para analisis
+    @GET("agenda/analysis/{id}")
+    suspend fun getAnalysisById(
+        @Path("id") id: Int,
+    ): PatientAnalysisDetail
 
     @POST("agenda/appointments/{id}/cancel")
     suspend fun cancelAppointment(

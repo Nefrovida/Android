@@ -105,50 +105,79 @@ fun AgendaScreen(
                     items = unifiedList,
                     onAppointmentClick = { appointment ->
                         viewModel.getAppointment(appointment.id)
+                        viewModel.selectItem(AgendaItem.AppointmentItem(appointment))
                         showDialog = true
                     },
                     onAnalysisClick = { analysis ->
-                        // TODO lo que quieras hacer con análisis
+                        viewModel.getAnalysis(analysis.patientAnalysisId)
+                        viewModel.selectItem(AgendaItem.AnalysisItem(analysis))
+                        showDialog = true
                     },
                 )
             }
 
             if (showDialog) {
-                uiState.selectedAppointment?.let { appointment ->
+                when (val item = uiState.selectedItem) {
+                    is AgendaItem.AppointmentItem -> {
+                        uiState.selectedAppointment?.let { appointment ->
 
-                    val placeOrLink =
-                        when (appointment.appointmentType) {
-                            AppointmentTypes.VIRTUAL -> {
-                                val link = appointment.link
-                                if (!link.isNullOrBlank()) "Link: $link" else ""
-                            }
-                            AppointmentTypes.PRESENCIAL -> {
-                                val place = appointment.place
-                                if (!place.isNullOrBlank()) "Lugar: $place" else ""
-                            }
-                            else -> ""
+                            val placeOrLink =
+                                when (appointment.appointmentType) {
+                                    AppointmentTypes.VIRTUAL ->
+                                        appointment.link?.let { "Link: $it" }.orEmpty()
+
+                                    AppointmentTypes.PRESENCIAL ->
+                                        appointment.place?.let { "Lugar: $it" }.orEmpty()
+
+                                    else -> ""
+                                }
+
+                            Dialog(
+                                title = "Doctor: ${appointment.name}",
+                                text =
+                                    """
+                                    ${appointment.appointmentName}
+                                    Fecha: ${appointment.date}
+                                    Hora: ${appointment.time}
+                                    Tipo: ${appointment.appointmentType}
+                                    $placeOrLink
+                                    
+                                    ¿Desea cancelar la cita?
+                                    """.trimIndent(),
+                                confirmText = "Sí, cancelar",
+                                dismissText = "No",
+                                onConfirm = {
+                                    viewModel.cancelAppointment(appointment.id)
+                                    showDialog = false
+                                },
+                                onDismiss = { showDialog = false },
+                            )
                         }
+                    }
 
-                    Dialog(
-                        title = "Doctor: ${appointment.name}",
-                        text =
-                            """
-                            ${appointment.appointmentName}
-                            Fecha: ${appointment.date}
-                            Hora: ${appointment.time}
-                            Tipo: ${appointment.appointmentType}
-                            $placeOrLink
-                            
-                            ¿Desea cancelar la cita?
-                            """.trimIndent(),
-                        confirmText = "Sí, cancelar",
-                        dismissText = "No",
-                        onConfirm = {
-                            viewModel.cancelAppointment(appointment.id)
-                            showDialog = false
-                        },
-                        onDismiss = { showDialog = false },
-                    )
+                    is AgendaItem.AnalysisItem -> {
+                        uiState.selectedAnalysis?.let { analysis ->
+
+                            Dialog(
+                                title = "Análisis: ${analysis.analysisName}",
+                                text =
+                                    """
+                                    Fecha y hora: ${analysis.analysisDate}
+                                    Lugar: ${analysis.place}
+                                    
+                                    ¿Desea cancelar el análisis?
+                                    """.trimIndent(),
+                                confirmText = "Cancelar análisis",
+                                dismissText = "Cerrar",
+                                onConfirm = {
+                                    // viewModel.cancelAnalysis(analysis.patientAnalysisId)
+                                    showDialog = false
+                                },
+                                onDismiss = { showDialog = false },
+                            )
+                        }
+                    }
+                    else -> {}
                 }
             }
         }
