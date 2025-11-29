@@ -2,6 +2,7 @@ package com.example.nefrovida.presentation.screens.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -78,13 +81,15 @@ fun LoginScreen(
             verticalArrangement = Arrangement.Center,
         ) {
             // Logo
-            Spacer(modifier = Modifier.height(48.dp))
-
             Image(
-                painter = painterResource(id = R.drawable.nefrovidalogo),
+                painter = painterResource(id = R.drawable.nefrovidalogologin),
                 contentDescription = "Logo NefroVida",
-                modifier = Modifier.size(200.dp),
+                modifier =
+                    Modifier
+                        .heightIn(max = 100.dp)
+                        .size(400.dp),
             )
+            Spacer(modifier = Modifier.height(40.dp))
 
             // Card de Login
             Card(
