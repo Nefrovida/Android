@@ -23,9 +23,7 @@ sealed class Screen(
 
     object Home : Screen("home")
 
-    object Laboratory : Screen("labs")
-
-    object AnalysisHistory : Screen("labs/history")
+    object AnalysisHistory : Screen("labs")
 
     object AnalysisDetail : Screen("labs/details/{analysisId}") {
         fun createRoute(analysisId: Int) = "labs/details/$analysisId"
@@ -72,12 +70,6 @@ fun NefrovidaNavGraph(
         composable(route = Screen.Home.route) {
             HomeScreen(navController = navController)
         }
-        composable(route = Screen.Laboratory.route) {
-            LaboratoryScreen(
-                navController = navController,
-                onBackClick = { navController.popBackStack() },
-            )
-        }
         composable(route = Screen.Forum.route) {
             ForumScreen(
                 navController = navController,
@@ -90,7 +82,7 @@ fun NefrovidaNavGraph(
                 onBackClick = { navController.popBackStack() },
             )
         }
-        composable(route = Screen.Laboratory.route) {
+        composable(route = Screen.AnalysisHistory.route) {
             AnalysisHistoryScreen(navController = navController)
         }
         composable(
