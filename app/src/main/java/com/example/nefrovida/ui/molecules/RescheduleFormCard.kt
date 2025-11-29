@@ -60,7 +60,6 @@ fun RescheduleFormCard(
         Text("Paciente: ${appointment?.name}")
         Text("Cita: ${appointment?.appointmentName}")
         Text("Fecha actual: ${appointment?.date}")
-        Text("Estatus: ${appointment?.status}")
 
         // --- Reason Input ---
         OutlinedTextField(
