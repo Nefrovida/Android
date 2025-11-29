@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.nefrovida.presentation.screens.NotificationsScreen
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
+import com.example.nefrovida.presentation.screens.catalog.CatalogScreen
 import com.example.nefrovida.presentation.screens.forum.ForumFeedScreen
 import com.example.nefrovida.presentation.screens.forum.ForumScreen
 import com.example.nefrovida.presentation.screens.home.HomeScreen
@@ -23,6 +24,8 @@ sealed class Screen(
     object Login : Screen("login")
 
     object Home : Screen("home")
+
+    object Catalog : Screen("catalog")
 
     object Laboratory : Screen("labs")
 
@@ -77,6 +80,13 @@ fun NefrovidaNavGraph(
         composable(route = Screen.Home.route) {
             HomeScreen(navController = navController)
         }
+        composable(route = Screen.Catalog.route) {
+            CatalogScreen(
+                Modifier = Modifier,
+                navController = navController,
+            )
+        }
+
         composable(route = Screen.Laboratory.route) {
             LaboratoryScreen(
                 navController = navController,
