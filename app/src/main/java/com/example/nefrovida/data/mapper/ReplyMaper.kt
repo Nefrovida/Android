@@ -9,7 +9,7 @@ fun Reply.toDomain(): Message =
         messageId = messageId,
         content = content,
         likes = stats.likes,
-        replies = stats.likes,
+        replies = stats.replies,
         forum =
             MessageForumInfo(
                 forumId,

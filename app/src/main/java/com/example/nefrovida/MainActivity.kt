@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.nefrovida.di.NetworkModule
 import com.example.nefrovida.presentation.navigation.NefrovidaNavGraph
 import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.ui.DrawerContent
@@ -64,6 +65,16 @@ class MainActivity : ComponentActivity() {
                                     navController = navController,
                                     onProfileClick = {
                                         scope.launch { drawerState.open() }
+                                    },
+                                    onLogoutClick = {
+                                        // CLEAR COOKIES
+                                        NetworkModule.clearCookies()
+
+                                        // NAVIGATE TO LOGIN AND CLEAR HISTORY
+                                        navController.navigate(Screen.Login.route) {
+                                            popUpTo(0)
+                                            launchSingleTop = true
+                                        }
                                     },
                                 )
                             }

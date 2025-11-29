@@ -8,13 +8,16 @@ import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.usecase.CancelAppointmentUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentFilteredListUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentUseCase
+import com.example.nefrovida.domain.usecase.GetDateAvailabilityUseCase
+import com.example.nefrovida.domain.usecase.RescheduleAppointmentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class AgendaViewModel
@@ -23,6 +26,8 @@ class AgendaViewModel
         private val getAppointmentUseCase: GetAppointmentUseCase,
         private val cancelAppointmentUseCase: CancelAppointmentUseCase,
         private val getAppointmentFilteredListUseCase: GetAppointmentFilteredListUseCase,
+        private val getDateAvailabilityUseCase: GetDateAvailabilityUseCase,
+        private val rescheduleAppointmentUseCase: RescheduleAppointmentUseCase,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(AgendaUiState())
         val uiState: StateFlow<AgendaUiState> = _uiState.asStateFlow()
@@ -42,6 +47,7 @@ class AgendaViewModel
                     _uiState.update { state ->
                         when (result) {
                             is Result.Loading -> {
+                                Log.d("AgendaVM", "Agenda List is loading")
                                 state.copy(
                                     isLoading = true,
                                     selectedDate = date,
@@ -49,6 +55,7 @@ class AgendaViewModel
                             }
 
                             is Result.Success -> {
+                                Log.d("AgendaVM", "Agenda List succeded")
                                 state.copy(
                                     appointmentFilteredList = result.data,
                                     isLoading = false,
@@ -117,9 +124,9 @@ class AgendaViewModel
                                         state.selectedAppointment?.copy(
                                             status = AppointmentStatus.CANCELED,
                                         ),
+                                    showCancelSuccess = true,
                                     isLoading = false,
                                     error = null,
-                                    showCancelSuccess = true,
                                 )
                             }
                         }
@@ -139,5 +146,83 @@ class AgendaViewModel
 
         fun resetCancelSuccess() {
             _uiState.update { it.copy(showCancelSuccess = false) }
+        }
+
+        fun resetRescheduleSuccess() {
+            _uiState.update { it.copy(showRescheduleSuccess = false) }
+        }
+
+        suspend fun getDateAvailability(
+            appointmentName: String,
+            date: String,
+        ): List<String> {
+            var result: List<String> = emptyList()
+
+            getDateAvailabilityUseCase(appointmentName, date).collect { state ->
+                when (state) {
+                    is Result.Loading -> {
+                        Log.d("AgendaVM", "Get Availability is loading")
+                        // Loading state
+                    }
+                    is Result.Success -> {
+                        Log.d("AgendaVM", "Get Availability List is successful")
+                        result = state.data
+                    }
+                    is Result.Error -> {
+                        Log.d("AgendaVM", "Get Availability is error")
+                        result = emptyList()
+                    }
+                }
+            }
+
+            return result
+        }
+
+        fun rescheduleAppointment(
+            id: Int,
+            reason: String,
+            date: String,
+            time: String,
+        ) {
+            viewModelScope.launch {
+                rescheduleAppointmentUseCase(
+                    id,
+                    reason,
+                    date,
+                    time,
+                ).collect { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            _uiState.update { state ->
+                                state.copy(isLoading = true)
+                            }
+                        }
+                        is Result.Success -> {
+                            _uiState.value.selectedDate?.let { selected ->
+                                loadAgendaList(selected)
+                            }
+                            _uiState.update { state ->
+                                state.copy(
+                                    selectedAppointment =
+                                        state.selectedAppointment?.copy(
+                                            status = AppointmentStatus.PROGRAMMED,
+                                        ),
+                                    isLoading = false,
+                                    error = null,
+                                    showRescheduleSuccess = true,
+                                )
+                            }
+                        }
+                        is Result.Error -> {
+                            _uiState.update { state ->
+                                state.copy(
+                                    error = result.exception.message,
+                                    isLoading = false,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
         }
     }

@@ -13,6 +13,8 @@ import com.example.nefrovida.presentation.screens.forum.ForumMessageScreen
 import com.example.nefrovida.presentation.screens.forum.ForumScreen
 import com.example.nefrovida.presentation.screens.forum.ParentMessageInfo
 import com.example.nefrovida.presentation.screens.home.HomeScreen
+import com.example.nefrovida.presentation.screens.laboratory.AnalysisDetailScreen
+import com.example.nefrovida.presentation.screens.laboratory.AnalysisHistoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.LaboratoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.ReportDetailScreen
 import com.example.nefrovida.presentation.screens.login.LoginScreen
@@ -25,6 +27,12 @@ sealed class Screen(
     object Home : Screen("home")
 
     object Laboratory : Screen("labs")
+
+    object AnalysisHistory : Screen("labs/history")
+
+    object AnalysisDetail : Screen("labs/details/{analysisId}") {
+        fun createRoute(analysisId: Int) = "labs/details/$analysisId"
+    }
 
     object ReportDetail : Screen("reportDetail/{patientAnalysisId}") {
         fun createRoute(id: Int) = "reportDetail/$id"
@@ -85,7 +93,9 @@ fun NefrovidaNavGraph(
             )
         }
         composable(route = Screen.Forum.route) {
-            ForumScreen(navController = navController)
+            ForumScreen(
+                navController = navController,
+            )
         }
         composable(
             route = Screen.ForumFeed.route,
@@ -122,6 +132,20 @@ fun NefrovidaNavGraph(
                 onBackClick = { navController.popBackStack() },
             )
         }
+        composable(route = Screen.Laboratory.route) {
+            AnalysisHistoryScreen(navController = navController)
+        }
+        composable(
+            route = Screen.AnalysisDetail.route,
+            arguments = listOf(navArgument("analysisId") { type = NavType.IntType }),
+        ) { backStackEntry ->
+            val analysisId = backStackEntry.arguments?.getInt("analysisId") ?: 0
+            AnalysisDetailScreen(
+                analysisId = analysisId,
+                navController = navController,
+            )
+        }
+
         composable(
             route = Screen.ReportDetail.route,
             arguments =

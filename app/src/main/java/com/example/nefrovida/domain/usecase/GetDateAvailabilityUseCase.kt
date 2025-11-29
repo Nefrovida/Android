@@ -3,21 +3,24 @@ package com.example.nefrovida.domain.usecase
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.repository.AppointmentRepository
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
 
-class GetAppointmentUseCase
+class GetDateAvailabilityUseCase
     @Inject
     constructor(
         private val repository: AppointmentRepository,
     ) {
-        operator fun invoke(id: Int): Flow<Result<Appointment>> =
+        operator fun invoke(
+            appointmentName: String,
+            date: String,
+        ): Flow<Result<List<String>>> =
             flow {
                 try {
                     emit(Result.Loading)
-                    val appointment = repository.getAppointmentById(id)
-                    emit(Result.Success(appointment))
+                    val data = repository.getDateAvailability(appointmentName, date)
+                    emit(Result.Success(data))
                 } catch (e: Exception) {
                     emit(Result.Error(e))
                 }

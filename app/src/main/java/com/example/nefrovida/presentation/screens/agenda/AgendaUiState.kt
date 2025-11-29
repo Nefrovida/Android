@@ -7,6 +7,7 @@ data class AgendaUiState (
     val appointmentFilteredList: List<Appointment> = emptyList(),
     val selectedAppointment: Appointment? = null,
     val showCancelSuccess: Boolean = false,
+    val showRescheduleSuccess: Boolean = false,
     val selectedDate: String? = null,
     val isLoading: Boolean = false,
     val error: String? = null
