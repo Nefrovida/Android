@@ -8,6 +8,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.usecase.GetMessageRepliesUseCase
+import com.example.nefrovida.domain.usecase.GetMessageUseCase
+import com.example.nefrovida.domain.usecase.PostMessageUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,10 +18,13 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class ForumMessageViewModel
     @Inject
     constructor(
         private val getReplies: GetMessageRepliesUseCase,
+        private val getMessage: GetMessageUseCase,
+        private val postReply: PostMessageUseCase,
     ) : ViewModel() {
         private val _messageReplies = MutableStateFlow(MessageReplyUiState())
         val messageReplies: StateFlow<MessageReplyUiState> = _messageReplies.asStateFlow()
@@ -30,29 +36,78 @@ class ForumMessageViewModel
             limit: Int = 10,
         ) {
             viewModelScope.launch {
-                getReplies(
-                    forumId,
-                    messageId,
-                    page,
-                    limit,
-                ).collect { result ->
-                    _messageReplies.update { state ->
-                        when (result) {
-                            is Result.Loading ->
-                                state.copy(
-                                    isLoading = true,
-                                )
-                            is Result.Success ->
-                                state.copy(
-                                    messageRepliesList = result.data,
-                                    isLoading = false,
-                                    error = null,
-                                )
-                            is Result.Error ->
-                                state.copy(
-                                    error = result.exception.message,
-                                    isLoading = false,
-                                )
+                launch {
+                    getMessage(messageId).collect { result ->
+                        _messageReplies.update { state ->
+                            when (result) {
+                                is Result.Loading ->
+                                    state.copy(
+                                        isLoading = true,
+                                    )
+                                is Result.Success ->
+                                    state.copy(
+                                        parentMessage = result.data,
+                                        isLoading = false,
+                                        error = null,
+                                    )
+                                is Result.Error ->
+                                    state.copy(
+                                        error = result.exception.message,
+                                        isLoading = false,
+                                    )
+                            }
+                        }
+                    }
+                }
+                launch {
+                    getReplies(
+                        forumId,
+                        messageId,
+                        page,
+                        limit,
+                    ).collect { result ->
+                        _messageReplies.update { state ->
+                            when (result) {
+                                is Result.Loading ->
+                                    state.copy(
+                                        isLoading = true,
+                                    )
+                                is Result.Success ->
+                                    state.copy(
+                                        messageRepliesList = result.data,
+                                        isLoading = false,
+                                        error = null,
+                                    )
+                                is Result.Error ->
+                                    state.copy(
+                                        error = result.exception.message,
+                                        isLoading = false,
+                                    )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        fun postReply(
+            forumId: Int,
+            parentMessageId: Int,
+            content: String,
+        ) {
+            viewModelScope.launch {
+                postReply.invoke(forumId, parentMessageId, content).collect { result ->
+                    when (result) {
+                        is Result.Success -> {
+                            loadReplies(forumId, parentMessageId)
+                        }
+                        is Result.Error -> {
+                            _messageReplies.update {
+                                it.copy(error = result.exception.message)
+                            }
+                        }
+                        is Result.Loading -> {
+                            // Nada
                         }
                     }
                 }

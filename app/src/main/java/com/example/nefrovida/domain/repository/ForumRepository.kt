@@ -21,10 +21,18 @@ interface ForumRepository {
         isPublic: Boolean?,
     ): Response<List<ForumComplete>>
 
+    suspend fun getMessage(messageId: Int): Message
+
+    suspend fun postMessage(
+        forumId: Int,
+        parentMessageId: Int,
+        content: String,
+    ): Boolean
+
     suspend fun getMessageReplies(
         forumId: Int,
         messageId: Int,
         page: Int,
         limit: Int,
-    ): List<MessageObj>
+    ): List<Message>
 }

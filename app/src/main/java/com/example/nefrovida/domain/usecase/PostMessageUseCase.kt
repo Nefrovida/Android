@@ -2,34 +2,30 @@ package com.example.nefrovida.domain.usecase
 
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.domain.common.Result
-import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetMessageRepliesUseCase
+class PostMessageUseCase
     @Inject
     constructor(
         private val forumRepository: ForumRepository,
     ) {
         operator fun invoke(
             forumId: Int,
-            messageId: Int,
-            page: Int = 0,
-            limit: Int = 10,
-        ): Flow<Result<List<Message>>> =
+            parentMessageId: Int,
+            content: String,
+        ): Flow<Result<Boolean>> =
             flow {
                 try {
-                    emit(Result.Loading)
-                    val responseList =
-                        forumRepository.getMessageReplies(
+                    val responseStatus =
+                        forumRepository.postMessage(
                             forumId,
-                            messageId,
-                            page,
-                            limit,
+                            parentMessageId,
+                            content,
                         )
-                    emit(Result.Success(responseList))
+                    emit(Result.Success(responseStatus))
                 } catch (e: Exception) {
                     emit(Result.Error(e))
                 }
