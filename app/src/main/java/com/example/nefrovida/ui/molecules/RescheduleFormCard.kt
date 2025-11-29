@@ -15,6 +15,8 @@ import com.example.nefrovida.presentation.utils.checkValidDate
 import com.example.nefrovida.ui.molecules.DatePickerDialog
 import com.example.nefrovida.ui.molecules.TimePickerDialog
 import com.example.nefrovida.ui.organisms.SimpleCard
+import com.example.nefrovida.ui.theme.NavyBlue
+import com.example.nefrovida.ui.theme.TextGray
 import kotlinx.coroutines.launch
 
 @Composable
@@ -70,6 +72,12 @@ fun RescheduleFormCard(
                     .fillMaxWidth()
                     .padding(top = 12.dp),
             minLines = 3,
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = NavyBlue,
+                    unfocusedBorderColor = TextGray,
+                    focusedLabelColor = NavyBlue,
+                ),
         )
 
         // --- Date & Time row ---
@@ -171,7 +179,7 @@ fun RescheduleFormCard(
                 enabled = formReady,
                 colors =
                     ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary, // keep default
+                        containerColor = MaterialTheme.colorScheme.secondary,
                         contentColor = Color.White, // strong white
                         disabledContainerColor = MaterialTheme.colorScheme.surfaceVariant,
                         disabledContentColor = Color.White.copy(alpha = 0.4f),
