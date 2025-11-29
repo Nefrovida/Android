@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
 
 @HiltViewModel
 class AgendaViewModel
@@ -37,12 +39,16 @@ class AgendaViewModel
         init {
             // get userId value from dataStore as coroutine
             viewModelScope.launch {
-                _userId.value = userPreferencesRepository.userIdFlow.firstOrNull() ?: ""
-            }
+                userPreferencesRepository.userIdFlow.collect { id ->
+                    _userId.value = id ?: ""
 
-            val today = java.text.SimpleDateFormat("yyyy-MM-dd").format(java.util.Date())
-            loadAgendaList(today, _userId.value)
-            Log.d("AgendaVMPrim", "fecha y user id: $today, ${_userId.value}")
+                    if (id != null && id.isNotBlank()) {
+                        val today = SimpleDateFormat("yyyy-MM-dd").format(Date())
+                        loadAgendaList(today, id)
+                        Log.d("AgendaVMPrim", "fecha y user id: $today, $id")
+                    }
+                }
+            }
         }
 
         fun loadAgendaList(
@@ -52,7 +58,7 @@ class AgendaViewModel
             // another coroutine, takes the value of userId previously loaded
             viewModelScope.launch {
                 val currentUserId = _userId.value
-                getAppointmentFilteredListUseCase(date, currentUserId).collect { result ->
+                getAppointmentFilteredListUseCase(date, userId).collect { result ->
                     _uiState.update { state ->
                         when (result) {
                             is Result.Loading -> {

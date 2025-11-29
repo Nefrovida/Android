@@ -14,5 +14,9 @@ interface AppointmentRepository {
 
     suspend fun getAppointmentById(id: Int): Appointment
 
+    // suspend fun getAnalysisById(id: Int): PatientAnalysis
+
     suspend fun cancelAppointmentById(id: Int): Response<Unit>
+
+    // suspend fun cancelAnalysisById(id: Int): Response<Unit>
 }

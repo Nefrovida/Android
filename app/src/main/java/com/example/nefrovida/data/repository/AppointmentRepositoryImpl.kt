@@ -34,5 +34,8 @@ class AppointmentRepositoryImpl
 
         override suspend fun getAppointmentById(id: Int): Appointment = api.getAppointmentById(id).toDomain()
 
+        // override suspend fun getAnalysisById(id: Int): PatientAnalysis = api.getAnalysisById(id).toDomain()
+
         override suspend fun cancelAppointmentById(id: Int): Response<Unit> = api.cancelAppointment(id)
+        // override suspend fun cancelAnalysisById(id: Int): Response<Unit> = api.cancelAnalysis(id)
     }
