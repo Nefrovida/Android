@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.nefrovida.presentation.screens.NotificationsScreen
+import com.example.nefrovida.presentation.screens.PatientHistoryScreen
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
 import com.example.nefrovida.presentation.screens.forum.ForumFeedScreen
 import com.example.nefrovida.presentation.screens.forum.ForumMessageScreen
@@ -87,9 +88,12 @@ fun NefrovidaNavGraph(
             HomeScreen(navController = navController)
         }
         composable(route = Screen.Laboratory.route) {
-            LaboratoryScreen(
+            // LaboratoryScreen(
+            //    navController = navController,
+            //    onBackClick = { navController.popBackStack() },
+            // )
+            PatientHistoryScreen(
                 navController = navController,
-                onBackClick = { navController.popBackStack() },
             )
         }
         composable(route = Screen.Forum.route) {
@@ -133,7 +137,10 @@ fun NefrovidaNavGraph(
             )
         }
         composable(route = Screen.Laboratory.route) {
-            AnalysisHistoryScreen(navController = navController)
+            // AnalysisHistoryScreen(navController = navController)
+            PatientHistoryScreen(
+                navController = navController,
+            )
         }
         composable(
             route = Screen.AnalysisDetail.route,
