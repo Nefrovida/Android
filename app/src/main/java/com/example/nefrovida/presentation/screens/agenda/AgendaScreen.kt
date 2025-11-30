@@ -1,5 +1,6 @@
 package com.example.nefrovida.presentation.screens.agenda
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -31,7 +33,10 @@ import com.example.nefrovida.data.remote.dto.AppointmentTypes
 import com.example.nefrovida.domain.model.AgendaItem
 import com.example.nefrovida.domain.model.AnalysisStatus
 import com.example.nefrovida.presentation.utils.formatDatePretty
+import com.example.nefrovida.ui.atoms.SimpleIconButton
+import com.example.nefrovida.ui.molecules.DatePickerDialog
 import com.example.nefrovida.ui.molecules.Dialog
+import com.example.nefrovida.ui.molecules.RescheduleFormCard
 import com.example.nefrovida.ui.molecules.WeeklyCalendarView
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -46,6 +51,11 @@ fun AgendaScreen(
 ) {
     var showDialog by remember { mutableStateOf(false) }
     var showSecondConfirmDialog by remember { mutableStateOf(false) }
+    var showAgendaList by remember { mutableStateOf(true) }
+    var showReschedulePrompt by remember { mutableStateOf(false) }
+    var showRescheduleForm by remember { mutableStateOf(false) }
+    var showDatePicker by remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
     val uiState by viewModel.uiState.collectAsState()
 
     val appointments = uiState.appointmentFilteredList?.appointments ?: emptyList()
@@ -64,6 +74,15 @@ fun AgendaScreen(
             scope.launch {
                 snackbarHostState.showSnackbar("Cita cancelada con éxito")
                 viewModel.resetCancelSuccess()
+            }
+        }
+    }
+
+    if (uiState.showRescheduleSuccess) {
+        LaunchedEffect(Unit) {
+            scope.launch {
+                snackbarHostState.showSnackbar("Cita reprogramada con éxito")
+                viewModel.resetRescheduleSuccess()
             }
         }
     }
@@ -194,10 +213,6 @@ fun AgendaScreen(
                             Dialog(
                                 title = "Análisis: ${analysis.analysisName}",
                                 text = {
-                                    Text(
-                                        analysis.analysisName,
-                                        style = MaterialTheme.typography.titleMedium,
-                                    )
                                     Text("Fecha y hora: $prettyDate")
                                     Text("Lugar: ${analysis.place}")
                                     Text("$status")
@@ -243,9 +258,55 @@ fun AgendaScreen(
                         }
 
                         showSecondConfirmDialog = false
+                        showReschedulePrompt = true
                     },
                     onDismiss = {
                         showSecondConfirmDialog = false
+                    },
+                )
+            }
+            if (showDatePicker) {
+                DatePickerDialog(
+                    onDismiss = { showDatePicker = false },
+                    onDateSelected = { date ->
+                        viewModel.loadAgendaList(date, userId)
+                    },
+                )
+            }
+            if (showReschedulePrompt) {
+                Dialog(
+                    title = "Cita cancelada con exito",
+                    text = { Text("¿Deseas reagendar la cita?") },
+                    confirmText = "Sí",
+                    dismissText = "No",
+                    onConfirm = {
+                        showAgendaList = false
+                        showReschedulePrompt = false
+                        showRescheduleForm = true
+                    },
+                    onDismiss = { showReschedulePrompt = false },
+                )
+            }
+            if (showRescheduleForm) {
+                val appt = uiState.selectedAppointment
+                RescheduleFormCard(
+                    appointment = appt,
+                    getDateAvailability = { name, date -> viewModel.getDateAvailability(name, date) },
+                    onCancel = {
+                        showRescheduleForm = false
+                        showAgendaList = true
+                    },
+                    onReschedule = { reason, date, time ->
+                        if (appt != null) {
+                            viewModel.rescheduleAppointment(
+                                id = appt.id,
+                                reason = reason,
+                                date = date,
+                                time = time,
+                            )
+                        }
+                        showRescheduleForm = false
+                        showAgendaList = true
                     },
                 )
             }

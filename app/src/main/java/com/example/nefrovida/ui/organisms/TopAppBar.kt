@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Logout
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -22,6 +23,7 @@ import com.example.nefrovida.presentation.navigation.NavDestination
 fun NfTopAppBar(
     navController: NavController,
     onProfileClick: () -> Unit,
+    onLogoutClick: () -> Unit,
 ) {
     TopAppBar(
         colors =
@@ -53,14 +55,12 @@ fun NfTopAppBar(
         actions = {
             IconButton(
                 onClick = {
-                    navController.navigate(NavDestination.Notifications.route) {
-                        launchSingleTop = true
-                    }
+                    onLogoutClick()
                 },
             ) {
                 Icon(
-                    imageVector = NavDestination.Notifications.icon,
-                    contentDescription = NavDestination.Notifications.label,
+                    imageVector = Icons.AutoMirrored.Outlined.Logout,
+                    contentDescription = "Cerrar sesión",
                 )
             }
         },

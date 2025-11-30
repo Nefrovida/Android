@@ -4,10 +4,13 @@ import com.example.nefrovida.data.remote.dto.AppointmentDto
 import com.example.nefrovida.data.remote.dto.AppointmentListDto
 import com.example.nefrovida.data.remote.dto.AppointmentsResponse
 import com.example.nefrovida.data.remote.dto.PatientAnalysisDetail
+import com.example.nefrovida.data.remote.dto.RescheduleAppointmentDto
 import com.example.nefrovida.domain.model.Appointment
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -42,5 +45,17 @@ interface AppointmentApi {
     @POST("agenda/analysis/{id}/cancel")
     suspend fun cancelAnalysis(
         @Path("id") id: Int,
+    ): Response<Unit>
+
+    @GET("agenda/appointments/date-availability")
+    suspend fun getDateAvailability(
+        @Query("appointmentName") appointmentName: String,
+        @Query("date") date: String,
+    ): Response<List<String>>
+
+    @PUT("appointments/{id}/reschedule")
+    suspend fun rescheduleAppointment(
+        @Path("id") id: Int,
+        @Body body: RescheduleAppointmentDto,
     ): Response<Unit>
 }

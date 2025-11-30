@@ -15,6 +15,7 @@ fun ResultResponse.toDomain() =
         date = date,
         path = path,
         interpretation = interpretation,
+        recommendation = recommendation,
         patientAnalysis = patientAnalysis.toDomain(),
     )
 

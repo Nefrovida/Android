@@ -8,6 +8,7 @@ enum class AppointmentStatus {
     FINISHED,
     PROGRAMMED,
     REQUESTED,
+    SCHEDULED,
 }
 
 enum class AppointmentTypes {
@@ -26,4 +27,9 @@ data class AppointmentDto(
     @SerializedName("appointment_status") val status: AppointmentStatus,
     @SerializedName("appointment_type") val appointmentType: AppointmentTypes,
     @SerializedName("appointment_name") val appointmentName: String?,
+)
+
+data class RescheduleAppointmentDto(
+    @SerializedName("reason") val reason: String,
+    @SerializedName("date_hour") val dateHour: String,
 )

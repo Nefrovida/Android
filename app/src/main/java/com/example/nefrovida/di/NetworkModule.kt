@@ -1,12 +1,18 @@
 package com.example.nefrovida.di
 
 import android.content.Context
+import com.example.nefrovida.data.remote.api.AnalysisHistoryApi
 import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.api.AuthApiService
+import com.example.nefrovida.data.remote.api.ForumApiService
 import com.example.nefrovida.data.remote.api.RefreshAuthenticator
 import com.example.nefrovida.data.remote.api.ReportsApi
+import com.example.nefrovida.data.repository.AnalysisHistoryRepositoryImpl
 import com.example.nefrovida.data.repository.AppointmentRepositoryImpl
+import com.example.nefrovida.data.repository.ForumRepositoryImpl
+import com.example.nefrovida.domain.repository.AnalysisHistoryRepository
 import com.example.nefrovida.domain.repository.AppointmentRepository
+import com.example.nefrovida.domain.repository.ForumRepository
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
@@ -52,7 +58,23 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideForumApi(retrofit: Retrofit): ForumApiService = retrofit.create(ForumApiService::class.java)
+
+    @Provides
+    @Singleton
     fun provideAppointmentRepository(api: AppointmentApi): AppointmentRepository = AppointmentRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideAnalysisHistoryApi(retrofit: Retrofit): AnalysisHistoryApi = retrofit.create(AnalysisHistoryApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideAnalysisHistoryRepository(api: AnalysisHistoryApi): AnalysisHistoryRepository = AnalysisHistoryRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideForumRepository(api: ForumApiService): ForumRepository = ForumRepositoryImpl(api)
 
     private fun createRetrofit(context: Context): Retrofit {
         // Create persistent cookie jar

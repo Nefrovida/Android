@@ -26,7 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.presentation.navigation.Screen
-import com.example.nefrovida.presentation.screens.agenda.AgendaUnifiedList
+// This doesnt exist any more
+// import com.example.nefrovida.presentation.screens.home.components.AgendaList
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 
 @Suppress("ktlint:standard:function-naming")
@@ -39,11 +40,12 @@ fun LaboratoryScreen(
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
-    Scaffold { _ ->
+    Scaffold { paddingValues ->
         Column(
             modifier =
                 modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .padding(paddingValues),
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
@@ -56,16 +58,14 @@ fun LaboratoryScreen(
                     onClick = { showDatePicker = true },
                 )
             }
-            /*AgendaUnifiedList(
-                    items = unifiedList,
-                    onAppointmentClick = { appointment ->
-                        viewModel.getAppointment(appointment.id)
-                        showDialog = true
-                    },
-            )*/
+           /* AgendaList(
+                appointmentList = Appointment.getMockData(),
+                onCardClick = { appointmentId ->
+                    navController.navigate(Screen.ReportDetail.createRoute(4))
+                })*/
         }
         if (showDatePicker) {
-            androidx.compose.ui.window.Dialog(onDismissRequest = { showDatePicker = false }) {
+            androidx.compose.ui.window.Dialog(onDismissRequest = { }) {
                 androidx.compose.material3.Surface(
                     color = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.medium,
@@ -104,7 +104,7 @@ fun LaboratoryScreen(
                                     .padding(horizontal = 8.dp, vertical = 4.dp),
                             horizontalArrangement = Arrangement.End,
                         ) {
-                            TextButton(onClick = { showDatePicker = false }) {
+                            TextButton(onClick = { }) {
                                 Text(
                                     "Cancelar",
                                     color = MaterialTheme.colorScheme.onSurface,
@@ -112,7 +112,6 @@ fun LaboratoryScreen(
                             }
                             TextButton(onClick = {
                                 val selectedDate = datePickerState.selectedDateMillis
-                                showDatePicker = false
                                 println("Fecha seleccionada: $selectedDate")
                             }) {
                                 Text(

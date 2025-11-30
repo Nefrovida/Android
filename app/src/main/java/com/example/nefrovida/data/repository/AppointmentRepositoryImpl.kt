@@ -2,6 +2,7 @@ package com.example.nefrovida.data.repository
 
 import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.AppointmentApi
+import com.example.nefrovida.data.remote.dto.RescheduleAppointmentDto
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.model.AppointmentsResult
 import com.example.nefrovida.domain.model.PatientAnalysis
@@ -39,4 +40,26 @@ class AppointmentRepositoryImpl
         override suspend fun cancelAppointmentById(id: Int): Response<Unit> = api.cancelAppointment(id)
 
         override suspend fun cancelAnalysisById(id: Int): Response<Unit> = api.cancelAnalysis(id)
+
+        override suspend fun getDateAvailability(
+            appointmentName: String,
+            date: String,
+        ): List<String> {
+            val response = api.getDateAvailability(appointmentName, date)
+
+            if (response.isSuccessful) {
+                return response.body() ?: emptyList()
+            } else {
+                throw Exception("HTTP ${response.code()}: ${response.message()}")
+            }
+        }
+
+        override suspend fun rescheduleAppointment(
+            id: Int,
+            reason: String,
+            dateHour: String,
+        ): Response<Unit> {
+            val body = RescheduleAppointmentDto(reason, dateHour)
+            return api.rescheduleAppointment(id, body)
+        }
     }

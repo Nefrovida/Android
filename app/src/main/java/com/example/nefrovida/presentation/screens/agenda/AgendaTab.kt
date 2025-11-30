@@ -79,7 +79,7 @@ fun AgendaUnifiedList(
                         onClick = { onAnalysisClick(item.analysis) },
                         backgroundColor = backgroundColor,
                     ) {
-                        Text(item.analysis.analysisName, style = MaterialTheme.typography.titleMedium)
+                        Text(item.analysis.analysisName ?: "Sin nombre", style = MaterialTheme.typography.titleMedium)
                         Text("Lugar: ${item.analysis.place}", style = MaterialTheme.typography.bodyMedium)
                         Text(
                             "Fecha y hora: ${formatDatePretty(item.analysis.analysisDate)}",

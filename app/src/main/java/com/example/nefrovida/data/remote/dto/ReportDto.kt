@@ -25,13 +25,14 @@ data class ResultResponse(
     val date: String,
     val path: String,
     val interpretation: String,
+    val recommendation: String,
     val patientAnalysis: PatientAnalysisDetail,
 )
 
 data class PatientAnalysisDetail(
-    val type: String,
+    val type: String?,
     val patientAnalysisId: Int,
-    val analysisName: String,
+    val analysisName: String?,
     val analysisDate: String,
     val resultsDate: String?,
     val place: String,

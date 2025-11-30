@@ -6,13 +6,14 @@ data class Report(
     val date: String,
     val path: String,
     val interpretation: String,
+    val recommendation: String,
     val patientAnalysis: PatientAnalysis,
 )
 
 data class PatientAnalysis(
-    val type: String,
+    val type: String?,
     val patientAnalysisId: Int,
-    val analysisName: String,
+    val analysisName: String?,
     val analysisDate: String,
     val resultsDate: String?,
     val place: String,
