@@ -170,7 +170,7 @@ fun AgendaScreen(
                                 confirmText = "Cancelar análisis",
                                 dismissText = "Cerrar",
                                 onConfirm = {
-                                    // viewModel.cancelAnalysis(analysis.patientAnalysisId)
+                                    viewModel.cancelAnalysis(analysis.patientAnalysisId)
                                     showDialog = false
                                 },
                                 onDismiss = { showDialog = false },

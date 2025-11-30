@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.model.AgendaItem
+import com.example.nefrovida.domain.model.AnalysisStatus
 import com.example.nefrovida.domain.repository.UserPreferencesRepository
 import com.example.nefrovida.domain.usecase.CancelAnalysisUseCase
 import com.example.nefrovida.domain.usecase.CancelAppointmentUseCase
@@ -217,7 +218,7 @@ class AgendaViewModel
                                 state.copy(
                                     selectedAnalysis =
                                         state.selectedAnalysis?.copy(
-                                            status = AnaysisStatus.CANCELED,
+                                            analysisStatus = AnalysisStatus.CANCELED,
                                         ),
                                     isLoading = false,
                                     error = null,
