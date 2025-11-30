@@ -30,13 +30,15 @@ data class ResultResponse(
 )
 
 data class PatientAnalysisDetail(
+    val type: String?,
     val patientAnalysisId: Int,
+    val analysisName: String?,
     val analysisDate: String,
-    val resultsDate: String,
+    val resultsDate: String?,
     val place: String,
     val duration: Int,
     val analysisStatus: AnalysisStatus,
-    val analysis: AnalysisInfo,
+    val analysis: AnalysisInfo?,
 )
 
 data class AnalysisInfo(
@@ -50,4 +52,6 @@ enum class AnalysisStatus {
     PENDING,
     SENT,
     REQUESTED,
+    CANCELED,
+    PROGRAMMED,
 }

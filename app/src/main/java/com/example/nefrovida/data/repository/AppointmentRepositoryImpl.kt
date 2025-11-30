@@ -4,10 +4,12 @@ import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.dto.RescheduleAppointmentDto
 import com.example.nefrovida.domain.model.Appointment
+import com.example.nefrovida.domain.model.AppointmentsResult
+import com.example.nefrovida.domain.model.PatientAnalysis
 import com.example.nefrovida.domain.repository.AppointmentRepository
+import jakarta.inject.Inject
+import jakarta.inject.Singleton
 import retrofit2.Response
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
 class AppointmentRepositoryImpl
@@ -20,14 +22,24 @@ class AppointmentRepositoryImpl
             return response.map { it.toDomain() }
         }
 
-        override suspend fun getAppointmentListByDate(date: String): List<Appointment> {
-            val response = api.getAppointmentListByDate(date)
-            return response.map { it.toDomain() }
+        override suspend fun getAppointmentListByDate(
+            date: String,
+            userId: String,
+        ): AppointmentsResult {
+            val response = api.getAppointmentListByDate(date, userId)
+            return AppointmentsResult(
+                appointments = response.appointments.map { it.toDomain() },
+                analysis = response.analysis.map { it.toDomain() },
+            )
         }
 
         override suspend fun getAppointmentById(id: Int): Appointment = api.getAppointmentById(id).toDomain()
 
+        override suspend fun getAnalysisById(id: Int): PatientAnalysis = api.getAnalysisById(id).toDomain()
+
         override suspend fun cancelAppointmentById(id: Int): Response<Unit> = api.cancelAppointment(id)
+
+        override suspend fun cancelAnalysisById(id: Int): Response<Unit> = api.cancelAnalysis(id)
 
         override suspend fun getDateAvailability(
             appointmentName: String,
