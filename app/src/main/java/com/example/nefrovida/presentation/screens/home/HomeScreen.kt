@@ -30,11 +30,9 @@ fun HomeScreen(
                         .fillMaxSize()
                         .verticalScroll(rememberScrollState()),
             ) {
-
                 Spacer(modifier = Modifier.height(10.dp))
                 // Header with background image and logo
                 HeaderSection()
-
 
                 // Blue section with text and button
                 BlueSection(navController = navController)
@@ -46,10 +44,10 @@ fun HomeScreen(
                     title = "Misión",
                     description =
                         "Brindar atención y apoyo multidisciplinario en la prevención, " +
-                                "detección, control y tratamiento de personas con Enfermedad Renal Crónica, " +
-                                "con o sin tratamiento sustitutivo de función renal (hemodiálisis, " +
-                                "diálisis) y acompañamiento de protocolo de trasplante por medio de " +
-                                "programas y acciones que contribuyan a mejorar su calidad de vida.",
+                            "detección, control y tratamiento de personas con Enfermedad Renal Crónica, " +
+                            "con o sin tratamiento sustitutivo de función renal (hemodiálisis, " +
+                            "diálisis) y acompañamiento de protocolo de trasplante por medio de " +
+                            "programas y acciones que contribuyan a mejorar su calidad de vida.",
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -58,10 +56,10 @@ fun HomeScreen(
                     title = "Visión",
                     description =
                         "Ser una organización autosustentable que promueve la prevención " +
-                                "y detección oportuna en personas con factores de riesgo de la " +
-                                "Enfermedad Renal Crónica (ERC), que se encuentran en situación " +
-                                "vulnerable; con el fin de modificar positivamente la evolución " +
-                                "natural y así disminuir la letalidad de la ERC."
+                            "y detección oportuna en personas con factores de riesgo de la " +
+                            "Enfermedad Renal Crónica (ERC), que se encuentran en situación " +
+                            "vulnerable; con el fin de modificar positivamente la evolución " +
+                            "natural y así disminuir la letalidad de la ERC.",
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -70,26 +68,16 @@ fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-
                 // Contact section
                 EncuentranosSection()
 
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
-
             // Fixed social media icons box at bottom right
-            //SocialMediaBox(
+            // SocialMediaBox(
             //    modifier = Modifier.align(Alignment.BottomEnd),
-            //)
+            // )
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true)
-@Composable
-fun HomeScreenPreview() {
-    val navController = androidx.navigation.compose.rememberNavController()
-
-    HomeScreen(navController = navController)
 }
