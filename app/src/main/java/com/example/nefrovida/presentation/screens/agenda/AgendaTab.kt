@@ -9,14 +9,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.domain.model.AgendaItem
 import com.example.nefrovida.domain.model.AnalysisStatus
 import com.example.nefrovida.domain.model.Appointment
-import com.example.nefrovida.domain.model.AppointmentsResult
 import com.example.nefrovida.domain.model.PatientAnalysis
+import com.example.nefrovida.presentation.utils.formatDatePretty
+import com.example.nefrovida.presentation.utils.formatDatePretty2
 import com.example.nefrovida.ui.organisms.SimpleCard
 
 @Suppress("ktlint:standard:function-naming")
@@ -47,9 +47,22 @@ fun AgendaUnifiedList(
                         onClick = { onAppointmentClick(item.appointment) },
                         backgroundColor = backgroundColor,
                     ) {
-                        Text(item.appointment.name, style = MaterialTheme.typography.titleMedium)
-                        Text("Cita: ${item.appointment.appointmentName}")
-                        Text("Fecha: ${item.appointment.date}")
+                        Text("Doctor: ${item.appointment.name}", style = MaterialTheme.typography.titleMedium)
+                        Text("Cita: ${item.appointment.appointmentName}", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "Fecha y hora: ${formatDatePretty2(item.appointment.date, item.appointment.time)} ",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        when (item.appointment.status) {
+                            AppointmentStatus.PROGRAMMED ->
+                                Text("CONFIRMADA", style = MaterialTheme.typography.bodyMedium)
+
+                            AppointmentStatus.REQUESTED ->
+                                Text("POR CONFIRMAR", style = MaterialTheme.typography.bodyMedium)
+
+                            else ->
+                                Text("SIN ESTATUS", style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
 
@@ -67,8 +80,21 @@ fun AgendaUnifiedList(
                         backgroundColor = backgroundColor,
                     ) {
                         Text(item.analysis.analysisName, style = MaterialTheme.typography.titleMedium)
-                        Text("Lugar: ${item.analysis.place}")
-                        Text("Fecha: ${item.analysis.analysisDate}")
+                        Text("Lugar: ${item.analysis.place}", style = MaterialTheme.typography.bodyMedium)
+                        Text(
+                            "Fecha y hora: ${formatDatePretty(item.analysis.analysisDate)}",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        when (item.analysis.analysisStatus) {
+                            AnalysisStatus.PROGRAMMED ->
+                                Text("CONFIRMADA", style = MaterialTheme.typography.bodyMedium)
+
+                            AnalysisStatus.REQUESTED ->
+                                Text("POR CONFIRMAR", style = MaterialTheme.typography.bodyMedium)
+
+                            else ->
+                                Text("SIN ESTATUS", style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
             }
