@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.nefrovida.data.remote.api.AnalysisHistoryApi
 import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.api.AuthApiService
+import com.example.nefrovida.data.remote.api.CatalogApi
 import com.example.nefrovida.data.remote.api.ForumApiService
 import com.example.nefrovida.data.remote.api.RefreshAuthenticator
 import com.example.nefrovida.data.remote.api.ReportsApi
@@ -75,6 +76,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideForumRepository(api: ForumApiService): ForumRepository = ForumRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideCatalogApi(retrofit: Retrofit): CatalogApi = retrofit.create(CatalogApi::class.java)
 
     private fun createRetrofit(context: Context): Retrofit {
         // Create persistent cookie jar
