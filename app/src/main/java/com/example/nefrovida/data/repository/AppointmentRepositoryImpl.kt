@@ -2,7 +2,6 @@ package com.example.nefrovida.data.repository
 
 import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.AppointmentApi
-import com.example.nefrovida.data.remote.dto.AppointmentsResponse
 import com.example.nefrovida.domain.model.Appointment
 import com.example.nefrovida.domain.model.AppointmentsResult
 import com.example.nefrovida.domain.model.PatientAnalysis
@@ -38,5 +37,6 @@ class AppointmentRepositoryImpl
         override suspend fun getAnalysisById(id: Int): PatientAnalysis = api.getAnalysisById(id).toDomain()
 
         override suspend fun cancelAppointmentById(id: Int): Response<Unit> = api.cancelAppointment(id)
-        // override suspend fun cancelAnalysisById(id: Int): Response<Unit> = api.cancelAnalysis(id)
+
+        override suspend fun cancelAnalysisById(id: Int): Response<Unit> = api.cancelAnalysis(id)
     }

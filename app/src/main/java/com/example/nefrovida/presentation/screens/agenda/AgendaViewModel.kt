@@ -7,6 +7,7 @@ import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.model.AgendaItem
 import com.example.nefrovida.domain.repository.UserPreferencesRepository
+import com.example.nefrovida.domain.usecase.CancelAnalysisUseCase
 import com.example.nefrovida.domain.usecase.CancelAppointmentUseCase
 import com.example.nefrovida.domain.usecase.GetAnalysisUseCase
 import com.example.nefrovida.domain.usecase.GetAppointmentFilteredListUseCase
@@ -28,6 +29,7 @@ class AgendaViewModel
     constructor(
         private val getAppointmentUseCase: GetAppointmentUseCase,
         private val cancelAppointmentUseCase: CancelAppointmentUseCase,
+        private val cancelAnalysisUseCase: CancelAnalysisUseCase,
         private val getAppointmentFilteredListUseCase: GetAppointmentFilteredListUseCase,
         private val userPreferencesRepository: UserPreferencesRepository,
         private val getAnalysisUseCase: GetAnalysisUseCase,
@@ -173,6 +175,49 @@ class AgendaViewModel
                                     selectedAppointment =
                                         state.selectedAppointment?.copy(
                                             status = AppointmentStatus.CANCELED,
+                                        ),
+                                    isLoading = false,
+                                    error = null,
+                                    showCancelSuccess = true,
+                                )
+                            }
+                        }
+
+                        is Result.Error -> {
+                            _uiState.update { state ->
+                                state.copy(
+                                    error = result.exception.message,
+                                    isLoading = false,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        fun cancelAnalysis(id: Int) {
+            viewModelScope.launch {
+                cancelAnalysisUseCase(id).collect { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            _uiState.update { state ->
+                                state.copy(isLoading = true)
+                            }
+                        }
+
+                        is Result.Success -> {
+                            _uiState.value.selectedDate?.let { selected ->
+                                _userId.value?.let { userId ->
+                                    loadAgendaList(selected, userId)
+                                }
+                            }
+
+                            _uiState.update { state ->
+                                state.copy(
+                                    selectedAnalysis =
+                                        state.selectedAnalysis?.copy(
+                                            status = AnaysisStatus.CANCELED,
                                         ),
                                     isLoading = false,
                                     error = null,

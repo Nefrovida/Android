@@ -38,4 +38,9 @@ interface AppointmentApi {
     suspend fun cancelAppointment(
         @Path("id") id: Int,
     ): Response<Unit>
+
+    @POST("agenda/analysis/{id}/cancel")
+    suspend fun cancelAnalysis(
+        @Path("id") id: Int,
+    ): Response<Unit>
 }
