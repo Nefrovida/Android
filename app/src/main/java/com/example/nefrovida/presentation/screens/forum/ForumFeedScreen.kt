@@ -17,6 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.ui.organisms.ForumPostCard
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -24,31 +25,32 @@ import com.example.nefrovida.ui.organisms.ForumPostCard
 fun ForumFeedScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: ForumFeedViewModel = hiltViewModel()
+    viewModel: ForumFeedViewModel = hiltViewModel(),
 ) {
     val forumFeed by viewModel.forumFeed
     val isLoading by viewModel.isLoading
     val listState = rememberLazyListState()
 
     Scaffold(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .padding(horizontal = 16.dp)
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .padding(horizontal = 16.dp),
         ) {
             if (isLoading && forumFeed.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator()
                 }
             } else if (forumFeed.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text("Aún no hay mensajes o foros con mensajes", color = Color(0xFF000080)) // Azul marino
                 }
@@ -56,19 +58,30 @@ fun ForumFeedScreen(
                 LazyColumn(
                     state = listState,
                     verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(vertical = 16.dp)
+                    contentPadding = PaddingValues(vertical = 16.dp),
                 ) {
                     items(forumFeed) { post ->
-                        ForumPostCard(post = post)
+                        ForumPostCard(
+                            post = post,
+                            onClick = {
+                                navController.navigate(
+                                    Screen.Message.createRoute(
+                                        forumId = post.forum.forumId,
+                                        messageId = post.messageId,
+                                    ),
+                                )
+                            },
+                        )
                     }
 
                     if (isLoading) {
                         item {
                             Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                contentAlignment = Alignment.Center
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
+                                contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()
                             }

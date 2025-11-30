@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.*
-import androidx.compose.runtime.* 
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,7 +24,7 @@ import com.example.nefrovida.ui.organisms.ForumPostCard
 fun ForumScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: ForumViewModel = hiltViewModel()
+    viewModel: ForumViewModel = hiltViewModel(),
 ) {
     var selectedTabIndex by remember { mutableIntStateOf(0) }
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
@@ -32,27 +32,40 @@ fun ForumScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { TopAppBar(title = { Text("Foros") }) }
+        topBar = { TopAppBar(title = { Text("Foros") }) },
     ) { paddingValues ->
         Column(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize()
+            modifier =
+                Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize(),
         ) {
             TabRow(selectedTabIndex = selectedTabIndex) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
                         onClick = { selectedTabIndex = index },
-                        text = { Text(title, color = if (selectedTabIndex == index) MaterialTheme.colorScheme.onPrimaryContainer else navyBlue) },
+                        text = {
+                            Text(
+                                title,
+                                color =
+                                    if (selectedTabIndex ==
+                                        index
+                                    ) {
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    } else {
+                                        navyBlue
+                                    },
+                            )
+                        },
                         selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = navyBlue
+                        unselectedContentColor = navyBlue,
                     )
                 }
             }
 
             when (selectedTabIndex) {
-                0 -> DiscoverTabContent(viewModel = viewModel)
+                0 -> DiscoverTabContent(viewModel = viewModel, navController = navController)
                 1 -> MyForumsTabContent(viewModel = viewModel, navController = navController)
                 2 -> AllForumsTabContent(viewModel = viewModel, navController = navController)
             }
@@ -61,7 +74,10 @@ fun ForumScreen(
 }
 
 @Composable
-fun DiscoverTabContent(viewModel: ForumViewModel) {
+fun DiscoverTabContent(
+    viewModel: ForumViewModel,
+    navController: NavController,
+) {
     val discoverFeed by viewModel.discoverFeed.collectAsState()
     val isDiscoverLoading by viewModel.isDiscoverLoading
     val listState = rememberLazyListState()
@@ -72,14 +88,14 @@ fun DiscoverTabContent(viewModel: ForumViewModel) {
         if (isDiscoverLoading && discoverFeed.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
             }
         } else if (discoverFeed.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text("Aún no hay mensajes o foros con mensajes", color = Color(0xFF000080))
             }
@@ -87,18 +103,29 @@ fun DiscoverTabContent(viewModel: ForumViewModel) {
             LazyColumn(
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
             ) {
                 items(discoverFeed) { post ->
-                    ForumPostCard(post = post)
+                    ForumPostCard(
+                        post = post,
+                        onClick = {
+                            navController.navigate(
+                                Screen.Message.createRoute(
+                                    forumId = post.forum.forumId,
+                                    messageId = post.messageId,
+                                ),
+                            )
+                        },
+                    )
                 }
                 if (isDiscoverLoading) {
                     item {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                            contentAlignment = Alignment.Center,
                         ) {
                             CircularProgressIndicator()
                         }
@@ -109,9 +136,15 @@ fun DiscoverTabContent(viewModel: ForumViewModel) {
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }.
-        collect { lastVisibleItemIndex ->
-            if (lastVisibleItemIndex != null && lastVisibleItemIndex >= listState.layoutInfo.totalItemsCount - 1 - 2) { // Cargar antes de llegar al final
+        snapshotFlow {
+            listState.layoutInfo.visibleItemsInfo
+                .lastOrNull()
+                ?.index
+        }.collect { lastVisibleItemIndex ->
+            // Cargar antes de llegar al final
+            if (lastVisibleItemIndex != null &&
+                lastVisibleItemIndex >= listState.layoutInfo.totalItemsCount - 1 - 2
+            ) {
                 viewModel.loadDiscoverFeed()
             }
         }
@@ -119,7 +152,10 @@ fun DiscoverTabContent(viewModel: ForumViewModel) {
 }
 
 @Composable
-fun MyForumsTabContent(viewModel: ForumViewModel, navController: NavController) {
+fun MyForumsTabContent(
+    viewModel: ForumViewModel,
+    navController: NavController,
+) {
     val myForumsSearchQuery by viewModel.myForumsSearchQuery.collectAsState()
     val filteredMyForums by viewModel.filteredMyForums.collectAsState()
     val isMyForumsLoading by viewModel.isMyForumsLoading
@@ -130,27 +166,27 @@ fun MyForumsTabContent(viewModel: ForumViewModel, navController: NavController) 
             query = myForumsSearchQuery,
             onQueryChange = viewModel::onMyForumsSearchQueryChange,
             onSearch = viewModel::onSearch,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (isMyForumsLoading && filteredMyForums.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
             }
         } else if (filteredMyForums.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text("Aún no perteneces a ningún foro", color = Color(0xFF000080))
             }
         } else {
             LazyColumn(
                 contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 items(filteredMyForums) { simpleForumInfo ->
                     ForumListItem(simpleForumInfo = simpleForumInfo) {
@@ -163,7 +199,10 @@ fun MyForumsTabContent(viewModel: ForumViewModel, navController: NavController) 
 }
 
 @Composable
-fun AllForumsTabContent(viewModel: ForumViewModel, navController: NavController) {
+fun AllForumsTabContent(
+    viewModel: ForumViewModel,
+    navController: NavController,
+) {
     val allForumsSearchQuery by viewModel.allForumsSearchQuery.collectAsState()
     val filteredAllForums by viewModel.filteredAllForums.collectAsState()
     val isAllForumsLoading by viewModel.isAllForumsLoading
@@ -175,20 +214,20 @@ fun AllForumsTabContent(viewModel: ForumViewModel, navController: NavController)
             query = allForumsSearchQuery,
             onQueryChange = viewModel::onAllForumsSearchQueryChange,
             onSearch = viewModel::onSearch,
-            modifier = Modifier.padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp),
         )
         Spacer(modifier = Modifier.height(16.dp))
         if (isAllForumsLoading && filteredAllForums.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
             }
         } else if (filteredAllForums.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Text("Aún no hay foros", color = Color(0xFF000080))
             }
@@ -196,7 +235,7 @@ fun AllForumsTabContent(viewModel: ForumViewModel, navController: NavController)
             LazyColumn(
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp)
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
             ) {
                 items(filteredAllForums) { forumComplete ->
                     ForumAllListItem(forumComplete = forumComplete) {
@@ -207,10 +246,11 @@ fun AllForumsTabContent(viewModel: ForumViewModel, navController: NavController)
                 if (isAllForumsLoading) {
                     item {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            contentAlignment = Alignment.Center
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                            contentAlignment = Alignment.Center,
                         ) {
                             CircularProgressIndicator()
                         }
@@ -221,9 +261,15 @@ fun AllForumsTabContent(viewModel: ForumViewModel, navController: NavController)
     }
 
     LaunchedEffect(listState) {
-        snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }.
-        collect { lastVisibleItemIndex ->
-            if (lastVisibleItemIndex != null && lastVisibleItemIndex >= listState.layoutInfo.totalItemsCount - 1 - 2) { // Cargar antes de llegar al final
+        snapshotFlow {
+            listState.layoutInfo.visibleItemsInfo
+                .lastOrNull()
+                ?.index
+        }.collect { lastVisibleItemIndex ->
+            // Cargar antes de llegar al final
+            if (lastVisibleItemIndex != null &&
+                lastVisibleItemIndex >= listState.layoutInfo.totalItemsCount - 1 - 2
+            ) {
                 viewModel.loadAllForums()
             }
         }
@@ -235,18 +281,19 @@ fun AllForumsTabContent(viewModel: ForumViewModel, navController: NavController)
 fun ForumListItem(
     simpleForumInfo: SimpleForumInfo,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = MaterialTheme.shapes.medium
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick),
+        shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = simpleForumInfo.name,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
             )
         }
     }
@@ -257,13 +304,14 @@ fun ForumListItem(
 fun ForumAllListItem(
     forumComplete: ForumComplete,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
-        shape = MaterialTheme.shapes.medium
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick),
+        shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = forumComplete.name, style = MaterialTheme.typography.titleMedium)
