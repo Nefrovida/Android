@@ -3,6 +3,7 @@ package com.example.nefrovida.presentation.screens.home.components
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -16,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -23,6 +25,7 @@ import com.example.nefrovida.R
 import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.ui.theme.NavyBlue
 import com.example.nefrovida.ui.theme.White
+import com.example.nefrovida.ui.theme.DarkBlue
 
 @Composable
 fun HeaderSection() {
@@ -40,33 +43,7 @@ fun HeaderSection() {
             contentScale = ContentScale.Crop,
         )
 
-        // Logo and name overlay (to the left)
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .align(Alignment.BottomStart),
-            verticalAlignment = Alignment.Bottom,
-        ) {
-            Text(
-                text =
-                    buildAnnotatedString {
-                        withStyle(style = SpanStyle(color = Color.Blue)) {
-                            append("NEFR")
-                        }
-                        withStyle(style = SpanStyle(color = Color.Red)) {
-                            append("O")
-                        }
-                        withStyle(style = SpanStyle(color = Color.Green)) {
-                            append("Vida")
-                        }
-                    },
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color = White,
-            )
-        }
+
     }
 }
 
@@ -76,7 +53,7 @@ fun BlueSection(navController: NavController) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .background(NavyBlue)
+                .background(color = DarkBlue)
                 .padding(24.dp),
     ) {
         Column {
@@ -99,8 +76,8 @@ fun BlueSection(navController: NavController) {
                 Button(
                     onClick = {
                         navController.navigate(Screen.Catalog.route) {
-                            popUpTo(navController.graph.startDestinationId) { 
-                                saveState = true 
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
                             }
                             launchSingleTop = true
                             restoreState = true
@@ -124,6 +101,34 @@ fun BlueSection(navController: NavController) {
         }
     }
 }
+
+@Composable
+fun TextBox(title: String, description: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = title,
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Text(
+            text = description,
+            style = MaterialTheme.typography.bodyMedium,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(100.dp)
+                .wrapContentHeight(align = Alignment.CenterVertically)
+        )
+    }
+}
+
 
 @Composable
 fun SocialMediaBox(modifier: Modifier = Modifier) {
@@ -184,4 +189,3 @@ fun SocialMediaBox(modifier: Modifier = Modifier) {
         }
     }
 }
-
