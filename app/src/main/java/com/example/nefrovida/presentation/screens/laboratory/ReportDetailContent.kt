@@ -16,8 +16,12 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -25,11 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nefrovida.presentation.utils.formatDateToDDMMYYYY
 
+@Suppress("ktlint:standard:function-naming")
 @Composable
 fun ReportDetailContent(
     title: String,
     date: String,
     interpretation: String,
+    recommendation: String,
     onDownloadClick: () -> Unit,
     onBackClick: () -> Unit,
 ) {
@@ -96,7 +102,7 @@ fun ReportDetailContent(
                     .fillMaxWidth()
                     .padding(top = 12.dp)
                     .background(
-                        color = MaterialTheme.colorScheme.tertiary,
+                        color = MaterialTheme.colorScheme.primary,
                         RoundedCornerShape(10.dp),
                     ).padding(12.dp),
         ) {
@@ -108,6 +114,18 @@ fun ReportDetailContent(
 
             Text(
                 text = interpretation,
+                fontSize = 14.sp,
+                style = MaterialTheme.typography.bodySmall,
+            )
+
+            Text(
+                text = "Recomendaciones",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+
+            Text(
+                text = recommendation,
                 fontSize = 14.sp,
                 style = MaterialTheme.typography.bodySmall,
             )

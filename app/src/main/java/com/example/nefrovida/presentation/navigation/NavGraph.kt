@@ -140,9 +140,14 @@ fun NefrovidaNavGraph(
             arguments = listOf(navArgument("analysisId") { type = NavType.IntType }),
         ) { backStackEntry ->
             val analysisId = backStackEntry.arguments?.getInt("analysisId") ?: 0
-            AnalysisDetailScreen(
-                analysisId = analysisId,
+            // AnalysisDetailScreen(
+            //    analysisId = analysisId,
+            //    navController = navController,
+            // )
+            ReportDetailScreen(
                 navController = navController,
+                patientAnalysisId = analysisId,
+                onBackClick = { navController.popBackStack() },
             )
         }
 
