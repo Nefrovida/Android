@@ -45,6 +45,7 @@ fun AgendaScreen(
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    var showSecondConfirmDialog by remember { mutableStateOf(false) }
     val uiState by viewModel.uiState.collectAsState()
 
     val appointments = uiState.appointmentFilteredList?.appointments ?: emptyList()
@@ -169,8 +170,8 @@ fun AgendaScreen(
                                 confirmText = "Sí, cancelar",
                                 dismissText = "No",
                                 onConfirm = {
-                                    viewModel.cancelAppointment(appointment.id)
                                     showDialog = false
+                                    showSecondConfirmDialog = true
                                 },
                                 onDismiss = { showDialog = false },
                             )
@@ -208,8 +209,8 @@ fun AgendaScreen(
                                 confirmText = "Sí, cancelar",
                                 dismissText = "No",
                                 onConfirm = {
-                                    viewModel.cancelAnalysis(analysis.patientAnalysisId)
                                     showDialog = false
+                                    showSecondConfirmDialog = true
                                 },
                                 onDismiss = { showDialog = false },
                             )
@@ -217,6 +218,36 @@ fun AgendaScreen(
                     }
                     else -> {}
                 }
+            }
+            if (showSecondConfirmDialog) {
+                Dialog(
+                    title = "Confirmar cancelación",
+                    text = {
+                        Text("¿Estás seguro de que deseas cancelar esta cita?")
+                    },
+                    confirmText = "Sí",
+                    dismissText = "No",
+                    onConfirm = {
+                        when (val item = uiState.selectedItem) {
+                            is AgendaItem.AppointmentItem -> {
+                                uiState.selectedAppointment?.let {
+                                    viewModel.cancelAppointment(it.id)
+                                }
+                            }
+                            is AgendaItem.AnalysisItem -> {
+                                uiState.selectedAnalysis?.let {
+                                    viewModel.cancelAnalysis(it.patientAnalysisId)
+                                }
+                            }
+                            else -> {}
+                        }
+
+                        showSecondConfirmDialog = false
+                    },
+                    onDismiss = {
+                        showSecondConfirmDialog = false
+                    },
+                )
             }
         }
     }
