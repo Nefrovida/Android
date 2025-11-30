@@ -7,6 +7,7 @@ enum class AppointmentStatus {
     CANCELED,
     FINISHED,
     PROGRAMMED,
+    REQUESTED,
 }
 
 enum class AppointmentTypes {

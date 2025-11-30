@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Suppress("ktlint:standard:function-naming")
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 fun SimpleCard(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
+    backgroundColor: Color = MaterialTheme.colorScheme.surface,
     content: @Composable () -> Unit,
 ) {
     val clickableModifier =
@@ -31,7 +33,7 @@ fun SimpleCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface,
+                containerColor = backgroundColor,
                 contentColor = MaterialTheme.colorScheme.secondary,
             ),
     ) {
