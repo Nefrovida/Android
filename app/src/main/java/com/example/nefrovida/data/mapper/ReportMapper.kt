@@ -44,4 +44,6 @@ fun com.example.nefrovida.data.remote.dto.AnalysisStatus.toDomain(): AnalysisSta
         com.example.nefrovida.data.remote.dto.AnalysisStatus.PENDING -> AnalysisStatus.PENDING
         com.example.nefrovida.data.remote.dto.AnalysisStatus.SENT -> AnalysisStatus.SENT
         com.example.nefrovida.data.remote.dto.AnalysisStatus.REQUESTED -> AnalysisStatus.REQUESTED
+        com.example.nefrovida.data.remote.dto.AnalysisStatus.CANCELED -> AnalysisStatus.CANCELED
+        com.example.nefrovida.data.remote.dto.AnalysisStatus.PROGRAMMED -> AnalysisStatus.PROGRAMMED
     }

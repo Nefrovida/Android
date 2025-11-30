@@ -51,4 +51,6 @@ enum class AnalysisStatus {
     PENDING,
     SENT,
     REQUESTED,
+    CANCELED,
+    PROGRAMMED,
 }
