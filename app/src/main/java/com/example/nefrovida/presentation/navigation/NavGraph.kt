@@ -82,7 +82,7 @@ fun NefrovidaNavGraph(
         }
         composable(route = Screen.Catalog.route) {
             CatalogScreen(
-                Modifier = Modifier,
+                modifier = Modifier,
                 navController = navController,
             )
         }
