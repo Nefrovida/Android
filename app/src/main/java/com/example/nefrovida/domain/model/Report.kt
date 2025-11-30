@@ -6,25 +6,33 @@ data class Report(
     val date: String,
     val path: String,
     val interpretation: String,
-    val patientAnalysis: PatientAnalysis
+    val recommendation: String,
+    val patientAnalysis: PatientAnalysis,
 )
 
 data class PatientAnalysis(
+    val type: String?,
     val patientAnalysisId: Int,
+    val analysisName: String?,
     val analysisDate: String,
-    val resultsDate: String,
+    val resultsDate: String?,
     val place: String,
     val duration: Int,
     val analysisStatus: AnalysisStatus,
-    val analysis: Analysis
+    val analysis: Analysis?,
 )
 
 data class Analysis(
     val analysisId: Int,
     val name: String,
-    val description: String
+    val description: String,
 )
 
 enum class AnalysisStatus {
-    LAB, PENDING, SENT, REQUESTED
+    LAB,
+    PENDING,
+    SENT,
+    REQUESTED,
+    CANCELED,
+    PROGRAMMED,
 }

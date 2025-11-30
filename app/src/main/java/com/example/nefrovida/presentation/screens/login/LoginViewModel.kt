@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.data.repository.AuthRepositoryImpl
 import com.example.nefrovida.di.NetworkModule
 import com.example.nefrovida.domain.repository.Result
+import com.example.nefrovida.domain.repository.UserPreferencesRepository
 import com.example.nefrovida.domain.usecase.LoginUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +19,8 @@ class LoginViewModel(
 ) : AndroidViewModel(application) {
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+    private val userPreferencesRepository =
+        UserPreferencesRepository(application.applicationContext)
 
     // Initialize dependencies
     private val authApiService = NetworkModule.provideAuthApiService(application)
@@ -43,7 +46,6 @@ class LoginViewModel(
 
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
-
             try {
                 val result =
                     loginUseCase(
@@ -53,10 +55,12 @@ class LoginViewModel(
 
                 when (result) {
                     is Result.Success -> {
+                        userPreferencesRepository.saveUserId(result.data.id)
                         _uiState.update {
                             it.copy(
                                 isLoading = false,
                                 loginSuccess = true,
+                                user = result.data,
                             )
                         }
                     }

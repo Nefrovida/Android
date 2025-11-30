@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.presentation.screens.home.components.*
 
+@Suppress("ktlint:standard:function-naming")
 @Composable
 fun HomeScreen(
     navController: NavController,

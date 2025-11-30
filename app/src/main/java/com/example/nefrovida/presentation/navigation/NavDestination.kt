@@ -27,9 +27,9 @@ sealed class NavDestination(
 
     object Lab : NavDestination(
         route = "labs",
-        label = "Análisis",
-        icon = Icons.Outlined.Science,
-        filledIcon = Icons.Filled.Science,
+        label = "Resultados",
+        icon = Icons.Outlined.Description,
+        filledIcon = Icons.Filled.Description,
     )
 
     object Forum : NavDestination(

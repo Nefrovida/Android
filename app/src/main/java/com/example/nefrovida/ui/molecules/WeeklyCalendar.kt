@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nefrovida.ui.atoms.DayItem
@@ -67,9 +68,13 @@ fun WeeklyCalendarView(
     val visibleMonth by derivedStateOf {
         val days = calendarState.firstVisibleWeek.days
         val middleDay = days[days.size / 2].date
+
         val monthName =
-            middleDay.month.getDisplayName(TextStyle.FULL, Locale("es", "ES"))
-        monthName.replaceFirstChar { it.uppercase(Locale.getDefault()) }
+            middleDay.month
+                .getDisplayName(TextStyle.FULL, Locale("es", "ES"))
+                .replaceFirstChar { it.uppercase() }
+
+        "$monthName ${middleDay.year}"
     }
 
     Column(
@@ -80,14 +85,14 @@ fun WeeklyCalendarView(
                 Modifier
                     .fillMaxWidth()
                     .padding(start = 8.dp, end = 16.dp, bottom = 8.dp),
-            horizontalArrangement = Arrangement.End,
+            horizontalArrangement = Arrangement.Center,
         ) {
             Text(
                 text = visibleMonth,
                 style =
-                    MaterialTheme.typography.titleMedium.copy(
+                    MaterialTheme.typography.titleLarge.copy(
                         fontWeight = FontWeight.Normal,
-                        fontSize = 18.sp,
+                        fontSize = 28.sp,
                     ),
                 color = MaterialTheme.colorScheme.onSurface,
             )

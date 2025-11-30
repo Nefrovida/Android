@@ -8,6 +8,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.example.nefrovida.ui.theme.NavyBlue
+import com.example.nefrovida.ui.theme.TextGray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,6 +54,12 @@ fun TimePickerDialog(
                             Modifier
                                 .fillMaxWidth()
                                 .menuAnchor(),
+                        colors =
+                            OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = NavyBlue,
+                                unfocusedBorderColor = TextGray,
+                                focusedLabelColor = NavyBlue,
+                            ),
                     )
 
                     ExposedDropdownMenu(
@@ -77,16 +85,28 @@ fun TimePickerDialog(
                     horizontalArrangement = Arrangement.End,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    TextButton(onClick = onDismiss) {
+                    TextButton(
+                        onClick = onDismiss,
+                        colors =
+                            ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.secondary,
+                            ),
+                    ) {
                         Text("Cancelar")
                     }
 
-                    TextButton(onClick = {
-                        if (selectedTime.isNotEmpty()) {
-                            onTimeSelected(selectedTime)
-                        }
-                        onDismiss()
-                    }) {
+                    TextButton(
+                        onClick = {
+                            if (selectedTime.isNotEmpty()) {
+                                onTimeSelected(selectedTime)
+                            }
+                            onDismiss()
+                        },
+                        colors =
+                            ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.secondary,
+                            ),
+                    ) {
                         Text("Aceptar")
                     }
                 }

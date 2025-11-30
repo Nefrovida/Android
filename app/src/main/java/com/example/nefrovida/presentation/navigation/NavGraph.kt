@@ -10,7 +10,9 @@ import com.example.nefrovida.presentation.screens.NotificationsScreen
 import com.example.nefrovida.presentation.screens.agenda.AgendaScreen
 import com.example.nefrovida.presentation.screens.catalog.CatalogScreen
 import com.example.nefrovida.presentation.screens.forum.ForumFeedScreen
+import com.example.nefrovida.presentation.screens.forum.ForumMessageScreen
 import com.example.nefrovida.presentation.screens.forum.ForumScreen
+import com.example.nefrovida.presentation.screens.forum.ParentMessageInfo
 import com.example.nefrovida.presentation.screens.home.HomeScreen
 import com.example.nefrovida.presentation.screens.laboratory.AnalysisDetailScreen
 import com.example.nefrovida.presentation.screens.laboratory.AnalysisHistoryScreen
@@ -45,6 +47,13 @@ sealed class Screen(
 
     object ForumFeed : Screen("forumFeed/{forumId}") {
         fun createRoute(forumId: Int) = "forumFeed/$forumId"
+    }
+
+    object Message : Screen("message/{forumId}/{messageId}") {
+        fun createRoute(
+            forumId: Int,
+            messageId: Int,
+        ) = "message/$forumId/$messageId"
     }
 
     object Notifications : Screen("notifications")
@@ -106,6 +115,27 @@ fun NefrovidaNavGraph(
                 navController = navController,
             )
         }
+        composable(
+            route = Screen.Message.route,
+            arguments =
+                listOf(
+                    navArgument("messageId") { type = NavType.IntType },
+                    navArgument("forumId") { type = NavType.IntType },
+                ),
+        ) { backStackEntry ->
+            val messageId = backStackEntry.arguments?.getInt("messageId")
+            val forumId = backStackEntry.arguments?.getInt("forumId")
+            ForumMessageScreen(
+                navController = navController,
+                pMI =
+                    ParentMessageInfo(
+                        forumId = forumId ?: 0,
+                        messageId = messageId ?: 0,
+                        page = 0,
+                        limit = 10,
+                    ),
+            )
+        }
         composable(route = Screen.Agenda.route) {
             AgendaScreen(
                 navController = navController,
@@ -120,9 +150,14 @@ fun NefrovidaNavGraph(
             arguments = listOf(navArgument("analysisId") { type = NavType.IntType }),
         ) { backStackEntry ->
             val analysisId = backStackEntry.arguments?.getInt("analysisId") ?: 0
-            AnalysisDetailScreen(
-                analysisId = analysisId,
+            // AnalysisDetailScreen(
+            //    analysisId = analysisId,
+            //    navController = navController,
+            // )
+            ReportDetailScreen(
                 navController = navController,
+                patientAnalysisId = analysisId,
+                onBackClick = { navController.popBackStack() },
             )
         }
 
