@@ -21,8 +21,8 @@ sealed class NavDestination(
     object Catalog : NavDestination(
         route = "catalog",
         label = "Catalogo",
-        icon = Icons.Outlined.MedicalServices,
-        filledIcon = Icons.Filled.MedicalServices,
+        icon = Icons.Outlined.GridView,
+        filledIcon = Icons.Filled.GridView,
     )
 
     object Lab : NavDestination(

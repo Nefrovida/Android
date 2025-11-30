@@ -1,5 +1,7 @@
 package com.example.nefrovida.presentation.screens.catalog
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,20 +31,25 @@ fun CatalogScreen(
     val analysisList = uiState.analysisList
 
     if (showCatalog) {
-        CatalogToggle(
-            selectedList = uiState.selectedList ?: "Consultas",
-            onTypeChange = { viewModel.updateSelectedList(it) },
-            modifier = modifier,
-        )
+        Column(
+            modifier = modifier.fillMaxSize()
+        ) {
+            CatalogToggle(
+                selectedList = uiState.selectedList ?: "Consultas",
+                onTypeChange = { viewModel.updateSelectedList(it) },
+                modifier = Modifier,
+            )
 
-        Catalog(
-            catalogList = if (selectedList == "Consultas") consultasList else analysisList,
-            onCardClick = { catalogItem ->
-                showDialog = true
-                showCatalog = false
-                viewModel.updateSelectedCatalogItem(catalogItem)
-            },
-        )
+            Catalog(
+                catalogList = if (selectedList == "Consultas") consultasList else analysisList,
+                onCardClick = { catalogItem ->
+                    showDialog = true
+                    showCatalog = false
+                    viewModel.updateSelectedCatalogItem(catalogItem)
+                },
+                modifier = Modifier.weight(1f),
+            )
+        }
     }
 
     if (showDialog) {
