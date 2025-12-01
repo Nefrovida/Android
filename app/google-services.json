@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1000573501582",
+    "project_id": "nefrovida-f25f3",
+    "storage_bucket": "nefrovida-f25f3.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1000573501582:android:53c0d8d758c7e2b5e409df",
+        "android_client_info": {
+          "package_name": "com.example.nefrovida"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBprdpBrkDidU8RMdnNgUDk48kR-tBFwsk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
