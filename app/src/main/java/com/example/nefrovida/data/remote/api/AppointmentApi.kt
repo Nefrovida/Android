@@ -2,6 +2,7 @@ package com.example.nefrovida.data.remote.api
 
 import com.example.nefrovida.data.remote.dto.AppointmentDto
 import com.example.nefrovida.data.remote.dto.AppointmentListDto
+import com.example.nefrovida.data.remote.dto.AppointmentNotesDto
 import com.example.nefrovida.data.remote.dto.AppointmentsResponse
 import com.example.nefrovida.data.remote.dto.PatientAnalysisDetail
 import com.example.nefrovida.data.remote.dto.RescheduleAppointmentDto
@@ -15,6 +16,9 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface AppointmentApi {
+    @GET("appointments/patient/get-notes")
+    suspend fun getNotes(): List<AppointmentNotesDto>
+
     @GET("secretary-agenda")
     suspend fun getAppointmentList(
         @Query("limit") limit: Int = 20,
