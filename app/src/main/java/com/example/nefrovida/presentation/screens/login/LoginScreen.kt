@@ -39,12 +39,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nefrovida.R
 import com.example.nefrovida.ui.theme.*
 
+@Suppress("ktlint:standard:function-naming")
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel(),
     onNavigateToRegister: () -> Unit = {},
     onNavigateToForgotPassword: () -> Unit = {},
-    onLoginSuccess: () -> Unit = {},
+    onLoginSuccess: (String) -> Unit = {},
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -52,7 +53,9 @@ fun LoginScreen(
     // Navigate on successful login
     LaunchedEffect(uiState.loginSuccess) {
         if (uiState.loginSuccess) {
-            onLoginSuccess()
+            uiState.user?.let { user ->
+                onLoginSuccess(user.id)
+            }
         }
     }
 

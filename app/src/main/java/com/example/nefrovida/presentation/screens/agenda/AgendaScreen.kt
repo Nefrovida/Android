@@ -1,11 +1,13 @@
 package com.example.nefrovida.presentation.screens.agenda
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -26,8 +28,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.data.remote.dto.AppointmentTypes
-import com.example.nefrovida.presentation.screens.home.components.AgendaList
+import com.example.nefrovida.domain.model.AgendaItem
+import com.example.nefrovida.domain.model.AnalysisStatus
+import com.example.nefrovida.presentation.utils.formatDatePretty
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 import com.example.nefrovida.ui.molecules.DatePickerDialog
 import com.example.nefrovida.ui.molecules.Dialog
@@ -45,13 +50,20 @@ fun AgendaScreen(
     viewModel: AgendaViewModel = hiltViewModel(),
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    var showSecondConfirmDialog by remember { mutableStateOf(false) }
     var showAgendaList by remember { mutableStateOf(true) }
     var showReschedulePrompt by remember { mutableStateOf(false) }
     var showRescheduleForm by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     val uiState by viewModel.uiState.collectAsState()
-    val appointments = uiState.appointmentFilteredList
+
+    val appointments = uiState.appointmentFilteredList?.appointments ?: emptyList()
+    val analysis = uiState.appointmentFilteredList?.analysis ?: emptyList()
+    val unifiedList: List<AgendaItem> =
+        appointments.map { AgendaItem.AppointmentItem(it) } +
+            analysis.map { AgendaItem.AnalysisItem(it) }
+
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
 
@@ -84,93 +96,187 @@ fun AgendaScreen(
                     .fillMaxSize()
                     .padding(),
         ) {
+            val scope = rememberCoroutineScope()
+            val userId by viewModel.userId.collectAsState()
+
             WeeklyCalendarView(
                 selectedDate = selectedDate,
                 onDateSelected = { date ->
                     selectedDate = date
                     val formattedDate = date.toString()
-                    viewModel.loadAgendaList(formattedDate)
+
+                    if (userId.isNotEmpty()) {
+                        scope.launch {
+                            viewModel.loadAgendaList(formattedDate, userId)
+                        }
+                    }
                 },
                 modifier = Modifier.padding(8.dp),
             )
 
-            if (showAgendaList) {
-                if (appointments.isNullOrEmpty()) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = "No hay citas para este día.",
-                            modifier = Modifier.padding(16.dp),
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                        )
-                    }
-                } else {
-                    AgendaList(
-                        appointmentList = appointments,
-                        onCardClick = { appointment ->
-                            viewModel.getAppointment(appointment.id)
-                            showDialog = true
-                        },
+            if (unifiedList.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = "No hay citas ni análisis para este día.",
+                        modifier = Modifier.padding(16.dp),
+                        fontSize = 14.sp,
+                        color = Color.Gray,
                     )
                 }
+            } else {
+                AgendaUnifiedList(
+                    items = unifiedList,
+                    onAppointmentClick = { appointment ->
+                        viewModel.getAppointment(appointment.id)
+                        viewModel.selectItem(AgendaItem.AppointmentItem(appointment))
+                        showDialog = true
+                    },
+                    onAnalysisClick = { analysis ->
+                        viewModel.getAnalysis(analysis.patientAnalysisId)
+                        viewModel.selectItem(AgendaItem.AnalysisItem(analysis))
+                        showDialog = true
+                    },
+                )
             }
 
             if (showDialog) {
-                uiState.selectedAppointment?.let { appointment ->
+                when (val item = uiState.selectedItem) {
+                    is AgendaItem.AppointmentItem -> {
+                        uiState.selectedAppointment?.let { appointment ->
 
-                    val placeOrLink =
-                        when (appointment.type) {
-                            AppointmentTypes.VIRTUAL -> {
-                                val link = appointment.link
-                                if (!link.isNullOrBlank()) "Link: $link" else ""
+                            val placeOrLink =
+                                when (appointment.appointmentType) {
+                                    AppointmentTypes.VIRTUAL ->
+                                        appointment.link?.let { "Link: $it" }.orEmpty()
+
+                                    AppointmentTypes.PRESENCIAL ->
+                                        appointment.place?.let { "Lugar: $it" }.orEmpty()
+
+                                    else -> ""
+                                }
+                            val status =
+                                when (appointment.status) {
+                                    AppointmentStatus.REQUESTED ->
+                                        appointment.status?.let { "POR CONFIRMAR" }.orEmpty()
+
+                                    AppointmentStatus.PROGRAMMED ->
+                                        appointment.status?.let { "CONFIRMADA" }.orEmpty()
+
+                                    else -> ""
+                                }
+
+                            Dialog(
+                                title = "Doctor: ${appointment.name}",
+                                text = {
+                                    Text(
+                                        "${appointment.appointmentName}",
+                                        style = MaterialTheme.typography.titleMedium,
+                                    )
+                                    Text("Fecha: ${appointment.date}")
+                                    Text("Hora: ${appointment.time}")
+                                    Text("Tipo: ${appointment.appointmentType}")
+                                    Text(placeOrLink)
+                                    Text(status)
+                                    Spacer(Modifier.height(12.dp))
+                                    Text(
+                                        "¿Desea cancelar la cita?",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                },
+                                confirmText = "Sí, cancelar",
+                                dismissText = "No",
+                                onConfirm = {
+                                    showDialog = false
+                                    showSecondConfirmDialog = true
+                                },
+                                onDismiss = { showDialog = false },
+                            )
+                        }
+                    }
+
+                    is AgendaItem.AnalysisItem -> {
+                        uiState.selectedAnalysis?.let { analysis ->
+                            val status =
+                                when (analysis.analysisStatus) {
+                                    AnalysisStatus.REQUESTED ->
+                                        analysis.analysisStatus?.let { "POR CONFIRMAR" }.orEmpty()
+
+                                    AnalysisStatus.PROGRAMMED ->
+                                        analysis.analysisStatus?.let { "CONFIRMADA" }.orEmpty()
+
+                                    else -> ""
+                                }
+                            val prettyDate = formatDatePretty(analysis.analysisDate)
+                            Dialog(
+                                title = "Análisis: ${analysis.analysisName}",
+                                text = {
+                                    Text("Fecha y hora: $prettyDate")
+                                    Text("Lugar: ${analysis.place}")
+                                    Text("$status")
+                                    Text(
+                                        "¿Desea cancelar la cita?",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                },
+                                confirmText = "Sí, cancelar",
+                                dismissText = "No",
+                                onConfirm = {
+                                    showDialog = false
+                                    showSecondConfirmDialog = true
+                                },
+                                onDismiss = { showDialog = false },
+                            )
+                        }
+                    }
+                    else -> {}
+                }
+            }
+            if (showSecondConfirmDialog) {
+                Dialog(
+                    title = "Confirmar cancelación",
+                    text = {
+                        Text("¿Estás seguro de que deseas cancelar esta cita?")
+                    },
+                    confirmText = "Sí",
+                    dismissText = "No",
+                    onConfirm = {
+                        when (val item = uiState.selectedItem) {
+                            is AgendaItem.AppointmentItem -> {
+                                uiState.selectedAppointment?.let {
+                                    viewModel.cancelAppointment(it.id)
+                                }
                             }
-                            AppointmentTypes.PRESENCIAL -> {
-                                val place = appointment.place
-                                if (!place.isNullOrBlank()) "Lugar: $place" else ""
+                            is AgendaItem.AnalysisItem -> {
+                                uiState.selectedAnalysis?.let {
+                                    viewModel.cancelAnalysis(it.patientAnalysisId)
+                                }
                             }
-                            else -> ""
+                            else -> {}
                         }
 
-                    Dialog(
-                        title = "Doctor: ${appointment.name}",
-                        text =
-                            """
-                            ${appointment.appointmentName}
-                            Fecha: ${appointment.date}
-                            Hora: ${appointment.time}
-                            Tipo: ${appointment.type}
-                            $placeOrLink
-                            
-                            ¿Desea cancelar la cita?
-                            """.trimIndent(),
-                        confirmText = "Sí, cancelar",
-                        dismissText = "No",
-                        onConfirm = {
-                            viewModel.cancelAppointment(appointment.id)
-                            showDialog = false
-                            showReschedulePrompt = true
-                        },
-                        onDismiss = { showDialog = false },
-                    )
-                }
+                        showSecondConfirmDialog = false
+                        showReschedulePrompt = true
+                    },
+                    onDismiss = {
+                        showSecondConfirmDialog = false
+                    },
+                )
             }
             if (showDatePicker) {
                 DatePickerDialog(
                     onDismiss = { showDatePicker = false },
                     onDateSelected = { date ->
-                        viewModel.loadAgendaList(date)
+                        viewModel.loadAgendaList(date, userId)
                     },
                 )
             }
             if (showReschedulePrompt) {
                 Dialog(
                     title = "Cita cancelada con exito",
-                    text = "¿Deseas reagendar la cita?",
+                    text = { Text("¿Deseas reagendar la cita?") },
                     confirmText = "Sí",
                     dismissText = "No",
                     onConfirm = {

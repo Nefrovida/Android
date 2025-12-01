@@ -21,13 +21,15 @@ fun ResultResponse.toDomain() =
 
 fun PatientAnalysisDetail.toDomain() =
     PatientAnalysis(
+        type,
         patientAnalysisId,
+        analysisName,
         analysisDate,
         resultsDate,
         place,
         duration,
         analysisStatus.toDomain(),
-        analysis.toDomain(),
+        analysis?.toDomain(),
     )
 
 fun AnalysisInfo.toDomain() =
@@ -43,4 +45,6 @@ fun com.example.nefrovida.data.remote.dto.AnalysisStatus.toDomain(): AnalysisSta
         com.example.nefrovida.data.remote.dto.AnalysisStatus.PENDING -> AnalysisStatus.PENDING
         com.example.nefrovida.data.remote.dto.AnalysisStatus.SENT -> AnalysisStatus.SENT
         com.example.nefrovida.data.remote.dto.AnalysisStatus.REQUESTED -> AnalysisStatus.REQUESTED
+        com.example.nefrovida.data.remote.dto.AnalysisStatus.CANCELED -> AnalysisStatus.CANCELED
+        com.example.nefrovida.data.remote.dto.AnalysisStatus.PROGRAMMED -> AnalysisStatus.PROGRAMMED
     }

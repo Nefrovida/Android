@@ -11,13 +11,15 @@ data class Report(
 )
 
 data class PatientAnalysis(
+    val type: String?,
     val patientAnalysisId: Int,
+    val analysisName: String?,
     val analysisDate: String,
-    val resultsDate: String,
+    val resultsDate: String?,
     val place: String,
     val duration: Int,
     val analysisStatus: AnalysisStatus,
-    val analysis: Analysis,
+    val analysis: Analysis?,
 )
 
 data class Analysis(
@@ -31,4 +33,6 @@ enum class AnalysisStatus {
     PENDING,
     SENT,
     REQUESTED,
+    CANCELED,
+    PROGRAMMED,
 }

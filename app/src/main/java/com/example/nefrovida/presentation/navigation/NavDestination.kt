@@ -18,6 +18,13 @@ sealed class NavDestination(
         filledIcon = Icons.Filled.Home,
     )
 
+    object Catalog : NavDestination(
+        route = "catalog",
+        label = "Catalogo",
+        icon = Icons.Outlined.GridView,
+        filledIcon = Icons.Filled.GridView,
+    )
+
     object Lab : NavDestination(
         route = "labs",
         label = "Resultados",
@@ -55,7 +62,7 @@ sealed class NavDestination(
     )
 
     companion object {
-        val bottomNavItems = listOf(Home, Lab, Forum, Agenda)
+        val bottomNavItems = listOf(Home, Catalog, Lab, Forum, Agenda)
         val topNavItems = listOf(Notifications)
     }
 }

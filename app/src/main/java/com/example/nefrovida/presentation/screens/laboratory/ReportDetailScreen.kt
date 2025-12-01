@@ -96,7 +96,7 @@ fun ReportDetailScreen(
                 }
 
                 ReportDetailContent(
-                    title = report.patientAnalysis.analysis.name,
+                    title = report.patientAnalysis.analysis?.name ?: "Sin nombre",
                     date = report.date,
                     interpretation = report.interpretation,
                     recommendation = report.recommendation,

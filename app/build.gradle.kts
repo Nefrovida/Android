@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.runtime)
+    implementation(libs.androidx.compose.ui.text)
     kapt(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -89,4 +90,7 @@ dependencies {
 
     // Calendar library
     implementation("com.kizitonwose.calendar:compose:2.9.0")
+
+    // data store
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }
