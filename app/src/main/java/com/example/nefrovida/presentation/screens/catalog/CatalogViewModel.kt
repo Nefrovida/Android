@@ -1,10 +1,13 @@
 package com.example.nefrovida.presentation.screens.catalog
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.repository.UserPreferencesRepository
 import com.example.nefrovida.domain.usecase.CreateAnalysisAppointmentUseCase
 import com.example.nefrovida.domain.usecase.CreateAppointmentUseCase
+import com.example.nefrovida.domain.usecase.GetCatalogDateAvailabilityUseCase
 import com.example.nefrovida.domain.usecase.GetCatalogListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +22,7 @@ class CatalogViewModel
         private val getCatalogListUseCase: GetCatalogListUseCase,
         private val createAppointmentUseCase: CreateAppointmentUseCase,
         private val createAnalysisAppointmentUseCase: CreateAnalysisAppointmentUseCase,
+        private val getCatalogDateAvailabilityUseCase: GetCatalogDateAvailabilityUseCase,
         private val userPreferencesRepository: UserPreferencesRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(CatalogUIState())
@@ -63,14 +67,14 @@ class CatalogViewModel
             place: String,
             dateHour: String,
             duration: Int,
-            doctorId: Int,
+            doctorName: String,
         ) {
             viewModelScope.launch {
                 try {
                     val success =
                         createAppointmentUseCase(
                             patientId = _userId.value,
-                            doctorId = doctorId,
+                            doctorName = doctorName,
                             dateHour = dateHour,
                             duration = duration,
                             appointmentType = appointmentType,
@@ -89,6 +93,31 @@ class CatalogViewModel
                         )
                 }
             }
+        }
+
+        suspend fun getDateAvailability(
+            doctorName: String,
+            date: String,
+        ): List<String> {
+            var result: List<String> = emptyList()
+
+            getCatalogDateAvailabilityUseCase(doctorName, date).collect { state ->
+                when (state) {
+                    is Result.Loading -> {
+                        Log.d("CatalogVM", "Get Availability is loading")
+                    }
+                    is Result.Success -> {
+                        Log.d("CatalogVM", "Get Availability List is successful: ${state.data}")
+                        result = state.data
+                    }
+                    is Result.Error -> {
+                        Log.e("CatalogVM", "Get Availability error: ${state.exception.message}")
+                        result = emptyList()
+                    }
+                }
+            }
+
+            return result
         }
 
         fun createAnalysisAppointment(

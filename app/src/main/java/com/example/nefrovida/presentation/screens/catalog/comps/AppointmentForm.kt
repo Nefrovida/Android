@@ -1,5 +1,6 @@
 package com.example.nefrovida.presentation.screens.catalog.comps
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,24 +11,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.data.remote.dto.ServiceItemDto
+import com.example.nefrovida.presentation.screens.catalog.CatalogViewModel
+import com.example.nefrovida.presentation.utils.checkValidDate
 import com.example.nefrovida.ui.molecules.DatePickerDialog
 import com.example.nefrovida.ui.molecules.ReusableIntDropdown
 import com.example.nefrovida.ui.molecules.ReusableStringDropdown
 import com.example.nefrovida.ui.theme.NavyBlue
 import com.example.nefrovida.ui.theme.TextGray
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppointmentForm(
     appointment: ServiceItemDto,
+    viewModel: CatalogViewModel,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
-    onSubmit: (String, String, String, Int, Int) -> Unit,
+    onSubmit: (String, String, String, Int, String) -> Unit,
 ) {
     val appointmentTypes = listOf("Presencial", "En Línea")
     val places = listOf("Consultorio 01", "Consultorio 02", "Sala Virtual")
@@ -38,13 +44,16 @@ fun AppointmentForm(
     var date by remember { mutableStateOf("") }
     var time by remember { mutableStateOf<String?>(null) }
     var duration by remember { mutableStateOf<Int?>(30) }
-    val doctorId = appointment.id
+    val doctorName = appointment.doctor ?: ""
 
     var typeExpanded by remember { mutableStateOf(false) }
     var placeExpanded by remember { mutableStateOf(false) }
     var timeExpanded by remember { mutableStateOf(false) }
     var durationExpanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
+    var availability by remember { mutableStateOf<List<String>>(emptyList()) }
 
     // Validation: all fields must be filled
     val readyToSubmit =
@@ -58,32 +67,6 @@ fun AppointmentForm(
         } else {
             ""
         }
-
-    // Available time slots
-    val timeSlots =
-        listOf(
-            "08:00",
-            "08:30",
-            "09:00",
-            "09:30",
-            "10:00",
-            "10:30",
-            "11:00",
-            "11:30",
-            "12:00",
-            "12:30",
-            "13:00",
-            "13:30",
-            "14:00",
-            "14:30",
-            "15:00",
-            "15:30",
-            "16:00",
-            "16:30",
-            "17:00",
-            "17:30",
-            "18:00",
-        )
 
     Card(
         modifier =
@@ -173,10 +156,11 @@ fun AppointmentForm(
                 ReusableStringDropdown(
                     label = "Hora",
                     selectedValue = time,
-                    options = timeSlots,
+                    options = availability,
                     expanded = timeExpanded,
                     onExpandedChange = { timeExpanded = it },
                     onValueSelected = { time = it },
+                    placeholder = if (date.isBlank()) "Seleccione fecha" else if (availability.isEmpty()) "Sin horarios" else "Seleccionar",
                     modifier = Modifier.weight(1f),
                 )
 
@@ -210,7 +194,7 @@ fun AppointmentForm(
                     onClick = {
                         if (appointmentType != null && place != null && time != null && duration != null) {
                             val dateTimeString = createDateTimeString()
-                            onSubmit(appointmentType!!, place!!, dateTimeString, duration!!, doctorId)
+                            onSubmit(appointmentType!!, place!!, dateTimeString, duration!!, doctorName)
                         }
                     },
                     modifier = Modifier.weight(1f),
@@ -233,8 +217,28 @@ fun AppointmentForm(
     if (showDatePicker) {
         DatePickerDialog(
             onDismiss = { showDatePicker = false },
-            onDateSelected = { selectedDate ->
-                date = selectedDate
+            onDateSelected = { pickedDate ->
+                Log.d("AppointmentForm", "Date selected: $pickedDate")
+                if (checkValidDate(pickedDate)) {
+                    Log.d("AppointmentForm", "Date is valid, fetching availability")
+                    date = pickedDate
+                    time = null // Reset time when date changes
+                    showDatePicker = false
+
+                    // Fetch availability for the selected date
+                    scope.launch {
+                        availability =
+                            try {
+                                viewModel.getDateAvailability(doctorName, pickedDate)
+                            } catch (e: Exception) {
+                                Log.e("AppointmentForm", "Error fetching availability: ${e.message}")
+                                emptyList()
+                            }
+                    }
+                } else {
+                    Log.w("AppointmentForm", "Selected date is invalid")
+                    // TODO: Show snackbar for invalid date
+                }
             },
         )
     }

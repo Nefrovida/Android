@@ -137,18 +137,19 @@ fun CatalogScreen(
                                 selectedItem?.let { appointment ->
                                     AppointmentForm(
                                         appointment = appointment,
+                                        viewModel = viewModel,
                                         modifier = Modifier,
                                         onDismiss = {
                                             selectedItem = null
                                             currentView = CatalogViewType.APPOINTMENTS
                                         },
-                                        onSubmit = { type, place, dateHour, duration, doctorId ->
+                                        onSubmit = { type, place, dateHour, duration, doctorName ->
                                             viewModel.createAppointment(
                                                 appointmentType = type,
                                                 place = place,
                                                 dateHour = dateHour,
                                                 duration = duration,
-                                                doctorId = doctorId
+                                                doctorName = doctorName
                                             )
                                             selectedItem = null
                                             currentView = CatalogViewType.APPOINTMENTS

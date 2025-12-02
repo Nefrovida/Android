@@ -5,9 +5,11 @@ import com.example.nefrovida.data.remote.dto.CreateAnalysisAppointmentResponse
 import com.example.nefrovida.data.remote.dto.CreateAppointmentRequest
 import com.example.nefrovida.data.remote.dto.CreateAppointmentResponse
 import com.example.nefrovida.data.remote.dto.ServiceItemDto
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Query
 
 interface CatalogApi {
     @GET("patients/get-services")
@@ -22,4 +24,10 @@ interface CatalogApi {
     suspend fun createAnalysisAppointment(
         @Body request: CreateAnalysisAppointmentRequest,
     ): CreateAnalysisAppointmentResponse
+
+    @GET("agenda/appointments/date-availability")
+    suspend fun getDateAvailability(
+        @Query("doctorName") doctorName: String,
+        @Query("date") date: String,
+    ): Response<List<String>>
 }
