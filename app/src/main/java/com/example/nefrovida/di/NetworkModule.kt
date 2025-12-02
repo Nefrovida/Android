@@ -75,6 +75,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideProfileApi(retrofit: Retrofit): ProfileApi = retrofit.create(ProfileApi::class.java)
+
+    @Provides
+    @Singleton
     fun provideForumRepository(api: ForumApiService): ForumRepository = ForumRepositoryImpl(api)
 
     @Provides
