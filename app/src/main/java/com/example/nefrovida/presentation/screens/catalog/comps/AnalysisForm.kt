@@ -1,5 +1,6 @@
 package com.example.nefrovida.presentation.screens.catalog.comps
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -10,49 +11,54 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.data.remote.dto.ServiceItemDto
+import com.example.nefrovida.presentation.screens.catalog.CatalogViewModel
+import com.example.nefrovida.presentation.utils.checkValidDate
 import com.example.nefrovida.ui.molecules.DatePickerDialog
+import com.example.nefrovida.ui.molecules.ReusableStringDropdown
 import com.example.nefrovida.ui.theme.NavyBlue
 import com.example.nefrovida.ui.theme.TextGray
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnalysisForm(
     analysis: ServiceItemDto,
+    viewModel: CatalogViewModel,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
     onSubmit: (Int, String, String) -> Unit,
 ) {
+    val places = listOf("Laboratorio Principal", "Laboratorio Sucursal")
+
     var date by remember { mutableStateOf("") }
-    var time by remember { mutableStateOf("") }
-    var place by remember { mutableStateOf("") }
+    var time by remember { mutableStateOf<String?>(null) }
+    var place by remember { mutableStateOf<String?>(null) }
     val analysisId = analysis.id
+    val analysisName = analysis.name
 
     var timeExpanded by remember { mutableStateOf(false) }
     var placeExpanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
 
+    val scope = rememberCoroutineScope()
+    var availability by remember { mutableStateOf<List<String>>(emptyList()) }
+
     // Validation: all fields must be filled
-    val readyToSubmit = date.isNotBlank() && time.isNotBlank() && place.isNotBlank()
+    val readyToSubmit = date.isNotBlank() && time != null && place != null
 
     // Combine date and time into ISO format: "2025-12-05T08:00:00"
-    fun createDateTimeString(): String {
-        return if (date.isNotBlank() && time.isNotBlank()) {
-            "${date}T${time}:00"
+    fun createDateTimeString(): String =
+        if (date.isNotBlank() && time != null) {
+            "${date}T$time:00"
         } else {
             ""
         }
-    }
-
-    // Available time slots for lab work (typically morning hours)
-    val timeSlots = listOf(
-        "07:00", "07:30", "08:00", "08:30", "09:00", "09:30",
-        "10:00", "10:30", "11:00", "11:30", "12:00"
-    )
 
     Card(
         modifier =
@@ -124,88 +130,28 @@ fun AnalysisForm(
                 )
 
                 // Time dropdown
-                ExposedDropdownMenuBox(
+                ReusableStringDropdown(
+                    label = "Hora",
+                    selectedValue = time,
+                    options = availability,
                     expanded = timeExpanded,
-                    onExpandedChange = { timeExpanded = !timeExpanded },
+                    onExpandedChange = { timeExpanded = it },
+                    onValueSelected = { time = it },
+                    placeholder = if (date.isBlank()) "Seleccione fecha" else if (availability.isEmpty()) "Sin horarios" else "Seleccionar",
                     modifier = Modifier.weight(1f),
-                ) {
-                    OutlinedTextField(
-                        value = time.ifBlank { "Hora" },
-                        readOnly = true,
-                        onValueChange = {},
-                        label = { Text("Hora") },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
-                        colors =
-                            OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = NavyBlue,
-                                unfocusedBorderColor = TextGray,
-                                focusedLabelColor = NavyBlue,
-                            ),
-                    )
-
-                    ExposedDropdownMenu(
-                        expanded = timeExpanded,
-                        onDismissRequest = { timeExpanded = false },
-                    ) {
-                        timeSlots.forEach { slot ->
-                            DropdownMenuItem(
-                                text = { Text(slot) },
-                                onClick = {
-                                    time = slot
-                                    timeExpanded = false
-                                },
-                            )
-                        }
-                    }
-                }
+                )
             }
 
             // Place dropdown
-            ExposedDropdownMenuBox(
+            ReusableStringDropdown(
+                label = "Lugar",
+                selectedValue = place,
+                options = places,
                 expanded = placeExpanded,
-                onExpandedChange = { placeExpanded = !placeExpanded },
+                onExpandedChange = { placeExpanded = it },
+                onValueSelected = { place = it },
                 modifier = Modifier.fillMaxWidth(),
-            ) {
-                OutlinedTextField(
-                    value = place.ifBlank { "Seleccionar" },
-                    readOnly = true,
-                    onValueChange = {},
-                    label = { Text("Lugar") },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = NavyBlue,
-                            unfocusedBorderColor = TextGray,
-                            focusedLabelColor = NavyBlue,
-                        ),
-                )
-
-                ExposedDropdownMenu(
-                    expanded = placeExpanded,
-                    onDismissRequest = { placeExpanded = false },
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Laboratorio Principal") },
-                        onClick = {
-                            place = "Laboratorio Principal"
-                            placeExpanded = false
-                        },
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Laboratorio Sucursal") },
-                        onClick = {
-                            place = "Laboratorio Sucursal"
-                            placeExpanded = false
-                        },
-                    )
-                }
-            }
+            )
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -223,8 +169,10 @@ fun AnalysisForm(
 
                 Button(
                     onClick = {
-                        val dateTimeString = createDateTimeString()
-                        onSubmit(analysisId, dateTimeString, place)
+                        if (time != null && place != null) {
+                            val dateTimeString = createDateTimeString()
+                            onSubmit(analysisId, dateTimeString, place!!)
+                        }
                     },
                     modifier = Modifier.weight(1f),
                     enabled = readyToSubmit,
@@ -246,8 +194,28 @@ fun AnalysisForm(
     if (showDatePicker) {
         DatePickerDialog(
             onDismiss = { showDatePicker = false },
-            onDateSelected = { selectedDate ->
-                date = selectedDate
+            onDateSelected = { pickedDate ->
+                Log.d("AnalysisForm", "Date selected: $pickedDate")
+                if (checkValidDate(pickedDate)) {
+                    Log.d("AnalysisForm", "Date is valid, fetching availability")
+                    date = pickedDate
+                    time = null // Reset time when date changes
+                    showDatePicker = false
+
+                    // Fetch availability for the selected date
+                    scope.launch {
+                        availability =
+                            try {
+                                viewModel.getAnalysisDateAvailability(analysisName, pickedDate)
+                            } catch (e: Exception) {
+                                Log.e("AnalysisForm", "Error fetching availability: ${e.message}")
+                                emptyList()
+                            }
+                    }
+                } else {
+                    Log.w("AnalysisForm", "Selected date is invalid")
+                    // TODO: Show snackbar for invalid date
+                }
             }
         )
     }

@@ -7,6 +7,7 @@ import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.repository.UserPreferencesRepository
 import com.example.nefrovida.domain.usecase.CreateAnalysisAppointmentUseCase
 import com.example.nefrovida.domain.usecase.CreateAppointmentUseCase
+import com.example.nefrovida.domain.usecase.GetCatalogAnalysisDateAvailabilityUseCase
 import com.example.nefrovida.domain.usecase.GetCatalogDateAvailabilityUseCase
 import com.example.nefrovida.domain.usecase.GetCatalogListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ class CatalogViewModel
         private val createAppointmentUseCase: CreateAppointmentUseCase,
         private val createAnalysisAppointmentUseCase: CreateAnalysisAppointmentUseCase,
         private val getCatalogDateAvailabilityUseCase: GetCatalogDateAvailabilityUseCase,
+        private val getCatalogAnalysisDateAvailabilityUseCase: GetCatalogAnalysisDateAvailabilityUseCase,
         private val userPreferencesRepository: UserPreferencesRepository,
     ) : ViewModel() {
         private val _uiState = MutableStateFlow(CatalogUIState())
@@ -112,6 +114,31 @@ class CatalogViewModel
                     }
                     is Result.Error -> {
                         Log.e("CatalogVM", "Get Availability error: ${state.exception.message}")
+                        result = emptyList()
+                    }
+                }
+            }
+
+            return result
+        }
+
+        suspend fun getAnalysisDateAvailability(
+            analysisName: String,
+            date: String,
+        ): List<String> {
+            var result: List<String> = emptyList()
+
+            getCatalogAnalysisDateAvailabilityUseCase(analysisName, date).collect { state ->
+                when (state) {
+                    is Result.Loading -> {
+                        Log.d("CatalogVM", "Get Analysis Availability is loading")
+                    }
+                    is Result.Success -> {
+                        Log.d("CatalogVM", "Get Analysis Availability List is successful: ${state.data}")
+                        result = state.data
+                    }
+                    is Result.Error -> {
+                        Log.e("CatalogVM", "Get Analysis Availability error: ${state.exception.message}")
                         result = emptyList()
                     }
                 }

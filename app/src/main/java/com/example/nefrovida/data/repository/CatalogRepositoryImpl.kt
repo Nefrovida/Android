@@ -75,4 +75,18 @@ class CatalogRepositoryImpl
                 return emptyList()
             }
         }
+
+        override suspend fun getAnalysisDateAvailability(
+            analysisName: String,
+            date: String,
+        ): List<String> {
+            val response = api.getAnalysisDateAvailability(analysisName, date)
+
+            if (response.isSuccessful) {
+                return response.body() ?: emptyList()
+            } else {
+                Log.e("CatalogRepository", "Failed to get analysis date availability: ${response.code()}")
+                return emptyList()
+            }
+        }
     }

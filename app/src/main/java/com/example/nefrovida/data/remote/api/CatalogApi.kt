@@ -30,4 +30,10 @@ interface CatalogApi {
         @Query("appointmentName") appointmentName: String,
         @Query("date") date: String,
     ): Response<List<String>>
+
+    @GET("agenda/analyses/date-availability")
+    suspend fun getAnalysisDateAvailability(
+        @Query("analysisName") analysisName: String,
+        @Query("date") date: String,
+    ): Response<List<String>>
 }

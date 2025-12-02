@@ -25,4 +25,9 @@ interface CatalogRepository {
         appointmentName: String,
         date: String,
     ): List<String>
+
+    suspend fun getAnalysisDateAvailability(
+        analysisName: String,
+        date: String,
+    ): List<String>
 }

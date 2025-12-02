@@ -162,6 +162,7 @@ fun CatalogScreen(
                                 selectedItem?.let { analysis ->
                                     AnalysisForm(
                                         analysis = analysis,
+                                        viewModel = viewModel,
                                         modifier = Modifier,
                                         onDismiss = {
                                             selectedItem = null
