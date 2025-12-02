@@ -93,8 +93,7 @@ fun AgendaScreen(
         Column(
             modifier =
                 modifier
-                    .fillMaxSize()
-                    .padding(),
+                    .fillMaxSize(),
         ) {
             val scope = rememberCoroutineScope()
             val userId by viewModel.userId.collectAsState()
