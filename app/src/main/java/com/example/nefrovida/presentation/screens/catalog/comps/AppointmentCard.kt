@@ -7,12 +7,18 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Schedule
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -22,8 +28,11 @@ import com.example.nefrovida.data.remote.dto.ServiceItemDto
 @Composable
 fun AppointmentCard(
     item: ServiceItemDto,
+    onReserve: (ServiceItemDto) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val showDialog = remember { mutableStateOf(false) }
+
     Card(
         modifier =
             modifier
@@ -82,14 +91,72 @@ fun AppointmentCard(
             }
 
             TextButton(
-                onClick = { /* TODO reservar */ },
+                onClick = { showDialog.value = true },
             ) {
-                Text(
-                    "Reservar",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontWeight = FontWeight.Medium,
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Schedule,
+                        contentDescription = "Reservar",
+                    )
+                    Text(
+                        "Reservar",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
             }
         }
+    }
+
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            containerColor = MaterialTheme.colorScheme.primary,
+            title = {
+                Text(
+                    text = item.name,
+                    style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                )
+            },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        text = "Doctor:",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    )
+                    Text(item.doctor ?: "NA")
+
+                    Text(
+                        text = "Descripción:",
+                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
+                    )
+                    Text(item.description ?: "NA")
+                }
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog.value = false
+                        onReserve(item)
+                    },
+                ) {
+                    Text(
+                        "Reservar",
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog.value = false }) {
+                    Text(
+                        "Salir",
+                        color = MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+            },
+        )
     }
 }

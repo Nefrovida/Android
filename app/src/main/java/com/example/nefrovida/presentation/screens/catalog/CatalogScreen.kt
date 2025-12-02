@@ -2,30 +2,22 @@ package com.example.nefrovida.presentation.screens.catalog
 
 import AnalysisList
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.nefrovida.data.remote.dto.ServiceItemDto
+import com.example.nefrovida.presentation.screens.catalog.comps.AnalysisForm
+import com.example.nefrovida.presentation.screens.catalog.comps.AppointmentForm
 import com.example.nefrovida.presentation.screens.catalog.comps.AppointmentList
 import com.example.nefrovida.ui.molecules.ResultsToggleButton
+import kotlinx.coroutines.launch
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -36,68 +28,157 @@ fun CatalogScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     var currentView by remember { mutableStateOf(CatalogViewType.APPOINTMENTS) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var selectedItem by remember { mutableStateOf<ServiceItemDto?>(null) }
 
-    when {
-        state.isLoading -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator()
+    if (state.showCreateSuccess) {
+        LaunchedEffect(Unit) {
+            scope.launch {
+                snackbarHostState.showSnackbar("Reserva creada con éxito")
+                viewModel.resetCreateSuccess()
             }
         }
+    }
 
-        state.error != null -> {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text("Error: ${state.error}")
+    if (state.showCreateError) {
+        LaunchedEffect(Unit) {
+            scope.launch {
+                snackbarHostState.showSnackbar("Error al crear la reserva")
+                viewModel.resetCreateError()
             }
         }
+    }
 
-        else -> {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(12.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    Row(
-                        modifier =
-                            Modifier
-                                .background(Color(0xFFF2F2F7), RoundedCornerShape(50))
-                                .padding(4.dp)
-                                .fillMaxWidth(),
+    Scaffold(
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { paddingValues ->
+        Box(modifier = Modifier.padding(paddingValues)) {
+            when {
+                state.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
                     ) {
-                        ResultsToggleButton(
-                            text = "Consultas",
-                            selected = currentView == CatalogViewType.APPOINTMENTS,
-                            onClick = { currentView = CatalogViewType.APPOINTMENTS },
-                            modifier = Modifier.weight(1f),
-                        )
-
-                        ResultsToggleButton(
-                            text = "Laboratorio",
-                            selected = currentView == CatalogViewType.LAB,
-                            onClick = { currentView = CatalogViewType.LAB },
-                            modifier = Modifier.weight(1f),
-                        )
+                        CircularProgressIndicator()
                     }
                 }
-                when (currentView) {
-                    CatalogViewType.APPOINTMENTS -> {
-                        AppointmentList(
-                            services = state.appointments,
-                        )
-                    }
 
-                    CatalogViewType.LAB -> {
-                        AnalysisList(
-                            services = state.analysis,
-                        )
+                state.error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text("Error: ${state.error}")
+                    }
+                }
+
+                else -> {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Row(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(12.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                        ) {
+                            Row(
+                                modifier =
+                                    Modifier
+                                        .background(Color(0xFFF2F2F7), RoundedCornerShape(50))
+                                        .padding(4.dp)
+                                        .fillMaxWidth(),
+                            ) {
+                                ResultsToggleButton(
+                                    text = "Consultas",
+                                    selected = currentView == CatalogViewType.APPOINTMENTS,
+                                    onClick = { currentView = CatalogViewType.APPOINTMENTS },
+                                    modifier = Modifier.weight(1f),
+                                )
+
+                                ResultsToggleButton(
+                                    text = "Laboratorio",
+                                    selected = currentView == CatalogViewType.LAB,
+                                    onClick = { currentView = CatalogViewType.LAB },
+                                    modifier = Modifier.weight(1f),
+                                )
+                            }
+                        }
+                        when (currentView) {
+                            CatalogViewType.APPOINTMENTS -> {
+                                AppointmentList(
+                                    services = state.appointments,
+                                    onReserve = { item ->
+                                        selectedItem = item
+                                        currentView = CatalogViewType.APPOINTMENT_FORM
+                                        // For now, using placeholder values
+//                                        viewModel.createAppointment(
+//                                            doctorId = item.id,
+//                                            dateHour = "2024-12-15T10:00:00",
+//                                            duration = 30,
+//                                            appointmentType = "PRESENCIAL",
+//                                            place = "Consultorio",
+//                                        )
+                                    },
+                                )
+                            }
+
+                            CatalogViewType.LAB -> {
+                                AnalysisList(
+                                    services = state.analysis,
+                                    onReserve = { item ->
+                                        selectedItem = item
+                                        currentView = CatalogViewType.LAB_FORM
+                                    },
+                                )
+                            }
+
+                            CatalogViewType.APPOINTMENT_FORM -> {
+                                selectedItem?.let { appointment ->
+                                    AppointmentForm(
+                                        appointment = appointment,
+                                        modifier = Modifier,
+                                        onDismiss = {
+                                            selectedItem = null
+                                            currentView = CatalogViewType.APPOINTMENTS
+                                        },
+                                        onSubmit = { type, place, dateHour, duration, doctorId ->
+                                            viewModel.createAppointment(
+                                                appointmentType = type,
+                                                place = place,
+                                                dateHour = dateHour,
+                                                duration = duration,
+                                                doctorId = doctorId
+                                            )
+                                            selectedItem = null
+                                            currentView = CatalogViewType.APPOINTMENTS
+                                        }
+                                    )
+                                }
+                            }
+
+                            CatalogViewType.LAB_FORM -> {
+                                selectedItem?.let { analysis ->
+                                    AnalysisForm(
+                                        analysis = analysis,
+                                        modifier = Modifier,
+                                        onDismiss = {
+                                            selectedItem = null
+                                            currentView = CatalogViewType.LAB
+                                        },
+                                        onSubmit = { analysisId, analysisDate, place ->
+                                            viewModel.createAnalysisAppointment(
+                                                analysisId = analysisId,
+                                                analysisDate = analysisDate,
+                                                place = place
+                                            )
+                                            selectedItem = null
+                                            currentView = CatalogViewType.LAB
+                                        }
+                                    )
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -107,5 +188,7 @@ fun CatalogScreen(
 
 enum class CatalogViewType {
     APPOINTMENTS,
+    APPOINTMENT_FORM,
     LAB,
+    LAB_FORM,
 }
