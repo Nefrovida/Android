@@ -8,7 +8,6 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -17,6 +16,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.data.remote.dto.ServiceItemDto
 import com.example.nefrovida.ui.molecules.DatePickerDialog
+import com.example.nefrovida.ui.molecules.ReusableIntDropdown
+import com.example.nefrovida.ui.molecules.ReusableStringDropdown
 import com.example.nefrovida.ui.theme.NavyBlue
 import com.example.nefrovida.ui.theme.TextGray
 
@@ -29,13 +30,14 @@ fun AppointmentForm(
     onSubmit: (String, String, String, Int, Int) -> Unit,
 ) {
     val appointmentTypes = listOf("Presencial", "En Línea")
+    val places = listOf("Consultorio 01", "Consultorio 02", "Sala Virtual")
     val durations = listOf(30, 45, 60, 90)
 
-    var appointmentType by remember { mutableStateOf("") }
-    var place by remember { mutableStateOf("") }
+    var appointmentType by remember { mutableStateOf<String?>(null) }
+    var place by remember { mutableStateOf<String?>(null) }
     var date by remember { mutableStateOf("") }
-    var time by remember { mutableStateOf("") }
-    var duration by remember { mutableIntStateOf(30) }
+    var time by remember { mutableStateOf<String?>(null) }
+    var duration by remember { mutableStateOf<Int?>(30) }
     val doctorId = appointment.id
 
     var typeExpanded by remember { mutableStateOf(false) }
@@ -46,12 +48,12 @@ fun AppointmentForm(
 
     // Validation: all fields must be filled
     val readyToSubmit =
-        appointmentType.isNotBlank() && place.isNotBlank() &&
-            date.isNotBlank() && time.isNotBlank() && duration >= 30
+        appointmentType != null && place != null &&
+            date.isNotBlank() && time != null && duration != null && duration!! >= 30
 
     // Combine date and time into ISO format: "2025-12-05T10:00:00"
     fun createDateTimeString(): String =
-        if (date.isNotBlank() && time.isNotBlank()) {
+        if (date.isNotBlank() && time != null) {
             "${date}T$time:00"
         } else {
             ""
@@ -115,129 +117,50 @@ fun AppointmentForm(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Row for type and place
+            // Row for type and duration
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                ExposedDropdownMenuBox(
+                ReusableStringDropdown(
+                    label = "Tipo",
+                    selectedValue = appointmentType,
+                    options = appointmentTypes,
                     expanded = typeExpanded,
-                    onExpandedChange = { typeExpanded = !typeExpanded },
+                    onExpandedChange = { typeExpanded = it },
+                    onValueSelected = { appointmentType = it },
                     modifier = Modifier.weight(1f),
-                ) {
-                    OutlinedTextField(
-                        value = appointmentType.ifBlank { "Seleccionar" },
-                        readOnly = true,
-                        onValueChange = {},
-                        label = { Text("Tipo") },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
-                        colors =
-                            OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = NavyBlue,
-                                unfocusedBorderColor = TextGray,
-                                focusedLabelColor = NavyBlue,
-                            ),
-                    )
+                )
 
-                    ExposedDropdownMenu(
-                        expanded = typeExpanded,
-                        onDismissRequest = { typeExpanded = false },
-                    ) {
-                        appointmentTypes.forEach { type ->
-                            DropdownMenuItem(
-                                text = { Text(type) },
-                                onClick = {
-                                    appointmentType = type
-                                    typeExpanded = false
-                                },
-                            )
-                        }
-                    }
-                }
-
-                // Duration dropdown
-                ExposedDropdownMenuBox(
+                ReusableIntDropdown(
+                    label = "Duración",
+                    selectedValue = duration,
+                    options = durations,
                     expanded = durationExpanded,
-                    onExpandedChange = { durationExpanded = !durationExpanded },
+                    onExpandedChange = { durationExpanded = it },
+                    onValueSelected = { duration = it },
+                    displayText = { "$it min" },
                     modifier = Modifier.weight(1f),
-                ) {
-                    OutlinedTextField(
-                        value = "$duration min",
-                        readOnly = true,
-                        onValueChange = {},
-                        label = { Text("Duración") },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .menuAnchor(),
-                        colors =
-                            OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = NavyBlue,
-                                unfocusedBorderColor = TextGray,
-                                focusedLabelColor = NavyBlue,
-                            ),
-                    )
+                )
+            }
 
-                    ExposedDropdownMenu(
-                        expanded = durationExpanded,
-                        onDismissRequest = { durationExpanded = false },
-                    ) {
-                        durations.forEach { dur ->
-                            DropdownMenuItem(
-                                text = { Text("$dur") },
-                                onClick = {
-                                    duration = dur
-                                    durationExpanded = false
-                                },
-                            )
+            // Row for date, time, and place
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                // Date picker
+                OutlinedTextField(
+                    value = date.ifBlank { "Fecha" },
+                    readOnly = true,
+                    onValueChange = {},
+                    label = { Text("Fecha") },
+                    trailingIcon = {
+                        IconButton(onClick = { showDatePicker = true }) {
+                            Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
                         }
-                    }
-                }
-            }
-
-            // Row for date, time, and duration
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.spacedBy(8.dp),
-//            ) {
-            // Date picker
-            OutlinedTextField(
-                value = date.ifBlank { "Fecha" },
-                readOnly = true,
-                onValueChange = {},
-                label = { Text("Fecha") },
-                trailingIcon = {
-                    IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
-                    }
-                },
-                modifier = Modifier.weight(1f),
-                colors =
-                    OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = NavyBlue,
-                        unfocusedBorderColor = TextGray,
-                        focusedLabelColor = NavyBlue,
-                    ),
-            )
-
-            // Time dropdown
-            ExposedDropdownMenuBox(
-                expanded = timeExpanded,
-                onExpandedChange = { timeExpanded = !timeExpanded },
-                modifier = Modifier.weight(1f),
-            ) {
-                OutlinedTextField(
-                    value = time.ifBlank { "Hora" },
-                    readOnly = true,
-                    onValueChange = {},
-                    label = { Text("Hora") },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(),
+                    },
+                    modifier = Modifier.weight(1f),
                     colors =
                         OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = NavyBlue,
@@ -246,72 +169,28 @@ fun AppointmentForm(
                         ),
                 )
 
-                ExposedDropdownMenu(
+                // Time dropdown
+                ReusableStringDropdown(
+                    label = "Hora",
+                    selectedValue = time,
+                    options = timeSlots,
                     expanded = timeExpanded,
-                    onDismissRequest = { timeExpanded = false },
-                ) {
-                    timeSlots.forEach { slot ->
-                        DropdownMenuItem(
-                            text = { Text(slot) },
-                            onClick = {
-                                time = slot
-                                timeExpanded = false
-                            },
-                        )
-                    }
-                }
-            }
-
-            ExposedDropdownMenuBox(
-                expanded = placeExpanded,
-                onExpandedChange = { placeExpanded = !placeExpanded },
-                modifier = Modifier.weight(1f),
-            ) {
-                OutlinedTextField(
-                    value = place.ifBlank { "Seleccionar" },
-                    readOnly = true,
-                    onValueChange = {},
-                    label = { Text("Lugar") },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .menuAnchor(),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = NavyBlue,
-                            unfocusedBorderColor = TextGray,
-                            focusedLabelColor = NavyBlue,
-                        ),
+                    onExpandedChange = { timeExpanded = it },
+                    onValueSelected = { time = it },
+                    modifier = Modifier.weight(1f),
                 )
 
-                ExposedDropdownMenu(
+                // Place dropdown
+                ReusableStringDropdown(
+                    label = "Lugar",
+                    selectedValue = place,
+                    options = places,
                     expanded = placeExpanded,
-                    onDismissRequest = { placeExpanded = false },
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Consultorio 01") },
-                        onClick = {
-                            place = "Consultorio 01"
-                            placeExpanded = false
-                        },
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Consultorio 02") },
-                        onClick = {
-                            place = "Consultorio 02"
-                            placeExpanded = false
-                        },
-                    )
-                    DropdownMenuItem(
-                        text = { Text("Sala Virtual") },
-                        onClick = {
-                            place = "Sala Virtual"
-                            placeExpanded = false
-                        },
-                    )
-                }
+                    onExpandedChange = { placeExpanded = it },
+                    onValueSelected = { place = it },
+                    modifier = Modifier.weight(1f),
+                )
             }
-//            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -329,8 +208,10 @@ fun AppointmentForm(
 
                 Button(
                     onClick = {
-                        val dateTimeString = createDateTimeString()
-                        onSubmit(appointmentType, place, dateTimeString, duration, doctorId)
+                        if (appointmentType != null && place != null && time != null && duration != null) {
+                            val dateTimeString = createDateTimeString()
+                            onSubmit(appointmentType!!, place!!, dateTimeString, duration!!, doctorId)
+                        }
                     },
                     modifier = Modifier.weight(1f),
                     enabled = readyToSubmit,

@@ -13,7 +13,7 @@ interface CatalogApi {
     @GET("patients/get-services")
     suspend fun getCatalog(): List<List<ServiceItemDto>>
 
-    @POST("agenda/create-appointment")
+    @POST("appointments/schedule-appointment")
     suspend fun createAppointment(
         @Body request: CreateAppointmentRequest,
     ): CreateAppointmentResponse
