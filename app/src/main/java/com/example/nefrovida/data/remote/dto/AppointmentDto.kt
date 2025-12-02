@@ -7,6 +7,7 @@ enum class AppointmentStatus {
     CANCELED,
     FINISHED,
     PROGRAMMED,
+    REQUESTED,
     SCHEDULED,
 }
 
@@ -16,6 +17,7 @@ enum class AppointmentTypes {
 }
 
 data class AppointmentDto(
+    @SerializedName("type") val type: String,
     @SerializedName("patient_appointment_id") val id: Int,
     @SerializedName("doctor_name") val name: String,
     @SerializedName("date_hour") val dateHour: String,
@@ -23,7 +25,7 @@ data class AppointmentDto(
     @SerializedName("link") val link: String?,
     @SerializedName("place") val place: String?,
     @SerializedName("appointment_status") val status: AppointmentStatus,
-    @SerializedName("appointment_type") val type: AppointmentTypes,
+    @SerializedName("appointment_type") val appointmentType: AppointmentTypes,
     @SerializedName("appointment_name") val appointmentName: String?,
 )
 

@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.nefrovida.data.remote.api.AnalysisHistoryApi
 import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.api.AuthApiService
+import com.example.nefrovida.data.remote.api.CatalogApi
 import com.example.nefrovida.data.remote.api.ForumApiService
 import com.example.nefrovida.data.remote.api.RefreshAuthenticator
 import com.example.nefrovida.data.remote.api.ReportsApi
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "http://10.25.96.70:3001/api/" // Android emulator localhost
+    private const val BASE_URL = "http://192.168.1.221:3001/api/" // Android emulator localhost
 
     // For physical device, use your computer's IP: "http://192.168.x.x:3001/api/"
     private var retrofit: Retrofit? = null
@@ -75,6 +76,10 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideForumRepository(api: ForumApiService): ForumRepository = ForumRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideCatalogApi(retrofit: Retrofit): CatalogApi = retrofit.create(CatalogApi::class.java)
 
     private fun createRetrofit(context: Context): Retrofit {
         // Create persistent cookie jar

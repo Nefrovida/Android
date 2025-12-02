@@ -2,6 +2,9 @@ package com.example.nefrovida.data.remote.api
 
 import com.example.nefrovida.data.remote.dto.AppointmentDto
 import com.example.nefrovida.data.remote.dto.AppointmentListDto
+import com.example.nefrovida.data.remote.dto.AppointmentNotesDto
+import com.example.nefrovida.data.remote.dto.AppointmentsResponse
+import com.example.nefrovida.data.remote.dto.PatientAnalysisDetail
 import com.example.nefrovida.data.remote.dto.RescheduleAppointmentDto
 import com.example.nefrovida.domain.model.Appointment
 import retrofit2.Response
@@ -13,24 +16,38 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface AppointmentApi {
+    @GET("appointments/patient/get-notes")
+    suspend fun getNotes(): List<AppointmentNotesDto>
+
     @GET("secretary-agenda")
     suspend fun getAppointmentList(
         @Query("limit") limit: Int = 20,
         @Query("offset") offset: Int = 0,
     ): List<AppointmentDto>
 
-    @GET("agenda/appointments-per-day")
+    @GET("agenda/appointments-per-patient")
     suspend fun getAppointmentListByDate(
         @Query("date") date: String,
-    ): List<AppointmentDto>
+        @Query("id") id: String,
+    ): AppointmentsResponse
 
     @GET("agenda/appointment/{id}")
     suspend fun getAppointmentById(
         @Path("id") id: Int,
     ): AppointmentDto
 
+    @GET("agenda/analysis/{id}")
+    suspend fun getAnalysisById(
+        @Path("id") id: Int,
+    ): PatientAnalysisDetail
+
     @POST("agenda/appointments/{id}/cancel")
     suspend fun cancelAppointment(
+        @Path("id") id: Int,
+    ): Response<Unit>
+
+    @POST("agenda/analysis/{id}/cancel")
+    suspend fun cancelAnalysis(
         @Path("id") id: Int,
     ): Response<Unit>
 

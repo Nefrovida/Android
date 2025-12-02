@@ -71,14 +71,6 @@ fun AnalysisHistoryScreen(
                     .fillMaxSize()
                     .padding(paddingValues),
         ) {
-            // Month Title
-            Text(
-                text = getCurrentMonthName(),
-                style = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(16.dp),
-            )
-
             // Content
             when {
                 uiState.isLoading -> {
@@ -123,14 +115,5 @@ fun AnalysisHistoryScreen(
                 }
             }
         }
-    }
-}
-
-@Composable
-fun getCurrentMonthName(): String {
-    val calendar = Calendar.getInstance()
-    val formatter = SimpleDateFormat("MMMM", Locale("es", "ES"))
-    return formatter.format(calendar.time).replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(Locale("es", "ES")) else it.toString()
     }
 }

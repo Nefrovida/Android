@@ -55,18 +55,6 @@ fun NfTopAppBar(
         actions = {
             IconButton(
                 onClick = {
-                    navController.navigate(NavDestination.Notifications.route) {
-                        launchSingleTop = true
-                    }
-                },
-            ) {
-                Icon(
-                    imageVector = NavDestination.Notifications.icon,
-                    contentDescription = NavDestination.Notifications.label,
-                )
-            }
-            IconButton(
-                onClick = {
                     onLogoutClick()
                 },
             ) {

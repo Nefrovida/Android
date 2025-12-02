@@ -1,5 +1,7 @@
 package com.example.nefrovida.ui.molecules
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +17,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun Dialog(
     title: String,
-    text: String,
+    text: @Composable () -> Unit,
     confirmText: String,
     dismissText: String,
     onConfirm: () -> Unit,
@@ -38,37 +40,21 @@ fun Dialog(
             )
         },
         text = {
-            Text(
-                text = text,
-                color = titleColor,
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.padding(4.dp),
-                fontSize = 16.sp,
-            )
+            ) {
+                text()
+            }
         },
         confirmButton = {
-            TextButton(
-                onClick = onConfirm,
-                modifier =
-                    Modifier
-                        .padding(4.dp),
-            ) {
-                Text(
-                    confirmText,
-                    color = dismissButtonColor,
-                )
+            TextButton(onClick = onConfirm, modifier = Modifier.padding(4.dp)) {
+                Text(confirmText, color = dismissButtonColor)
             }
         },
         dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                modifier =
-                    Modifier
-                        .padding(4.dp),
-            ) {
-                Text(
-                    dismissText,
-                    color = dismissButtonColor,
-                )
+            TextButton(onClick = onDismiss, modifier = Modifier.padding(4.dp)) {
+                Text(dismissText, color = dismissButtonColor)
             }
         },
     )
