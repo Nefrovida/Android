@@ -10,15 +10,15 @@ import retrofit2.http.GET
 import retrofit2.http.PUT
 
 interface ProfileApi {
-    @GET("profile/me")
+    @GET("com/example/nefrovida/presentation/screens/profile/me")
     suspend fun getMyProfile(): Response<UserProfileDto>
 
-    @PUT("profile/me")
+    @PUT("com/example/nefrovida/presentation/screens/profile/me")
     suspend fun updateMyProfile(
         @Body updateProfileDto: UpdateProfileDto,
     ): Response<UpdateProfileResponse>
 
-    @PUT("profile/change-password")
+    @PUT("com/example/nefrovida/presentation/screens/profile/change-password")
     suspend fun changePassword(
         @Body changePasswordDto: ChangePasswordDto,
     ): Response<Unit>

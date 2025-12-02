@@ -26,6 +26,8 @@ sealed class Screen(
 ) {
     object Login : Screen("login")
 
+    object Profile : Screen("profile")
+
     object Home : Screen("home")
 
     object Catalog : Screen("catalog")
@@ -89,6 +91,10 @@ fun NefrovidaNavGraph(
         }
         composable(route = Screen.Home.route) {
             HomeScreen(navController = navController)
+        }
+
+        composable(Screen.Profile.route) {
+            ProfileScreen(navController = navController)
         }
         composable(route = Screen.Catalog.route) {
             CatalogScreen(
