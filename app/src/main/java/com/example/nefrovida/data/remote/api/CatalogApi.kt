@@ -27,7 +27,7 @@ interface CatalogApi {
 
     @GET("agenda/appointments/date-availability")
     suspend fun getDateAvailability(
-        @Query("doctorName") doctorName: String,
+        @Query("appointmentName") appointmentName: String,
         @Query("date") date: String,
     ): Response<List<String>>
 }

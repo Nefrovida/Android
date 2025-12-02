@@ -33,7 +33,7 @@ fun AppointmentForm(
     viewModel: CatalogViewModel,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
-    onSubmit: (String, String, String, Int, String) -> Unit,
+    onSubmit: (String, String, String, Int, Int) -> Unit,
 ) {
     val appointmentTypes = listOf("Presencial", "En Línea")
     val places = listOf("Consultorio 01", "Consultorio 02", "Sala Virtual")
@@ -44,7 +44,8 @@ fun AppointmentForm(
     var date by remember { mutableStateOf("") }
     var time by remember { mutableStateOf<String?>(null) }
     var duration by remember { mutableStateOf<Int?>(30) }
-    val doctorName = appointment.doctor ?: ""
+    val appointmentId = appointment.id
+    val appointmentName = appointment.name
 
     var typeExpanded by remember { mutableStateOf(false) }
     var placeExpanded by remember { mutableStateOf(false) }
@@ -194,7 +195,7 @@ fun AppointmentForm(
                     onClick = {
                         if (appointmentType != null && place != null && time != null && duration != null) {
                             val dateTimeString = createDateTimeString()
-                            onSubmit(appointmentType!!, place!!, dateTimeString, duration!!, doctorName)
+                            onSubmit(appointmentType!!, place!!, dateTimeString, duration!!, appointmentId)
                         }
                     },
                     modifier = Modifier.weight(1f),
@@ -229,7 +230,7 @@ fun AppointmentForm(
                     scope.launch {
                         availability =
                             try {
-                                viewModel.getDateAvailability(doctorName, pickedDate)
+                                viewModel.getDateAvailability(appointmentName, pickedDate)
                             } catch (e: Exception) {
                                 Log.e("AppointmentForm", "Error fetching availability: ${e.message}")
                                 emptyList()

@@ -143,13 +143,13 @@ fun CatalogScreen(
                                             selectedItem = null
                                             currentView = CatalogViewType.APPOINTMENTS
                                         },
-                                        onSubmit = { type, place, dateHour, duration, doctorName ->
+                                        onSubmit = { type, place, dateHour, duration, appointmentId ->
                                             viewModel.createAppointment(
                                                 appointmentType = type,
                                                 place = place,
                                                 dateHour = dateHour,
                                                 duration = duration,
-                                                doctorName = doctorName
+                                                appointmentId = appointmentId
                                             )
                                             selectedItem = null
                                             currentView = CatalogViewType.APPOINTMENTS

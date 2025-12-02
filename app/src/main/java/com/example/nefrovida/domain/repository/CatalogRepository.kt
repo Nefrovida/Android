@@ -7,7 +7,7 @@ interface CatalogRepository {
 
     suspend fun createAppointment(
         patientId: String,
-        doctorName: String,
+        appointmentId: Int,
         dateHour: String,
         duration: Int,
         appointmentType: String,
@@ -22,7 +22,7 @@ interface CatalogRepository {
     ): Boolean
 
     suspend fun getDateAvailability(
-        doctorName: String,
+        appointmentName: String,
         date: String,
     ): List<String>
 }

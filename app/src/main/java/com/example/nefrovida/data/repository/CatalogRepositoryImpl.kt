@@ -26,7 +26,7 @@ class CatalogRepositoryImpl
 
         override suspend fun createAppointment(
             patientId: String,
-            doctorName: String,
+            appointmentId: Int,
             dateHour: String,
             duration: Int,
             appointmentType: String,
@@ -35,7 +35,7 @@ class CatalogRepositoryImpl
             val request =
                 CreateAppointmentRequest(
                     patientId = patientId,
-                    doctorName = doctorName,
+                    appointmentId = appointmentId,
                     dateHour = dateHour,
                     duration = duration,
                     appointmentType = appointmentType,
@@ -63,10 +63,10 @@ class CatalogRepositoryImpl
         }
 
         override suspend fun getDateAvailability(
-            doctorName: String,
+            appointmentName: String,
             date: String,
         ): List<String> {
-            val response = api.getDateAvailability(doctorName, date)
+            val response = api.getDateAvailability(appointmentName, date)
 
             if (response.isSuccessful) {
                 return response.body() ?: emptyList()

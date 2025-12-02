@@ -10,7 +10,7 @@ class CreateAppointmentUseCase
     ) {
         suspend operator fun invoke(
             patientId: String,
-            doctorName: String,
+            appointmentId: Int,
             dateHour: String,
             duration: Int,
             appointmentType: String,
@@ -18,7 +18,7 @@ class CreateAppointmentUseCase
         ): Boolean =
             catalogRepository.createAppointment(
                 patientId = patientId,
-                doctorName = doctorName,
+                appointmentId = appointmentId,
                 dateHour = dateHour,
                 duration = duration,
                 appointmentType = appointmentType,

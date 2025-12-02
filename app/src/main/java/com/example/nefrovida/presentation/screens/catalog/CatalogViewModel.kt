@@ -67,14 +67,14 @@ class CatalogViewModel
             place: String,
             dateHour: String,
             duration: Int,
-            doctorName: String,
+            appointmentId: Int,
         ) {
             viewModelScope.launch {
                 try {
                     val success =
                         createAppointmentUseCase(
                             patientId = _userId.value,
-                            doctorName = doctorName,
+                            appointmentId = appointmentId,
                             dateHour = dateHour,
                             duration = duration,
                             appointmentType = appointmentType,
@@ -96,12 +96,12 @@ class CatalogViewModel
         }
 
         suspend fun getDateAvailability(
-            doctorName: String,
+            appointmentName: String,
             date: String,
         ): List<String> {
             var result: List<String> = emptyList()
 
-            getCatalogDateAvailabilityUseCase(doctorName, date).collect { state ->
+            getCatalogDateAvailabilityUseCase(appointmentName, date).collect { state ->
                 when (state) {
                     is Result.Loading -> {
                         Log.d("CatalogVM", "Get Availability is loading")
