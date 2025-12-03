@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.R
 import com.example.nefrovida.presentation.navigation.Screen
+import com.example.nefrovida.ui.theme.DarkBlue
 import com.example.nefrovida.ui.theme.NavyBlue
 import com.example.nefrovida.ui.theme.White
-import com.example.nefrovida.ui.theme.DarkBlue
 
 @Composable
 fun HeaderSection() {
@@ -42,8 +42,6 @@ fun HeaderSection() {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
         )
-
-
     }
 }
 
@@ -103,32 +101,37 @@ fun BlueSection(navController: NavController) {
 }
 
 @Composable
-fun TextBox(title: String, description: String) {
+fun TextBox(
+    title: String,
+    description: String,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .wrapContentHeight(align = Alignment.CenterVertically)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(180.dp)
+                    .wrapContentHeight(align = Alignment.CenterVertically),
         )
     }
 }
-
 
 @Composable
 fun SocialMediaBox(modifier: Modifier = Modifier) {

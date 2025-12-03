@@ -34,7 +34,7 @@ fun EncuentranosSection() {
         ContactInfoRow(
             icon = Icons.Default.LocationOn,
             label = "Dirección",
-            value = "Calle Principal #123, Colonia Centro, Ciudad, CP 12345",
+            value = "C. Sierra Vertientes #167, Lomas de San Juan, 76806 San Juan del Río, Qro",
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -52,7 +52,7 @@ fun EncuentranosSection() {
         ContactInfoRow(
             icon = Icons.Default.Phone,
             label = "Teléfono",
-            value = "+52 (123) 456-7890",
+            value = "(01 427)-101-3435",
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -101,4 +101,3 @@ fun ContactInfoRow(
         }
     }
 }
-

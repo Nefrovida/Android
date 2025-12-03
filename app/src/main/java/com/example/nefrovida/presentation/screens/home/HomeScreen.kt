@@ -49,6 +49,7 @@ fun HomeScreen(
                             "con o sin tratamiento sustitutivo de función renal (hemodiálisis, " +
                             "diálisis) y acompañamiento de protocolo de trasplante por medio de " +
                             "programas y acciones que contribuyan a mejorar su calidad de vida.",
+                    modifier = Modifier.padding(16.dp),
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -61,9 +62,10 @@ fun HomeScreen(
                             "Enfermedad Renal Crónica (ERC), que se encuentran en situación " +
                             "vulnerable; con el fin de modificar positivamente la evolución " +
                             "natural y así disminuir la letalidad de la ERC.",
+                    modifier = Modifier.padding(16.dp),
                 )
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(10.dp))
                 // Our Services section
                 OurServicesSection()
 
