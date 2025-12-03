@@ -9,12 +9,9 @@ data class CreateAnalysisAppointmentRequest(
     val analysisId: Int,
     @SerializedName("analysis_date")
     val analysisDate: String,
-    @SerializedName("place")
-    val place: String,
 )
 
 data class CreateAnalysisAppointmentResponse(
     @SerializedName("success")
     val success: Boolean,
 )
-

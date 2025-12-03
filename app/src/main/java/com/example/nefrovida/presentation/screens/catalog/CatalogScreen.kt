@@ -114,14 +114,6 @@ fun CatalogScreen(
                                     onReserve = { item ->
                                         selectedItem = item
                                         currentView = CatalogViewType.APPOINTMENT_FORM
-                                        // For now, using placeholder values
-//                                        viewModel.createAppointment(
-//                                            doctorId = item.id,
-//                                            dateHour = "2024-12-15T10:00:00",
-//                                            duration = 30,
-//                                            appointmentType = "PRESENCIAL",
-//                                            place = "Consultorio",
-//                                        )
                                     },
                                 )
                             }
@@ -150,11 +142,11 @@ fun CatalogScreen(
                                             viewModel.createAppointment(
                                                 appointmentType = type,
                                                 dateHour = dateHour,
-                                                appointmentId = appointmentId
+                                                appointmentId = appointmentId,
                                             )
                                             selectedItem = null
                                             currentView = CatalogViewType.APPOINTMENTS
-                                        }
+                                        },
                                     )
                                 }
                             }
@@ -169,15 +161,14 @@ fun CatalogScreen(
                                             selectedItem = null
                                             currentView = CatalogViewType.LAB
                                         },
-                                        onSubmit = { analysisId, analysisDate, place ->
+                                        onSubmit = { analysisId, analysisDate ->
                                             viewModel.createAnalysisAppointment(
                                                 analysisId = analysisId,
                                                 analysisDate = analysisDate,
-                                                place = place
                                             )
                                             selectedItem = null
                                             currentView = CatalogViewType.LAB
-                                        }
+                                        },
                                     )
                                 }
                             }

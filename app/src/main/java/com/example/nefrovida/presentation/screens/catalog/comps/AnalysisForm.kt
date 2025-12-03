@@ -32,7 +32,7 @@ fun AnalysisForm(
     viewModel: CatalogViewModel,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
-    onSubmit: (Int, String, String) -> Unit,
+    onSubmit: (Int, String) -> Unit,
 ) {
     val places = listOf("Laboratorio Principal", "Laboratorio Sucursal")
 
@@ -43,14 +43,14 @@ fun AnalysisForm(
     val analysisName = analysis.name
 
     var timeExpanded by remember { mutableStateOf(false) }
-    var placeExpanded by remember { mutableStateOf(false) }
+//    var placeExpanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
     var availability by remember { mutableStateOf<List<String>>(emptyList()) }
 
     // Validation: all fields must be filled
-    val readyToSubmit = date.isNotBlank() && time != null && place != null
+    val readyToSubmit = date.isNotBlank() && time != null
 
     // Combine date and time into ISO format: "2025-12-05T08:00:00"
     fun createDateTimeString(): String =
@@ -84,7 +84,7 @@ fun AnalysisForm(
                 text = "Análisis: ${analysis.name}",
                 style = MaterialTheme.typography.titleMedium,
             )
-            
+
             if (!analysis.description.isNullOrBlank()) {
                 Text(
                     text = analysis.description,
@@ -104,53 +104,42 @@ fun AnalysisForm(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Row for date and time
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                // Date picker
-                OutlinedTextField(
-                    value = date.ifBlank { "Fecha" },
-                    readOnly = true,
-                    onValueChange = {},
-                    label = { Text("Fecha") },
-                    trailingIcon = {
-                        IconButton(onClick = { showDatePicker = true }) {
-                            Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
-                        }
-                    },
-                    modifier = Modifier.weight(1f),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = NavyBlue,
-                            unfocusedBorderColor = TextGray,
-                            focusedLabelColor = NavyBlue,
-                        ),
-                )
+            // Date picker
+            OutlinedTextField(
+                value = date.ifBlank { "Fecha" },
+                readOnly = true,
+                onValueChange = {},
+                label = { Text("Fecha") },
+                trailingIcon = {
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
+                    }
+                },
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = NavyBlue,
+                        unfocusedBorderColor = TextGray,
+                        focusedLabelColor = NavyBlue,
+                    ),
+            )
 
-                // Time dropdown
-                ReusableStringDropdown(
-                    label = "Hora",
-                    selectedValue = time,
-                    options = availability,
-                    expanded = timeExpanded,
-                    onExpandedChange = { timeExpanded = it },
-                    onValueSelected = { time = it },
-                    placeholder = if (date.isBlank()) "Seleccione fecha" else if (availability.isEmpty()) "Sin horarios" else "Seleccionar",
-                    modifier = Modifier.weight(1f),
-                )
-            }
-
-            // Place dropdown
+            // Time dropdown
             ReusableStringDropdown(
-                label = "Lugar",
-                selectedValue = place,
-                options = places,
-                expanded = placeExpanded,
-                onExpandedChange = { placeExpanded = it },
-                onValueSelected = { place = it },
-                modifier = Modifier.fillMaxWidth(),
+                label = "Hora",
+                selectedValue = time,
+                options = availability,
+                expanded = timeExpanded,
+                onExpandedChange = { timeExpanded = it },
+                onValueSelected = { time = it },
+                placeholder =
+                    if (date.isBlank()) {
+                        "Seleccione fecha"
+                    } else if (availability.isEmpty()) {
+                        "Sin horarios"
+                    } else {
+                        "Seleccionar"
+                    },
+                modifier = Modifier.weight(1f),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -169,9 +158,9 @@ fun AnalysisForm(
 
                 Button(
                     onClick = {
-                        if (time != null && place != null) {
+                        if (time != null) {
                             val dateTimeString = createDateTimeString()
-                            onSubmit(analysisId, dateTimeString, place!!)
+                            onSubmit(analysisId, dateTimeString)
                         }
                     },
                     modifier = Modifier.weight(1f),
@@ -216,7 +205,7 @@ fun AnalysisForm(
                     Log.w("AnalysisForm", "Selected date is invalid")
                     // TODO: Show snackbar for invalid date
                 }
-            }
+            },
         )
     }
 }

@@ -12,13 +12,10 @@ class CreateAnalysisAppointmentUseCase
             userId: String,
             analysisId: Int,
             analysisDate: String,
-            place: String,
         ): Boolean =
             catalogRepository.createAnalysisAppointment(
                 userId = userId,
                 analysisId = analysisId,
                 analysisDate = analysisDate,
-                place = place,
             )
     }
-

@@ -45,14 +45,12 @@ class CatalogRepositoryImpl
             userId: String,
             analysisId: Int,
             analysisDate: String,
-            place: String,
         ): Boolean {
             val request =
                 CreateAnalysisAppointmentRequest(
                     userId = userId,
                     analysisId = analysisId,
                     analysisDate = analysisDate,
-                    place = place,
                 )
             val response = api.createAnalysisAppointment(request)
             return response.success

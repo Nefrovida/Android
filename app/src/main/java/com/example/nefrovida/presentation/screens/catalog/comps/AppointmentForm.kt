@@ -35,7 +35,7 @@ fun AppointmentForm(
     onDismiss: () -> Unit,
     onSubmit: (String, String, Int) -> Unit,
 ) {
-    val appointmentTypes = listOf("Presencial", "En Línea")
+    val appointmentTypes = listOf("Presencial", "Virtual")
 
     var appointmentType by remember { mutableStateOf<String?>(null) }
     var date by remember { mutableStateOf("") }
@@ -125,11 +125,6 @@ fun AppointmentForm(
                 modifier = Modifier.fillMaxWidth(),
             )
 
-            // Row for date and time
-//            Row(
-//                modifier = Modifier.fillMaxWidth(),
-//                horizontalArrangement = Arrangement.spacedBy(8.dp),
-//            ) {
             // Date picker
             OutlinedTextField(
                 value = date.ifBlank { "Fecha" },
@@ -141,7 +136,6 @@ fun AppointmentForm(
                         Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
                     }
                 },
-                modifier = Modifier.weight(1f),
                 colors =
                     OutlinedTextFieldDefaults.colors(
                         focusedBorderColor = NavyBlue,
@@ -168,7 +162,6 @@ fun AppointmentForm(
                     },
                 modifier = Modifier.weight(1f),
             )
-//            }
 
             Spacer(modifier = Modifier.height(8.dp))
 

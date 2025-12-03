@@ -16,7 +16,6 @@ interface CatalogRepository {
         userId: String,
         analysisId: Int,
         analysisDate: String,
-        place: String,
     ): Boolean
 
     suspend fun getDateAvailability(

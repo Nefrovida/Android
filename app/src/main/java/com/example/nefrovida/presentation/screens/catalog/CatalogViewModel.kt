@@ -146,7 +146,6 @@ class CatalogViewModel
         fun createAnalysisAppointment(
             analysisId: Int,
             analysisDate: String,
-            place: String,
         ) {
             viewModelScope.launch {
                 try {
@@ -155,7 +154,6 @@ class CatalogViewModel
                             userId = _userId.value,
                             analysisId = analysisId,
                             analysisDate = analysisDate,
-                            place = place,
                         )
                     _uiState.value =
                         _uiState.value.copy(
