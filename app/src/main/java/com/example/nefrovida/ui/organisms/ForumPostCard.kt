@@ -51,10 +51,14 @@ fun ForumPostCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Row {
-                    Icon(
-                        imageVector = Icons.Default.FavoriteBorder,
-                        contentDescription = "Likes",
-                    )
+                    IconButton(
+                        onClick = { /* Handle like button click */ },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.FavoriteBorder,
+                            contentDescription = "Likes",
+                        )
+                    }
                     Text(
                         text = "${post.likes}",
                         modifier = Modifier.padding(start = 4.dp),
