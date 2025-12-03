@@ -66,9 +66,7 @@ class CatalogViewModel
 
         fun createAppointment(
             appointmentType: String,
-            place: String,
             dateHour: String,
-            duration: Int,
             appointmentId: Int,
         ) {
             viewModelScope.launch {
@@ -78,9 +76,7 @@ class CatalogViewModel
                             patientId = _userId.value,
                             appointmentId = appointmentId,
                             dateHour = dateHour,
-                            duration = duration,
                             appointmentType = appointmentType,
-                            place = place,
                         )
                     _uiState.value =
                         _uiState.value.copy(
@@ -98,12 +94,12 @@ class CatalogViewModel
         }
 
         suspend fun getDateAvailability(
-            appointmentName: String,
             date: String,
+            appointmentId: Int,
         ): List<String> {
             var result: List<String> = emptyList()
 
-            getCatalogDateAvailabilityUseCase(appointmentName, date).collect { state ->
+            getCatalogDateAvailabilityUseCase(date, appointmentId).collect { state ->
                 when (state) {
                     is Result.Loading -> {
                         Log.d("CatalogVM", "Get Availability is loading")

@@ -12,17 +12,13 @@ class CreateAppointmentUseCase
             patientId: String,
             appointmentId: Int,
             dateHour: String,
-            duration: Int,
             appointmentType: String,
-            place: String,
         ): Boolean =
             catalogRepository.createAppointment(
                 patientId = patientId,
                 appointmentId = appointmentId,
                 dateHour = dateHour,
-                duration = duration,
                 appointmentType = appointmentType,
-                place = place,
             )
     }
 

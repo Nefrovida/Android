@@ -12,13 +12,13 @@ class GetCatalogDateAvailabilityUseCase
         private val repository: CatalogRepository,
     ) {
         operator fun invoke(
-            appointmentName: String,
             date: String,
+            appointmentId: Int,
         ): Flow<Result<List<String>>> =
             flow {
                 try {
                     emit(Result.Loading)
-                    val data = repository.getDateAvailability(appointmentName, date)
+                    val data = repository.getDateAvailability(date, appointmentId)
                     emit(Result.Success(data))
                 } catch (e: Exception) {
                     emit(Result.Error(e))

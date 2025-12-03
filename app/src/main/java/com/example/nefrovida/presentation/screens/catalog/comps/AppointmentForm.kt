@@ -33,24 +33,17 @@ fun AppointmentForm(
     viewModel: CatalogViewModel,
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit,
-    onSubmit: (String, String, String, Int, Int) -> Unit,
+    onSubmit: (String, String, Int) -> Unit,
 ) {
     val appointmentTypes = listOf("Presencial", "En Línea")
-    val places = listOf("Consultorio 01", "Consultorio 02", "Sala Virtual")
-    val durations = listOf(30, 45, 60, 90)
 
     var appointmentType by remember { mutableStateOf<String?>(null) }
-    var place by remember { mutableStateOf<String?>(null) }
     var date by remember { mutableStateOf("") }
     var time by remember { mutableStateOf<String?>(null) }
-    var duration by remember { mutableStateOf<Int?>(30) }
     val appointmentId = appointment.id
-    val appointmentName = appointment.name
 
     var typeExpanded by remember { mutableStateOf(false) }
-    var placeExpanded by remember { mutableStateOf(false) }
     var timeExpanded by remember { mutableStateOf(false) }
-    var durationExpanded by remember { mutableStateOf(false) }
     var showDatePicker by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
@@ -58,8 +51,7 @@ fun AppointmentForm(
 
     // Validation: all fields must be filled
     val readyToSubmit =
-        appointmentType != null && place != null &&
-            date.isNotBlank() && time != null && duration != null && duration!! >= 30
+        appointmentType != null && date.isNotBlank() && time != null
 
     // Combine date and time into ISO format: "2025-12-05T10:00:00"
     fun createDateTimeString(): String =
@@ -68,6 +60,27 @@ fun AppointmentForm(
         } else {
             ""
         }
+
+    // Generate all time slots from 9 AM to 5 PM every 10 minutes
+    fun generateAllTimeSlots(): List<String> {
+        val slots = mutableListOf<String>()
+        for (hour in 9..16) { // 9 AM to 4 PM (16:00 is 4 PM, will generate up to 16:50)
+            for (minute in 0..50 step 10) {
+                val hourStr = hour.toString().padStart(2, '0')
+                val minuteStr = minute.toString().padStart(2, '0')
+                slots.add("$hourStr:$minuteStr")
+            }
+        }
+        // Add 5:00 PM (17:00) as the last slot
+        slots.add("17:00")
+        return slots
+    }
+
+    // Filter out occupied times from the API response
+    fun getAvailableTimeSlots(occupiedTimes: List<String>): List<String> {
+        val allSlots = generateAllTimeSlots()
+        return allSlots.filter { it !in occupiedTimes }
+    }
 
     Card(
         modifier =
@@ -101,81 +114,61 @@ fun AppointmentForm(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Row for type and duration
-            Row(
+            // Appointment type dropdown
+            ReusableStringDropdown(
+                label = "Tipo de Consulta",
+                selectedValue = appointmentType,
+                options = appointmentTypes,
+                expanded = typeExpanded,
+                onExpandedChange = { typeExpanded = it },
+                onValueSelected = { appointmentType = it },
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                ReusableStringDropdown(
-                    label = "Tipo",
-                    selectedValue = appointmentType,
-                    options = appointmentTypes,
-                    expanded = typeExpanded,
-                    onExpandedChange = { typeExpanded = it },
-                    onValueSelected = { appointmentType = it },
-                    modifier = Modifier.weight(1f),
-                )
+            )
 
-                ReusableIntDropdown(
-                    label = "Duración",
-                    selectedValue = duration,
-                    options = durations,
-                    expanded = durationExpanded,
-                    onExpandedChange = { durationExpanded = it },
-                    onValueSelected = { duration = it },
-                    displayText = { "$it min" },
-                    modifier = Modifier.weight(1f),
-                )
-            }
+            // Row for date and time
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.spacedBy(8.dp),
+//            ) {
+            // Date picker
+            OutlinedTextField(
+                value = date.ifBlank { "Fecha" },
+                readOnly = true,
+                onValueChange = {},
+                label = { Text("Fecha") },
+                trailingIcon = {
+                    IconButton(onClick = { showDatePicker = true }) {
+                        Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
+                    }
+                },
+                modifier = Modifier.weight(1f),
+                colors =
+                    OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = NavyBlue,
+                        unfocusedBorderColor = TextGray,
+                        focusedLabelColor = NavyBlue,
+                    ),
+            )
 
-            // Row for date, time, and place
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                // Date picker
-                OutlinedTextField(
-                    value = date.ifBlank { "Fecha" },
-                    readOnly = true,
-                    onValueChange = {},
-                    label = { Text("Fecha") },
-                    trailingIcon = {
-                        IconButton(onClick = { showDatePicker = true }) {
-                            Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
-                        }
+            // Time dropdown
+            ReusableStringDropdown(
+                label = "Hora",
+                selectedValue = time,
+                options = availability,
+                expanded = timeExpanded,
+                onExpandedChange = { timeExpanded = it },
+                onValueSelected = { time = it },
+                placeholder =
+                    if (date.isBlank()) {
+                        "Seleccione fecha"
+                    } else if (availability.isEmpty()) {
+                        "Sin horarios"
+                    } else {
+                        "Seleccionar"
                     },
-                    modifier = Modifier.weight(1f),
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = NavyBlue,
-                            unfocusedBorderColor = TextGray,
-                            focusedLabelColor = NavyBlue,
-                        ),
-                )
-
-                // Time dropdown
-                ReusableStringDropdown(
-                    label = "Hora",
-                    selectedValue = time,
-                    options = availability,
-                    expanded = timeExpanded,
-                    onExpandedChange = { timeExpanded = it },
-                    onValueSelected = { time = it },
-                    placeholder = if (date.isBlank()) "Seleccione fecha" else if (availability.isEmpty()) "Sin horarios" else "Seleccionar",
-                    modifier = Modifier.weight(1f),
-                )
-
-                // Place dropdown
-                ReusableStringDropdown(
-                    label = "Lugar",
-                    selectedValue = place,
-                    options = places,
-                    expanded = placeExpanded,
-                    onExpandedChange = { placeExpanded = it },
-                    onValueSelected = { place = it },
-                    modifier = Modifier.weight(1f),
-                )
-            }
+                modifier = Modifier.weight(1f),
+            )
+//            }
 
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -193,9 +186,9 @@ fun AppointmentForm(
 
                 Button(
                     onClick = {
-                        if (appointmentType != null && place != null && time != null && duration != null) {
+                        if (appointmentType != null && time != null) {
                             val dateTimeString = createDateTimeString()
-                            onSubmit(appointmentType!!, place!!, dateTimeString, duration!!, appointmentId)
+                            onSubmit(appointmentType!!, dateTimeString, appointmentId)
                         }
                     },
                     modifier = Modifier.weight(1f),
@@ -226,15 +219,19 @@ fun AppointmentForm(
                     time = null // Reset time when date changes
                     showDatePicker = false
 
-                    // Fetch availability for the selected date
+                    // Fetch occupied times for the selected date and appointmentId
                     scope.launch {
-                        availability =
+                        val occupiedTimes =
                             try {
-                                viewModel.getDateAvailability(appointmentName, pickedDate)
+                                viewModel.getDateAvailability(pickedDate, appointmentId)
                             } catch (e: Exception) {
                                 Log.e("AppointmentForm", "Error fetching availability: ${e.message}")
                                 emptyList()
                             }
+                        // Convert occupied times to available times
+                        availability = getAvailableTimeSlots(occupiedTimes)
+                        Log.d("AppointmentForm", "Occupied times: $occupiedTimes")
+                        Log.d("AppointmentForm", "Available times: $availability")
                     }
                 } else {
                     Log.w("AppointmentForm", "Selected date is invalid")

@@ -28,18 +28,14 @@ class CatalogRepositoryImpl
             patientId: String,
             appointmentId: Int,
             dateHour: String,
-            duration: Int,
             appointmentType: String,
-            place: String,
         ): Boolean {
             val request =
                 CreateAppointmentRequest(
                     patientId = patientId,
                     appointmentId = appointmentId,
                     dateHour = dateHour,
-                    duration = duration,
                     appointmentType = appointmentType,
-                    place = place,
                 )
             val response = api.createAppointment(request)
             return response.success
@@ -63,13 +59,22 @@ class CatalogRepositoryImpl
         }
 
         override suspend fun getDateAvailability(
-            appointmentName: String,
             date: String,
+            appointmentId: Int,
         ): List<String> {
-            val response = api.getDateAvailability(appointmentName, date)
+            val response = api.getDateAvailability(date, appointmentId)
 
             if (response.isSuccessful) {
-                return response.body() ?: emptyList()
+                val appointments = response.body() ?: emptyList()
+                // Extract time from date_hour field (format: "2025-12-05T15:00:00.000Z")
+                return appointments.map { appointment ->
+                    // Extract the time portion (HH:mm) from the ISO datetime string
+                    val dateTime = appointment.dateHour
+                    // Parse: "2025-12-05T15:00:00.000Z" -> extract "15:00"
+                    val timePart = dateTime.substringAfter('T').substringBefore(':')
+                    val minutePart = dateTime.substringAfter('T').substringAfter(':').take(2)
+                    "$timePart:$minutePart"
+                }
             } else {
                 Log.e("CatalogRepository", "Failed to get date availability: ${response.code()}")
                 return emptyList()

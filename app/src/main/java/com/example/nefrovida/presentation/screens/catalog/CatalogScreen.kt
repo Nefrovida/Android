@@ -75,33 +75,36 @@ fun CatalogScreen(
 
                 else -> {
                     Column(modifier = Modifier.fillMaxSize()) {
-                        Row(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp),
-                            horizontalArrangement = Arrangement.SpaceEvenly,
-                        ) {
+                        // Only show toggle when not in a form
+                        if (currentView != CatalogViewType.APPOINTMENT_FORM && currentView != CatalogViewType.LAB_FORM) {
                             Row(
                                 modifier =
                                     Modifier
-                                        .background(Color(0xFFF2F2F7), RoundedCornerShape(50))
-                                        .padding(4.dp)
-                                        .fillMaxWidth(),
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                horizontalArrangement = Arrangement.SpaceEvenly,
                             ) {
-                                ResultsToggleButton(
-                                    text = "Consultas",
-                                    selected = currentView == CatalogViewType.APPOINTMENTS,
-                                    onClick = { currentView = CatalogViewType.APPOINTMENTS },
-                                    modifier = Modifier.weight(1f),
-                                )
+                                Row(
+                                    modifier =
+                                        Modifier
+                                            .background(Color(0xFFF2F2F7), RoundedCornerShape(50))
+                                            .padding(4.dp)
+                                            .fillMaxWidth(),
+                                ) {
+                                    ResultsToggleButton(
+                                        text = "Consultas",
+                                        selected = currentView == CatalogViewType.APPOINTMENTS,
+                                        onClick = { currentView = CatalogViewType.APPOINTMENTS },
+                                        modifier = Modifier.weight(1f),
+                                    )
 
-                                ResultsToggleButton(
-                                    text = "Laboratorio",
-                                    selected = currentView == CatalogViewType.LAB,
-                                    onClick = { currentView = CatalogViewType.LAB },
-                                    modifier = Modifier.weight(1f),
-                                )
+                                    ResultsToggleButton(
+                                        text = "Laboratorio",
+                                        selected = currentView == CatalogViewType.LAB,
+                                        onClick = { currentView = CatalogViewType.LAB },
+                                        modifier = Modifier.weight(1f),
+                                    )
+                                }
                             }
                         }
                         when (currentView) {
@@ -143,12 +146,10 @@ fun CatalogScreen(
                                             selectedItem = null
                                             currentView = CatalogViewType.APPOINTMENTS
                                         },
-                                        onSubmit = { type, place, dateHour, duration, appointmentId ->
+                                        onSubmit = { type, dateHour, appointmentId ->
                                             viewModel.createAppointment(
                                                 appointmentType = type,
-                                                place = place,
                                                 dateHour = dateHour,
-                                                duration = duration,
                                                 appointmentId = appointmentId
                                             )
                                             selectedItem = null

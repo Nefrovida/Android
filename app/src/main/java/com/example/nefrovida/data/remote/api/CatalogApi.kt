@@ -1,5 +1,6 @@
 package com.example.nefrovida.data.remote.api
 
+import com.example.nefrovida.data.remote.dto.AppointmentAvailabilityDto
 import com.example.nefrovida.data.remote.dto.CreateAnalysisAppointmentRequest
 import com.example.nefrovida.data.remote.dto.CreateAnalysisAppointmentResponse
 import com.example.nefrovida.data.remote.dto.CreateAppointmentRequest
@@ -25,11 +26,11 @@ interface CatalogApi {
         @Body request: CreateAnalysisAppointmentRequest,
     ): CreateAnalysisAppointmentResponse
 
-    @GET("agenda/appointments/date-availability")
+    @GET("agenda/appointments-per-day/by-appointment")
     suspend fun getDateAvailability(
-        @Query("appointmentName") appointmentName: String,
         @Query("date") date: String,
-    ): Response<List<String>>
+        @Query("appointmentId") appointmentId: Int,
+    ): Response<List<AppointmentAvailabilityDto>>
 
     @GET("agenda/analyses/date-availability")
     suspend fun getAnalysisDateAvailability(

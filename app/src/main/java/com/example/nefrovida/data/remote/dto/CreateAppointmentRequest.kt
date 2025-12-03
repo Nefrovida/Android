@@ -9,12 +9,8 @@ data class CreateAppointmentRequest(
     val appointmentId: Int,
     @SerializedName("dateHour")
     val dateHour: String,
-    @SerializedName("duration")
-    val duration: Int,
     @SerializedName("appointmentType")
     val appointmentType: String,
-    @SerializedName("place")
-    val place: String,
 )
 
 data class CreateAppointmentResponse(

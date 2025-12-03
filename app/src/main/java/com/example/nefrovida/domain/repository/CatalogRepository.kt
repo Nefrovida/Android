@@ -9,9 +9,7 @@ interface CatalogRepository {
         patientId: String,
         appointmentId: Int,
         dateHour: String,
-        duration: Int,
         appointmentType: String,
-        place: String,
     ): Boolean
 
     suspend fun createAnalysisAppointment(
@@ -22,8 +20,8 @@ interface CatalogRepository {
     ): Boolean
 
     suspend fun getDateAvailability(
-        appointmentName: String,
         date: String,
+        appointmentId: Int,
     ): List<String>
 
     suspend fun getAnalysisDateAvailability(
