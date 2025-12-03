@@ -135,7 +135,6 @@ fun ForumMessageScreen(
                         Modifier
                             .fillMaxWidth()
                             .background(Color.White)
-                            .imePadding()
                             .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
