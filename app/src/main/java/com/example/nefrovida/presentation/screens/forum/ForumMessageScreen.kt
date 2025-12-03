@@ -97,8 +97,7 @@ fun ForumMessageScreen(
             Column(
                 modifier =
                     Modifier
-                        .fillMaxSize()
-                        .imePadding(),
+                        .fillMaxSize(),
             ) {
                 LazyColumn(
                     state = listState,
