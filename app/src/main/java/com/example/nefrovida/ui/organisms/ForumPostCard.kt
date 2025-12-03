@@ -47,24 +47,21 @@ fun ForumPostCard(
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.Start,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row {
-                    IconButton(
-                        onClick = { /* Handle like button click */ },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "Likes",
-                        )
-                    }
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "Likes",
+                    )
                     Text(
                         text = "${post.likes}",
                         modifier = Modifier.padding(start = 4.dp),
                     )
                 }
-                Row {
+                Spacer(modifier = Modifier.width(16.dp))
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Outlined.Comment,
                         contentDescription = "Replies",
