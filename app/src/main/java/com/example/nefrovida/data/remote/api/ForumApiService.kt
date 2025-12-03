@@ -7,6 +7,7 @@ import com.example.nefrovida.data.remote.dto.MessageDto
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
 import com.example.nefrovida.data.remote.dto.ReplyMessageStatus
+import com.example.nefrovida.data.remote.dto.StatusMessage
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -36,6 +37,11 @@ interface ForumApiService {
     suspend fun getMessage(
         @Path("messageId") messageId: Int,
     ): Message
+
+    @POST("forums/like/{messageId}")
+    suspend fun postLike(
+        @Path("messageId") messageId: Int,
+    ): StatusMessage
 
     @POST("forums/{forumId}/replies")
     suspend fun postMessage(

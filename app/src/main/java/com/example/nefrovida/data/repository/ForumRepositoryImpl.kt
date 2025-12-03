@@ -7,6 +7,7 @@ import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
+import com.example.nefrovida.data.remote.dto.StatusMessage
 import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository
 import retrofit2.Response
@@ -33,6 +34,11 @@ class ForumRepositoryImpl
 
         override suspend fun getMessage(messageId: Int): Message {
             val response = api.getMessage(messageId)
+            return response
+        }
+
+        override suspend fun postLike(messageId: Int): StatusMessage {
+            val response = api.postLike(messageId)
             return response
         }
 

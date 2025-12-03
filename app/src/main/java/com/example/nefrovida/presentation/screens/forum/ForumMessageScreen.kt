@@ -117,7 +117,6 @@ fun ForumMessageScreen(
                             post = reply,
                             modifier = Modifier.padding(8.dp),
                             onClick = {
-                                Log.d("ForumClick", "forumId = ${pMI.forumId}, replyId = ${reply.messageId}")
                                 navController.navigate(
                                     Screen.Message.createRoute(
                                         forumId = pMI.forumId,
