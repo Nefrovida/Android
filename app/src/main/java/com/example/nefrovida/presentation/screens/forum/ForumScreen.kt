@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.SimpleForumInfo
@@ -26,7 +27,7 @@ fun ForumScreen(
     modifier: Modifier = Modifier,
     viewModel: ForumViewModel = hiltViewModel(),
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
     val navyBlue = Color(0xFF000080)
 
@@ -37,7 +38,7 @@ fun ForumScreen(
             tabs.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
+                    onClick = { viewModel.onTabSelected(index) },
                     text = {
                         Text(
                             title,
