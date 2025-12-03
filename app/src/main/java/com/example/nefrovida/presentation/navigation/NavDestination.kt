@@ -20,9 +20,9 @@ sealed class NavDestination(
 
     object Catalog : NavDestination(
         route = "catalog",
-        label = "Catalogo",
-        icon = Icons.Outlined.GridView,
-        filledIcon = Icons.Filled.GridView,
+        label = "Catálogo",
+        icon = Icons.Outlined.Dashboard,
+        filledIcon = Icons.Filled.Dashboard,
     )
 
     object Lab : NavDestination(
@@ -43,7 +43,7 @@ sealed class NavDestination(
         route = "forumFeed/{forumId}",
         label = "Feed del Foro",
         icon = Icons.Outlined.Forum,
-        filledIcon = Icons.Filled.Forum, // Puedes usar un icono diferente si lo deseas
+        filledIcon = Icons.Filled.Forum,
     ) {
         fun createRoute(forumId: Int) = "forumFeed/$forumId"
     }
