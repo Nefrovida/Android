@@ -66,15 +66,31 @@ class CatalogRepositoryImpl
 
             if (response.isSuccessful) {
                 val appointments = response.body() ?: emptyList()
-                // Extract time from date_hour field (format: "2025-12-05T15:00:00.000Z")
-                return appointments.map { appointment ->
+                val occupiedSlots = mutableSetOf<String>()
+
+                // For each appointment, calculate all occupied time slots based on duration
+                appointments.forEach { appointment ->
                     // Extract the time portion (HH:mm) from the ISO datetime string
                     val dateTime = appointment.dateHour
-                    // Parse: "2025-12-05T15:00:00.000Z" -> extract "15:00"
                     val timePart = dateTime.substringAfter('T').substringBefore(':')
                     val minutePart = dateTime.substringAfter('T').substringAfter(':').take(2)
-                    "$timePart:$minutePart"
+                    val startHour = timePart.toInt()
+                    val startMinute = minutePart.toInt()
+                    val duration = appointment.duration
+
+                    // Calculate all 10-minute slots occupied by this appointment
+                    var currentMinutes = startHour * 60 + startMinute
+                    val endMinutes = currentMinutes + duration
+
+                    while (currentMinutes < endMinutes) {
+                        val hour = currentMinutes / 60
+                        val minute = currentMinutes % 60
+                        occupiedSlots.add(String.format("%02d:%02d", hour, minute))
+                        currentMinutes += 10 // Next 10-minute slot
+                    }
                 }
+
+                return occupiedSlots.toList()
             } else {
                 Log.e("CatalogRepository", "Failed to get date availability: ${response.code()}")
                 return emptyList()

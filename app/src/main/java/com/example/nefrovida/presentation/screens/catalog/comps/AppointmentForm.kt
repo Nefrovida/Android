@@ -86,7 +86,7 @@ fun AppointmentForm(
         modifier =
             modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 24.dp),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(3.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)),
         colors =
