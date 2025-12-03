@@ -46,17 +46,13 @@ fun ForumPostCard(
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Row {
-                    Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Likes")
-                    Text(text = "${post.likes}", modifier = Modifier.padding(start = 4.dp))
-                }
-                Row {
-                    Icon(imageVector = Icons.Default.Reply, contentDescription = "Replies")
-                    Text(text = "${post.replies}", modifier = Modifier.padding(start = 4.dp))
-                }
+                Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Likes")
+                Text(text = "${post.likes}", modifier = Modifier.padding(start = 4.dp))
+                Spacer(modifier = Modifier.width(16.dp))
+                Icon(imageVector = Icons.Default.Reply, contentDescription = "Replies")
+                Text(text = "${post.replies}", modifier = Modifier.padding(start = 4.dp))
             }
         }
     }
