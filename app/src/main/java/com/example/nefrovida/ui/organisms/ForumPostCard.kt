@@ -3,8 +3,9 @@ package com.example.nefrovida.ui.organisms
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.outlined.Comment
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Reply
+import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -46,13 +47,29 @@ fun ForumPostCard(
             Spacer(modifier = Modifier.height(16.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Likes")
-                Text(text = "${post.likes}", modifier = Modifier.padding(start = 4.dp))
-                Spacer(modifier = Modifier.width(16.dp))
-                Icon(imageVector = Icons.Default.Reply, contentDescription = "Replies")
-                Text(text = "${post.replies}", modifier = Modifier.padding(start = 4.dp))
+                Row {
+                    Icon(
+                        imageVector = Icons.Default.FavoriteBorder,
+                        contentDescription = "Likes",
+                    )
+                    Text(
+                        text = "${post.likes}",
+                        modifier = Modifier.padding(start = 4.dp),
+                    )
+                }
+                Row {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Outlined.Comment,
+                        contentDescription = "Replies",
+                    )
+                    Text(
+                        text = "${post.replies}",
+                        modifier = Modifier.padding(start = 4.dp),
+                    )
+                }
             }
         }
     }
