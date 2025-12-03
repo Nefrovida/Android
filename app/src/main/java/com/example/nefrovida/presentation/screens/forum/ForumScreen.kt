@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.SimpleForumInfo
@@ -26,49 +27,41 @@ fun ForumScreen(
     modifier: Modifier = Modifier,
     viewModel: ForumViewModel = hiltViewModel(),
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
     val navyBlue = Color(0xFF000080)
 
-    Scaffold(
+    Column(
         modifier = modifier.fillMaxSize(),
-        topBar = { TopAppBar(title = { Text("Foros") }) },
-    ) { paddingValues ->
-        Column(
-            modifier =
-                Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
-        ) {
-            TabRow(selectedTabIndex = selectedTabIndex) {
-                tabs.forEachIndexed { index, title ->
-                    Tab(
-                        selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
-                        text = {
-                            Text(
-                                title,
-                                color =
-                                    if (selectedTabIndex ==
-                                        index
-                                    ) {
-                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                    } else {
-                                        navyBlue
-                                    },
-                            )
-                        },
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = navyBlue,
-                    )
-                }
+    ) {
+        TabRow(selectedTabIndex = selectedTabIndex) {
+            tabs.forEachIndexed { index, title ->
+                Tab(
+                    selected = selectedTabIndex == index,
+                    onClick = { viewModel.onTabSelected(index) },
+                    text = {
+                        Text(
+                            title,
+                            color =
+                                if (selectedTabIndex ==
+                                    index
+                                ) {
+                                    MaterialTheme.colorScheme.onPrimaryContainer
+                                } else {
+                                    navyBlue
+                                },
+                        )
+                    },
+                    selectedContentColor = MaterialTheme.colorScheme.primary,
+                    unselectedContentColor = navyBlue,
+                )
             }
+        }
 
-            when (selectedTabIndex) {
-                0 -> DiscoverTabContent(viewModel = viewModel, navController = navController)
-                1 -> MyForumsTabContent(viewModel = viewModel, navController = navController)
-                2 -> AllForumsTabContent(viewModel = viewModel, navController = navController)
-            }
+        when (selectedTabIndex) {
+            0 -> DiscoverTabContent(viewModel = viewModel, navController = navController)
+            1 -> MyForumsTabContent(viewModel = viewModel, navController = navController)
+            2 -> AllForumsTabContent(viewModel = viewModel, navController = navController)
         }
     }
 }
@@ -83,7 +76,6 @@ fun DiscoverTabContent(
     val listState = rememberLazyListState()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(16.dp))
         // No hay barra de búsqueda para Descubrir según la documentación
         if (isDiscoverLoading && discoverFeed.isEmpty()) {
             Box(
@@ -161,7 +153,6 @@ fun MyForumsTabContent(
     val isMyForumsLoading by viewModel.isMyForumsLoading
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(16.dp))
         SearchBar(
             query = myForumsSearchQuery,
             onQueryChange = viewModel::onMyForumsSearchQueryChange,
@@ -209,7 +200,6 @@ fun AllForumsTabContent(
     val listState = rememberLazyListState()
 
     Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(16.dp))
         SearchBar(
             query = allForumsSearchQuery,
             onQueryChange = viewModel::onAllForumsSearchQueryChange,

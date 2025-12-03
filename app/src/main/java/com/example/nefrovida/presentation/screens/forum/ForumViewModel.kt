@@ -28,6 +28,14 @@ class ForumViewModel @Inject constructor(
     private val getAllForumsUseCase: GetAllForumsUseCase
 ) : ViewModel() {
 
+    // --- State for Tab Selection ---
+    private val _selectedTabIndex = MutableStateFlow(0)
+    val selectedTabIndex: StateFlow<Int> = _selectedTabIndex.asStateFlow()
+
+    fun onTabSelected(index: Int) {
+        _selectedTabIndex.value = index
+    }
+
     // --- State for "Descubrir" (General Feed) ---
     private val _discoverFeed = MutableStateFlow<List<Message>>(emptyList())
     val discoverFeed: StateFlow<List<Message>> = _discoverFeed.asStateFlow()
@@ -164,6 +172,8 @@ class ForumViewModel @Inject constructor(
         _allForumsSearchQuery.value = query
         loadAllForums(reset = true) // Reload all forums on search query change
     }
+
+
 
     fun onSearch() {
         // This function will be called from the SearchBar in ForumScreen
