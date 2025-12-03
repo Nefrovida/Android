@@ -32,3 +32,8 @@ data class UpdateProfileResponse(
     val message: String,
     val data: UserProfileDto,
 )
+
+// DTO para la respuesta de cambio de contraseña
+data class ChangePasswordResponse(
+    val message: String,
+)

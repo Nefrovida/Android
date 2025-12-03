@@ -64,7 +64,9 @@ class MainActivity : ComponentActivity() {
                                 NfTopAppBar(
                                     navController = navController,
                                     onProfileClick = {
-                                        scope.launch { drawerState.open() }
+                                        navController.navigate(Screen.Profile.route) {
+                                            launchSingleTop = true
+                                        }
                                     },
                                     onLogoutClick = {
                                         // CLEAR COOKIES

@@ -1,4 +1,4 @@
-package com.example.nefrovida.presentation.profile
+package com.example.nefrovida.presentation.screens.profile
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -7,7 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.nefrovida.ui.theme.NavyBlue
+import com.example.nefrovida.ui.theme.NefroGreen
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -71,12 +73,12 @@ fun ProfileScreen(
                 title = { Text("Mi Perfil") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Atrás")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atrás")
                     }
                 },
                 colors =
                     TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color(0xFF6A1B9A), // Color morado oscuro
+                        containerColor = NavyBlue,
                         titleContentColor = Color.White,
                         navigationIconContentColor = Color.White,
                     ),
@@ -178,10 +180,21 @@ fun ProfileInfoCard(profile: com.example.nefrovida.domain.model.UserProfile) {
             Spacer(modifier = Modifier.height(16.dp))
             Row(Modifier.fillMaxWidth()) {
                 InfoItem("Nombre(s)", profile.name, Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(8.dp))
                 InfoItem("Apellido Paterno", profile.parentLastName, Modifier.weight(1f))
             }
             Spacer(modifier = Modifier.height(16.dp))
-            InfoItem("Apellido Materno", profile.maternalLastName)
+            Row(Modifier.fillMaxWidth()) {
+                InfoItem("Apellido Materno", profile.maternalLastName, Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(8.dp))
+                InfoItem("Teléfono", profile.phoneNumber, Modifier.weight(1f))
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Row(Modifier.fillMaxWidth()) {
+                InfoItem("Usuario", profile.username, Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(8.dp))
+                InfoItem("Rol", profile.roleName, Modifier.weight(1f))
+            }
         }
     }
 }
@@ -279,7 +292,7 @@ fun ChangePasswordDialog(
                     value = confirmPassword,
                     onValueChange = { confirmPassword = it },
                     label = { Text("Confirmar nueva contraseña") },
-                    visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualtransformation(),
+                    visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
                         val image = if (isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff

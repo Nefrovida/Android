@@ -1,12 +1,14 @@
-package com.example.nefrovida.presentation.profileimport androidx.compose.runtime.State
+package com.example.nefrovida.presentation.screens.profile
+
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.data.remote.dto.ChangePasswordDto
 import com.example.nefrovida.data.remote.dto.UpdateProfileDto
+import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.model.UserProfile
 import com.example.nefrovida.domain.repository.ProfileRepository
-import com.example.nefrovida.utils.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -44,14 +46,14 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             _state.value = _state.value.copy(isLoading = true)
             when (val result = repository.getMyProfile()) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     _state.value = ProfileState(profile = result.data, isLoading = false)
                 }
-                is Resource.Error -> {
-                    _state.value = ProfileState(isLoading = false, error = result.message)
-                    _eventFlow.emit(UiEvent.ShowSnackbar(result.message ?: "Error desconocido"))
+                is Result.Error -> {
+                    _state.value = ProfileState(isLoading = false, error = result.exception.message)
+                    _eventFlow.emit(UiEvent.ShowSnackbar(result.exception.message ?: "Error desconocido"))
                 }
-                is Resource.Loading -> {
+                is Result.Loading -> {
                     _state.value = _state.value.copy(isLoading = true)
                 }
             }
@@ -63,16 +65,16 @@ class ProfileViewModel @Inject constructor(
             val dto = UpdateProfileDto(name, pLastName, mLastName, phone)
             _state.value = _state.value.copy(isLoading = true)
             when (val result = repository.updateMyProfile(dto)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     _state.value = ProfileState(profile = result.data, isLoading = false)
                     _eventFlow.emit(UiEvent.ProfileUpdated)
                     _eventFlow.emit(UiEvent.ShowSnackbar("Perfil actualizado con éxito"))
                 }
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(isLoading = false)
-                    _eventFlow.emit(UiEvent.ShowSnackbar(result.message ?: "Error al actualizar"))
+                    _eventFlow.emit(UiEvent.ShowSnackbar(result.exception.message ?: "Error al actualizar"))
                 }
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
@@ -87,16 +89,16 @@ class ProfileViewModel @Inject constructor(
             val dto = ChangePasswordDto(newPassword = pass, confirmNewPassword = confirmPass)
             _state.value = _state.value.copy(isLoading = true)
             when (val result = repository.changePassword(dto)) {
-                is Resource.Success -> {
+                is Result.Success -> {
                     _state.value = _state.value.copy(isLoading = false)
                     _eventFlow.emit(UiEvent.PasswordChanged)
                     _eventFlow.emit(UiEvent.ShowSnackbar("Contraseña cambiada con éxito"))
                 }
-                is Resource.Error -> {
+                is Result.Error -> {
                     _state.value = _state.value.copy(isLoading = false)
-                    _eventFlow.emit(UiEvent.ShowSnackbar(result.message ?: "Error al cambiar contraseña"))
+                    _eventFlow.emit(UiEvent.ShowSnackbar(result.exception.message ?: "Error al cambiar contraseña"))
                 }
-                is Resource.Loading -> {}
+                is Result.Loading -> {}
             }
         }
     }
