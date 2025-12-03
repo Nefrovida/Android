@@ -2,7 +2,6 @@ package com.example.nefrovida.presentation.screens.laboratory
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,16 +9,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,21 +38,6 @@ fun ReportDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val snackbarHostState = remember { SnackbarHostState() }
-
-    val openPdfViewer = { pdfUrl: String ->
-        val intent =
-            Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse(pdfUrl)
-                type = "application/pdf"
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            }
-        try {
-            context.startActivity(intent)
-        } catch (e: Exception) {
-            Log.e("PDF_VIEWER", "Fallo al abrir PDF: ${e.message}")
-        }
-    }
 
     LaunchedEffect(patientAnalysisId) {
         viewModel.loadReport(patientAnalysisId)
@@ -62,7 +45,14 @@ fun ReportDetailScreen(
 
     when (val state = uiState) {
         ReportDetailUiState.Loading -> {
-            Text("Cargando...")
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+                Text("Cargando reporte...", modifier = Modifier.padding(top = 16.dp))
+            }
         }
 
         is ReportDetailUiState.Error -> {
@@ -71,7 +61,12 @@ fun ReportDetailScreen(
 
         is ReportDetailUiState.Success -> {
             val report = (uiState as ReportDetailUiState.Success).data
-            val pdfUrl = report.path
+
+            val onDownloadClick = {
+                val pdfUrl = viewModel.getPdfUrl(patientAnalysisId)
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(pdfUrl))
+                context.startActivity(intent)
+            }
 
             Column {
                 Row(
@@ -100,8 +95,8 @@ fun ReportDetailScreen(
                     date = report.date,
                     interpretation = report.interpretation,
                     recommendation = report.recommendation,
-                    onDownloadClick = { openPdfViewer(pdfUrl) },
-                    onBackClick = onBackClick,
+                    onDownloadClick = onDownloadClick,
+                    onBackClick = onBackClick
                 )
             }
         }

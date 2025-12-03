@@ -3,6 +3,7 @@ package com.example.nefrovida.presentation.screens.laboratory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.domain.model.Report
+import com.example.nefrovida.domain.repository.ReportRepository
 import com.example.nefrovida.domain.usecase.GetReportByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,8 @@ sealed class ReportDetailUiState {
 
 @HiltViewModel
 class ReportDetailViewModel @Inject constructor(
-    private val getReportDetailUseCase: GetReportByIdUseCase
+    private val getReportDetailUseCase: GetReportByIdUseCase,
+    private val reportRepository: ReportRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<ReportDetailUiState>(ReportDetailUiState.Loading)
@@ -38,5 +40,9 @@ class ReportDetailViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun getPdfUrl(patientAnalysisId: Int): String {
+        return reportRepository.getPdfUrl(patientAnalysisId)
     }
 }
