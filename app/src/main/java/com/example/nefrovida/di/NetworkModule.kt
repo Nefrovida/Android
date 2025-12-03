@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "http://192.168.1.69:3001/api/" // Android emulator localhost
+    private const val BASE_URL = "http://10.25.102.123:3001/api/" // Android emulator localhost
 
     // For physical device, use your computer's IP: "http://192.168.x.x:3001/api/"
     private var retrofit: Retrofit? = null
@@ -112,12 +112,65 @@ object NetworkModule {
                 level = HttpLoggingInterceptor.Level.BODY
             }
 
+        // Create cookie interceptor that forces cookies for all paths
+        val cookieForcingInterceptor = okhttp3.Interceptor { chain ->
+            val originalRequest = chain.request()
+            val url = originalRequest.url
+
+            android.util.Log.d("NetworkModule", "========== REQUEST ==========")
+            android.util.Log.d("NetworkModule", "URL: $url")
+
+            // Get all cookies from the cookie jar
+            val allCookies = cookieJar!!.loadForRequest(url)
+            android.util.Log.d("NetworkModule", "Cookies from CookieJar for this URL: ${allCookies.size}")
+
+            // If no cookies for this URL, try to get cookies for the base API URL
+            val cookiesToUse = if (allCookies.isEmpty()) {
+                android.util.Log.d("NetworkModule", "No cookies for current URL, trying to get cookies from base API URL")
+                val baseApiUrl = okhttp3.HttpUrl.Builder()
+                    .scheme(url.scheme)
+                    .host(url.host)
+                    .port(url.port)
+                    .addPathSegment("api")
+                    .build()
+
+                val apiCookies = cookieJar!!.loadForRequest(baseApiUrl)
+                android.util.Log.d("NetworkModule", "Cookies from base API URL: ${apiCookies.size}")
+                apiCookies
+            } else {
+                allCookies
+            }
+
+            android.util.Log.d("NetworkModule", "Total cookies to use: ${cookiesToUse.size}")
+            cookiesToUse.forEach { cookie ->
+                android.util.Log.d("NetworkModule", "Cookie: ${cookie.name} = ${cookie.value}")
+            }
+
+            // Build the request with cookies manually added
+            val requestBuilder = originalRequest.newBuilder()
+
+            if (cookiesToUse.isNotEmpty()) {
+                val cookieHeader = cookiesToUse.joinToString("; ") { "${it.name}=${it.value}" }
+                android.util.Log.d("NetworkModule", "Adding Cookie header: $cookieHeader")
+                requestBuilder.header("Cookie", cookieHeader)
+            }
+
+            val newRequest = requestBuilder.build()
+            val response = chain.proceed(newRequest)
+
+            android.util.Log.d("NetworkModule", "Response code: ${response.code}")
+            android.util.Log.d("NetworkModule", "========== END REQUEST ==========")
+
+            response
+        }
+
         // Create main OkHttp client with cookie jar and authenticator
         val okHttpClient =
             OkHttpClient
                 .Builder()
                 .cookieJar(cookieJar!!)
                 .authenticator(authenticator)
+                .addInterceptor(cookieForcingInterceptor)
                 .addInterceptor(loggingInterceptor)
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)

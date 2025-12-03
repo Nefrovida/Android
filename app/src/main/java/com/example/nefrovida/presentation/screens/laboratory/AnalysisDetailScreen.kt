@@ -1,5 +1,6 @@
 package com.example.nefrovida.presentation.screens.laboratory
 
+import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -38,11 +39,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.nefrovida.ui.organisms.NfBottomNavigationBar
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,6 +58,7 @@ fun AnalysisDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     // Load analysis details when screen is first displayed
     LaunchedEffect(analysisId) {
@@ -65,6 +70,66 @@ fun AnalysisDetailScreen(
         uiState.error?.let { error ->
             snackbarHostState.showSnackbar(error)
             viewModel.clearError()
+        }
+    }
+
+    fun openPdf(file: File) {
+        try {
+            // Verify file is actually a PDF by checking magic bytes
+            val header = file.inputStream().use { it.readNBytes(5) }
+            val isPdf = header.size >= 5 &&
+                        header[0].toInt() == 0x25 && // %
+                        header[1].toInt() == 0x50 && // P
+                        header[2].toInt() == 0x44 && // D
+                        header[3].toInt() == 0x46    // F
+
+            if (!isPdf) {
+                android.util.Log.e("AnalysisDetailScreen", "File is not a PDF! First bytes: ${header.joinToString()}")
+                // Read a bit of the file to see what it actually contains
+                val preview = file.readText().take(200)
+                android.util.Log.e("AnalysisDetailScreen", "File content preview: $preview")
+                throw Exception("El archivo descargado no es un PDF válido")
+            }
+
+            val uri = FileProvider.getUriForFile(
+                context,
+                "${context.packageName}.provider",
+                file
+            )
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                setDataAndType(uri, "application/pdf")
+                flags = Intent.FLAG_ACTIVITY_NO_HISTORY or Intent.FLAG_GRANT_READ_URI_PERMISSION
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            android.util.Log.e("AnalysisDetailScreen", "Error opening PDF", e)
+            e.printStackTrace()
+        }
+    }
+
+    fun downloadAndOpenPdf(urlPath: String, fileName: String) {
+        // The URL comes as: /uploads/orina_20251021.pdf
+        // We need to construct the full URL using the base URL
+        val baseUrl = "http://10.25.102.123:3001"
+        val fullUrl = if (urlPath.startsWith("http")) {
+            urlPath
+        } else {
+            // Ensure path starts with /
+            val path = if (urlPath.startsWith("/")) urlPath else "/$urlPath"
+            "$baseUrl$path"
+        }
+
+        android.util.Log.d("AnalysisDetailScreen", "Original path from server: $urlPath")
+        android.util.Log.d("AnalysisDetailScreen", "Full URL constructed: $fullUrl")
+
+        val downloadsDir = File(context.getExternalFilesDir(null), "downloads")
+        if (!downloadsDir.exists()) {
+            downloadsDir.mkdirs()
+        }
+        val pdfFile = File(downloadsDir, fileName)
+
+        viewModel.downloadPdf(fullUrl, pdfFile) { file ->
+            openPdf(file)
         }
     }
 
@@ -164,7 +229,12 @@ fun AnalysisDetailScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     if (analysis.downloadUrl != null) {
-                                        IconButton(onClick = { /* Handle download */ }) {
+                                        IconButton(onClick = {
+                                            downloadAndOpenPdf(
+                                                analysis.downloadUrl,
+                                                "analisis_${analysis.id}.pdf"
+                                            )
+                                        }) {
                                             Icon(
                                                 imageVector = Icons.Default.Download,
                                                 contentDescription = "Download analysis",
