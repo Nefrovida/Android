@@ -37,3 +37,8 @@ data class UpdateProfileResponse(
 data class ChangePasswordResponse(
     val message: String,
 )
+
+// DTO para errores del backend
+data class ErrorResponse(
+    val message: String,
+)
