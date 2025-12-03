@@ -1,6 +1,8 @@
 package com.example.nefrovida.presentation.screens.profile
 
+import android.app.DatePickerDialog
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -9,11 +11,15 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
+import androidx.compose.material3.ExposedDropdownMenuDefaults.TrailingIcon
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.runtime.*
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
@@ -22,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -34,6 +41,8 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.nefrovida.ui.theme.ErrorRed
 import com.example.nefrovida.ui.theme.NavyBlue
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -122,9 +131,10 @@ fun ProfileScreen(
                         onClick = { showEditProfileDialog = true },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = NavyBlue,
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = NavyBlue,
+                            ),
                         contentPadding = PaddingValues(vertical = 14.dp),
                     ) {
                         Icon(
@@ -152,9 +162,10 @@ fun ProfileScreen(
                         onClick = { showChangePasswordDialog = true },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = NavyBlue,
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = NavyBlue,
+                            ),
                         contentPadding = PaddingValues(vertical = 14.dp),
                     ) {
                         Icon(
@@ -178,8 +189,8 @@ fun ProfileScreen(
                 EditProfileDialog(
                     profile = state.profile!!,
                     onDismiss = { showEditProfileDialog = false },
-                    onSave = { name, pLastName, mLastName, phone ->
-                        viewModel.updateMyProfile(name, pLastName, mLastName, phone)
+                    onSave = { name, pLastName, mLastName, phone, gender, birthday ->
+                        viewModel.updateMyProfile(name, pLastName, mLastName, phone, gender, birthday)
                     },
                     isLoading = state.isLoading,
                 )
@@ -202,18 +213,17 @@ fun ProfileScreen(
 fun ProfileHeader() {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(120.dp)
-            .clip(CircleShape)
-            .background(NavyBlue.copy(alpha = 0.1f)),
-    ) {
-        AsyncImage(
-            model = "https://via.placeholder.com/150",
-            contentDescription = "Foto de perfil",
-            modifier = Modifier
+        modifier =
+            Modifier
                 .size(120.dp)
-                .clip(CircleShape),
-            contentScale = ContentScale.Crop,
+                .clip(CircleShape)
+                .background(NavyBlue.copy(alpha = 0.1f)),
+    ) {
+        Icon(
+            imageVector = Icons.Default.Person,
+            contentDescription = "Perfil de usuario",
+            modifier = Modifier.size(60.dp),
+            tint = NavyBlue,
         )
     }
 }
@@ -246,11 +256,40 @@ fun ProfileInfoCard(profile: com.example.nefrovida.domain.model.UserProfile) {
 
             // Maternal Last Name and Phone
             Row(Modifier.fillMaxWidth()) {
-                InfoItem("Apellido Materno", profile.maternalLastName, Modifier.weight(1f))
+                InfoItem("Apellido Materno", profile.maternalLastName ?: "-", Modifier.weight(1f))
                 Spacer(modifier = Modifier.width(16.dp))
                 InfoItem("Teléfono", profile.phoneNumber, Modifier.weight(1f))
             }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Gender and Birthday
+            Row(Modifier.fillMaxWidth()) {
+                InfoItem(
+                    "Género",
+                    when (profile.gender) {
+                        "MALE" -> "Masculino"
+                        "FEMALE" -> "Femenino"
+                        else -> "-"
+                    },
+                    Modifier.weight(1f),
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                InfoItem("Fecha de Nacimiento", formatDate(profile.birthday), Modifier.weight(1f))
+            }
         }
+    }
+}
+
+fun formatDate(dateString: String?): String {
+    if (dateString == null) return "-"
+    return try {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val date = inputFormat.parse(dateString)
+        outputFormat.format(date!!)
+    } catch (e: Exception) {
+        dateString
     }
 }
 
@@ -314,18 +353,24 @@ fun InfoItem(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditProfileDialog(
     profile: com.example.nefrovida.domain.model.UserProfile,
     onDismiss: () -> Unit,
-    onSave: (String, String, String, String) -> Unit,
+    onSave: (String, String, String?, String, String?, String?) -> Unit,
     isLoading: Boolean,
 ) {
     var name by remember { mutableStateOf(profile.name) }
     var pLastName by remember { mutableStateOf(profile.parentLastName) }
-    var mLastName by remember { mutableStateOf(profile.maternalLastName) }
+    var mLastName by remember { mutableStateOf(profile.maternalLastName ?: "") }
     var phone by remember { mutableStateOf(profile.phoneNumber) }
+    var gender by remember { mutableStateOf(profile.gender ?: "") }
+    var birthday by remember { mutableStateOf(profile.birthday ?: "") }
     var errorMessage by remember { mutableStateOf("") }
+    var showGenderDropdown by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
 
     // Validation function
     fun validate(): Boolean {
@@ -334,33 +379,49 @@ fun EditProfileDialog(
                 errorMessage = "El nombre es requerido"
                 return false
             }
+
             name.trim().length > 50 -> {
                 errorMessage = "El nombre debe tener como máximo 50 caracteres"
                 return false
             }
+
             pLastName.trim().isEmpty() -> {
                 errorMessage = "El apellido paterno es requerido"
                 return false
             }
+
             pLastName.trim().length > 50 -> {
                 errorMessage = "El apellido paterno debe tener como máximo 50 caracteres"
                 return false
             }
-            mLastName.trim().isEmpty() -> {
-                errorMessage = "El apellido materno es requerido"
-                return false
-            }
-            mLastName.trim().length > 50 -> {
+
+            mLastName.trim().isNotEmpty() && mLastName.trim().length > 50 -> {
                 errorMessage = "El apellido materno debe tener como máximo 50 caracteres"
                 return false
             }
+
             phone.trim().isEmpty() -> {
                 errorMessage = "El teléfono es requerido"
                 return false
             }
+
             !phone.trim().matches(Regex("^\\d{10,15}$")) -> {
                 errorMessage = "El teléfono debe contener sólo dígitos y tener entre 10 y 15 caracteres"
                 return false
+            }
+
+            birthday.isNotEmpty() -> {
+                try {
+                    val inputFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                    val date = inputFormat.parse(birthday)
+                    if (date != null && date.after(Date())) {
+                        errorMessage = "La fecha de nacimiento no puede ser futura"
+                        return false
+                    }
+                } catch (e: Exception) {
+                    errorMessage = "La fecha de nacimiento no es válida"
+                    return false
+                }
             }
         }
         errorMessage = ""
@@ -378,7 +439,10 @@ fun EditProfileDialog(
         },
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 OutlinedTextField(
@@ -409,7 +473,7 @@ fun EditProfileDialog(
                         if (it.length <= 50) mLastName = it
                         errorMessage = ""
                     },
-                    label = { Text("Apellido Materno") },
+                    label = { Text("Apellido Materno (Opcional)") },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                     supportingText = { Text("${mLastName.length}/50") },
@@ -427,6 +491,86 @@ fun EditProfileDialog(
                     supportingText = { Text("${phone.length}/15 dígitos") },
                 )
 
+                // Gender Dropdown
+                ExposedDropdownMenuBox(
+                    expanded = showGenderDropdown,
+                    onExpandedChange = { showGenderDropdown = it },
+                ) {
+                    OutlinedTextField(
+                        value =
+                            when (gender) {
+                                "MALE" -> "Masculino"
+                                "FEMALE" -> "Femenino"
+                                else -> ""
+                            },
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Género (Opcional)") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showGenderDropdown) },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .menuAnchor(MenuAnchorType.PrimaryNotEditable, enabled = true),
+                    )
+                    ExposedDropdownMenu(
+                        expanded = showGenderDropdown,
+                        onDismissRequest = { showGenderDropdown = false },
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Masculino") },
+                            onClick = {
+                                gender = "MALE"
+                                showGenderDropdown = false
+                            },
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Femenino") },
+                            onClick = {
+                                gender = "FEMALE"
+                                showGenderDropdown = false
+                            },
+                        )
+                    }
+                }
+
+                // Birthday DatePicker
+                OutlinedTextField(
+                    value = formatDate(birthday),
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Fecha de Nacimiento") },
+                    trailingIcon = {
+                        IconButton(onClick = {
+                            val calendar = Calendar.getInstance()
+                            if (birthday.isNotEmpty()) {
+                                try {
+                                    val format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                                    calendar.time = format.parse(birthday)!!
+                                } catch (e: Exception) {
+                                    // Use current date
+                                }
+                            }
+
+                            DatePickerDialog(
+                                context,
+                                { _, year, month, dayOfMonth ->
+                                    birthday = String.format("%04d-%02d-%02d", year, month + 1, dayOfMonth)
+                                    errorMessage = ""
+                                },
+                                calendar.get(Calendar.YEAR),
+                                calendar.get(Calendar.MONTH),
+                                calendar.get(Calendar.DAY_OF_MONTH),
+                            ).apply {
+                                datePicker.maxDate = System.currentTimeMillis()
+                            }.show()
+                        }) {
+                            Icon(Icons.Default.CalendarToday, contentDescription = "Seleccionar fecha")
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    singleLine = true,
+                )
+
                 if (errorMessage.isNotEmpty()) {
                     Text(
                         text = errorMessage,
@@ -441,7 +585,14 @@ fun EditProfileDialog(
             Button(
                 onClick = {
                     if (validate()) {
-                        onSave(name.trim(), pLastName.trim(), mLastName.trim(), phone.trim())
+                        onSave(
+                            name.trim(),
+                            pLastName.trim(),
+                            mLastName.trim().ifEmpty { null },
+                            phone.trim(),
+                            gender.ifEmpty { null },
+                            birthday.ifEmpty { null },
+                        )
                     }
                 },
                 enabled = !isLoading,
@@ -490,30 +641,42 @@ fun ChangePasswordDialog(
                 errorMessage = "La nueva contraseña es requerida"
                 return false
             }
+
+            newPassword.length > 15 -> {
+                errorMessage = "La contraseña no puede tener más de 15 caracteres"
+                return false
+            }
+
             newPassword.length < 8 -> {
                 errorMessage = "La contraseña debe tener al menos 8 caracteres"
                 return false
             }
+
             !newPassword.contains(Regex("[A-Z]")) -> {
                 errorMessage = "La contraseña debe tener al menos una letra mayúscula"
                 return false
             }
+
             !newPassword.contains(Regex("\\d")) -> {
                 errorMessage = "La contraseña debe tener al menos un número"
                 return false
             }
+
             !newPassword.contains(Regex("[#?!@\$%^&*\\-]")) -> {
                 errorMessage = "La contraseña debe tener al menos un carácter especial [#?!@\$%^&*-]"
                 return false
             }
+
             !passwordRegex.matches(newPassword) -> {
                 errorMessage = "La contraseña no cumple con los requisitos"
                 return false
             }
+
             confirmPassword.isEmpty() -> {
                 errorMessage = "Debe confirmar la nueva contraseña"
                 return false
             }
+
             newPassword != confirmPassword -> {
                 errorMessage = "Las contraseñas no coinciden"
                 return false
@@ -540,8 +703,10 @@ fun ChangePasswordDialog(
                 OutlinedTextField(
                     value = newPassword,
                     onValueChange = {
-                        newPassword = it
-                        errorMessage = ""
+                        if (it.length <= 15) {
+                            newPassword = it
+                            errorMessage = ""
+                        }
                     },
                     label = { Text("Nueva contraseña") },
                     modifier = Modifier.fillMaxWidth(),
@@ -555,12 +720,15 @@ fun ChangePasswordDialog(
                     },
                     singleLine = true,
                     isError = errorMessage.isNotEmpty() && newPassword.isNotEmpty(),
+                    supportingText = { Text("${newPassword.length}/15") },
                 )
                 OutlinedTextField(
                     value = confirmPassword,
                     onValueChange = {
-                        confirmPassword = it
-                        errorMessage = ""
+                        if (it.length <= 15) {
+                            confirmPassword = it
+                            errorMessage = ""
+                        }
                     },
                     label = { Text("Confirmar contraseña") },
                     modifier = Modifier.fillMaxWidth(),
@@ -574,6 +742,7 @@ fun ChangePasswordDialog(
                     },
                     singleLine = true,
                     isError = errorMessage.isNotEmpty() && confirmPassword.isNotEmpty(),
+                    supportingText = { Text("${confirmPassword.length}/15") },
                 )
 
                 if (errorMessage.isNotEmpty()) {
@@ -585,7 +754,7 @@ fun ChangePasswordDialog(
                     )
                 } else {
                     Text(
-                        text = "La contraseña debe tener al menos 8 caracteres, entre ellos, una mayúscula, un número y un carácter especial [#?!@\$%^&*-]",
+                        text = "La contraseña debe tener entre 8 y 15 caracteres, una mayúscula, un número y un carácter especial [#?!@\$%^&*-]",
                         style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Start,
                         color = Color.Gray,

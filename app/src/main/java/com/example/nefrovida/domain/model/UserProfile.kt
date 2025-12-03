@@ -4,8 +4,10 @@ data class UserProfile(
     val userId: String,
     val name: String,
     val parentLastName: String,
-    val maternalLastName: String,
+    val maternalLastName: String?,
     val username: String,
     val phoneNumber: String,
     val roleName: String,
+    val gender: String?,
+    val birthday: String?, // ISO date string YYYY-MM-DD
 )

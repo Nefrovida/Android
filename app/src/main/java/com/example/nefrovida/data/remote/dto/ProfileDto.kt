@@ -7,10 +7,12 @@ data class UserProfileDto(
     @SerializedName("user_id") val userId: String,
     @SerializedName("name") val name: String,
     @SerializedName("parent_last_name") val parentLastName: String,
-    @SerializedName("maternal_last_name") val maternalLastName: String,
+    @SerializedName("maternal_last_name") val maternalLastName: String?,
     @SerializedName("username") val username: String,
     @SerializedName("phone_number") val phoneNumber: String,
     @SerializedName("role_name") val roleName: String,
+    @SerializedName("gender") val gender: String?,
+    @SerializedName("birthday") val birthday: String?, // ISO date string YYYY-MM-DD
 )
 
 // DTO para enviar la actualización del perfil
@@ -19,6 +21,8 @@ data class UpdateProfileDto(
     @SerializedName("parent_last_name") val parentLastName: String?,
     @SerializedName("maternal_last_name") val maternalLastName: String?,
     @SerializedName("phone_number") val phoneNumber: String?,
+    @SerializedName("gender") val gender: String?,
+    @SerializedName("birthday") val birthday: String?, // ISO date string YYYY-MM-DD
 )
 
 // DTO para el cambio de contraseña

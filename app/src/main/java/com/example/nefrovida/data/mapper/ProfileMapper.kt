@@ -12,4 +12,6 @@ fun UserProfileDto.toDomain(): UserProfile =
         username = this.username,
         phoneNumber = this.phoneNumber,
         roleName = this.roleName,
+        gender = this.gender,
+        birthday = this.birthday,
     )

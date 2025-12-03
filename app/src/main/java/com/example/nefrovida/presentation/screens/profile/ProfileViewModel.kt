@@ -60,9 +60,16 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
-    fun updateMyProfile(name: String, pLastName: String, mLastName: String, phone: String) {
+    fun updateMyProfile(
+        name: String,
+        pLastName: String,
+        mLastName: String?,
+        phone: String,
+        gender: String?,
+        birthday: String?
+    ) {
         viewModelScope.launch {
-            val dto = UpdateProfileDto(name, pLastName, mLastName, phone)
+            val dto = UpdateProfileDto(name, pLastName, mLastName, phone, gender, birthday)
             _state.value = _state.value.copy(isLoading = true)
             when (val result = repository.updateMyProfile(dto)) {
                 is Result.Success -> {
