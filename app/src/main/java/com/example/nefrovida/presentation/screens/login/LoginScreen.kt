@@ -35,14 +35,19 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nefrovida.R
-import com.example.nefrovida.ui.theme.*
+import com.example.nefrovida.ui.theme.BackgroundGradientEnd
+import com.example.nefrovida.ui.theme.BackgroundGradientStart
+import com.example.nefrovida.ui.theme.ErrorRed
+import com.example.nefrovida.ui.theme.NavyBlue
+import com.example.nefrovida.ui.theme.TextGray
+import com.example.nefrovida.ui.theme.White
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun LoginScreen(
-    viewModel: LoginViewModel = viewModel(),
+    viewModel: LoginViewModel = hiltViewModel(),
     onNavigateToRegister: () -> Unit = {},
     onNavigateToForgotPassword: () -> Unit = {},
     onLoginSuccess: (String) -> Unit = {},

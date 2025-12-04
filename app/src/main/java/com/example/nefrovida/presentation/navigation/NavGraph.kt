@@ -27,6 +27,8 @@ sealed class Screen(
 ) {
     object Login : Screen("login")
 
+    object Register : Screen("register")
+    
     object Profile : Screen("profile")
 
     object Home : Screen("home")
@@ -77,7 +79,7 @@ fun NefrovidaNavGraph(
         composable(route = Screen.Login.route) {
             LoginScreen(
                 onNavigateToRegister = {
-                    // TODO: Navegar a pantalla de registro
+                    navController.navigate(Screen.Register.route)
                 },
                 onNavigateToForgotPassword = {
                     // TODO: Navegar a pantalla de recuperación de contraseña
@@ -88,6 +90,11 @@ fun NefrovidaNavGraph(
                         restoreState = true
                     }
                 },
+            )
+        }
+        composable(route = Screen.Register.route) {
+            com.example.nefrovida.presentation.screens.register.RegisterScreen(
+                onNavigateBack = { navController.popBackStack() }
             )
         }
         composable(route = Screen.Home.route) {
