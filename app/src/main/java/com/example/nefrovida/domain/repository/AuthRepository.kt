@@ -10,5 +10,6 @@ sealed class Result<out T> {
 interface AuthRepository {
     suspend fun login(username: String, password: String): Result<User>
     suspend fun logout(): Result<Unit>
+    suspend fun forgotPassword(username: String): Result<Unit>
 }
 
