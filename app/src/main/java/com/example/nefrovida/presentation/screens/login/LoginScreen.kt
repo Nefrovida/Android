@@ -18,6 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
@@ -54,6 +57,7 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
+    var showPasswordResetDialog by remember { mutableStateOf(false) }
 
     // Navigate on successful login
     LaunchedEffect(uiState.loginSuccess) {
@@ -238,7 +242,7 @@ fun LoginScreen(
 
                     // Olvidaste tu contraseña
                     TextButton(
-                        onClick = onNavigateToForgotPassword,
+                        onClick = { showPasswordResetDialog = true },
                         modifier = Modifier.align(Alignment.End),
                     ) {
                         Text(
@@ -305,6 +309,13 @@ fun LoginScreen(
             }
 
             Spacer(modifier = Modifier.height(48.dp))
+        }
+
+        // Password Reset Dialog
+        if (showPasswordResetDialog) {
+            PasswordResetDialog(
+                onDismiss = { showPasswordResetDialog = false }
+            )
         }
     }
 }
