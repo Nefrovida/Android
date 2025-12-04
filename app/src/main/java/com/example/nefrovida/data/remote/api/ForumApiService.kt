@@ -4,6 +4,7 @@ import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.ForumMessageDto
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MessageDto
+import com.example.nefrovida.data.remote.dto.MessageRequest
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
 import com.example.nefrovida.data.remote.dto.ReplyMessageStatus
@@ -37,6 +38,12 @@ interface ForumApiService {
     suspend fun getMessage(
         @Path("messageId") messageId: Int,
     ): Message
+
+    @POST("forums/{forumId}")
+    suspend fun postMessage(
+        @Path("forumId") forumId: Int,
+        @Body request: MessageRequest,
+    ): StatusMessage
 
     @POST("forums/like/{messageId}")
     suspend fun postLike(

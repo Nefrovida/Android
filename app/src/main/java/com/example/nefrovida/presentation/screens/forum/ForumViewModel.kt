@@ -14,6 +14,7 @@ import com.example.nefrovida.domain.usecase.GetAllForumsUseCase
 import com.example.nefrovida.domain.usecase.GetForumFeedUseCase
 import com.example.nefrovida.domain.usecase.GetMyForumsUseCase
 import com.example.nefrovida.domain.usecase.PostLikeUseCase
+import com.example.nefrovida.domain.usecase.PostNewMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,8 +22,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.invoke
 
 @HiltViewModel
 class ForumViewModel
@@ -31,6 +34,7 @@ class ForumViewModel
         private val getMyForumsUseCase: GetMyForumsUseCase,
         private val getForumFeedUseCase: GetForumFeedUseCase,
         private val getAllForumsUseCase: GetAllForumsUseCase,
+        private val postMessage: PostNewMessage,
     ) : ViewModel() {
         // --- State for "Descubrir" (General Feed) ---
         private val _discoverFeed = MutableStateFlow<List<Message>>(emptyList())
@@ -42,10 +46,16 @@ class ForumViewModel
 
         // --- State for "Mis Foros" ---
         private val _myForums = MutableStateFlow<List<SimpleForumInfo>>(emptyList())
+        val myForums = _myForums.asStateFlow()
+
         private val _myForumsSearchQuery = MutableStateFlow("")
         val myForumsSearchQuery: StateFlow<String> = _myForumsSearchQuery.asStateFlow()
         private val _isMyForumsLoading = mutableStateOf(false)
         val isMyForumsLoading: State<Boolean> = _isMyForumsLoading
+
+        // --- State for "Post new Message" ---
+        private val _postMessageError = MutableStateFlow("")
+        val postMessageError = _postMessageError.asStateFlow()
 
         val filteredMyForums: StateFlow<List<SimpleForumInfo>> =
             combine(_myForums, _myForumsSearchQuery) { forums, query ->
@@ -177,5 +187,25 @@ class ForumViewModel
             // but the filtering logic is handled by combine for "Mis Foros" and "Todos los Foros"
             // and for "Descubrir" there is no search on content, only filtering by forumId which is not in this ViewModel.
             // It's effectively a no-op here for now, as search is handled by query change and combine.
+        }
+
+        fun postNewMessage(
+            forumId: Int,
+            content: String,
+        ) {
+            viewModelScope.launch {
+                postMessage.invoke(forumId, content).collect { result ->
+                    when (result) {
+                        is Result.Success -> {
+                        }
+                        is Result.Error -> {
+                            _postMessageError.update { result.toString() }
+                        }
+                        is Result.Loading -> {
+                            // Nada
+                        }
+                    }
+                }
+            }
         }
     }

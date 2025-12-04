@@ -33,6 +33,11 @@ interface ForumRepository {
         content: String,
     ): Boolean
 
+    suspend fun postMessage(
+        forumId: Int,
+        content: String,
+    ): StatusMessage
+
     suspend fun getMessageReplies(
         forumId: Int,
         messageId: Int,

@@ -6,53 +6,63 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nefrovida.data.remote.dto.Message
+import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.usecase.GetForumFeedUseCase
+import com.example.nefrovida.domain.usecase.PostNewMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ForumFeedViewModel @Inject constructor(
-    private val getForumFeedUseCase: GetForumFeedUseCase,
-    savedStateHandle: SavedStateHandle
-) : ViewModel() {
+class ForumFeedViewModel
+    @Inject
+    constructor(
+        private val getForumFeedUseCase: GetForumFeedUseCase,
+        savedStateHandle: SavedStateHandle,
+    ) : ViewModel() {
+        private val _forumFeed = mutableStateOf<List<Message>>(emptyList())
 
-    private val _forumFeed = mutableStateOf<List<Message>>(emptyList())
-    val forumFeed: State<List<Message>> = _forumFeed
+        val forumFeed: State<List<Message>> = _forumFeed
 
-    private val _isLoading = mutableStateOf(false)
-    val isLoading: State<Boolean> = _isLoading
+        private val _isLoading = mutableStateOf(false)
+        val isLoading: State<Boolean> = _isLoading
 
-    private val _page = mutableStateOf(0)
-    private var _canPaginate = true
-    private val forumId: Int? = savedStateHandle.get("forumId")
+        @Suppress("ktlint:standard:backing-property-naming")
+        private val _page = mutableStateOf(0)
 
-    init {
-        loadForumFeed(reset = true)
-    }
+        @Suppress("ktlint:standard:backing-property-naming")
+        private var _canPaginate = true
+        private val forumId: Int? = savedStateHandle.get("forumId")
 
-    fun loadForumFeed(reset: Boolean = false) {
-        if (_isLoading.value || (!_canPaginate && !reset)) return
-
-        if (reset) {
-            _page.value = 0
-            _forumFeed.value = emptyList()
-            _canPaginate = true
+        init {
+            loadForumFeed(reset = true)
         }
 
-        viewModelScope.launch {
-            _isLoading.value = true
-            val response = getForumFeedUseCase(_page.value, forumId)
-            if (response.isSuccessful) {
-                val newMessages = response.body() ?: emptyList()
-                if (newMessages.isNotEmpty()) {
-                    _forumFeed.value = _forumFeed.value + newMessages
-                    _page.value++
-                } else {
-                    _canPaginate = false
-                }
+        fun loadForumFeed(reset: Boolean = false) {
+            if (_isLoading.value || (!_canPaginate && !reset)) return
+
+            if (reset) {
+                _page.value = 0
+                _forumFeed.value = emptyList()
+                _canPaginate = true
             }
-            _isLoading.value = false
+
+            viewModelScope.launch {
+                _isLoading.value = true
+                val response = getForumFeedUseCase(_page.value, forumId)
+                if (response.isSuccessful) {
+                    val newMessages = response.body() ?: emptyList()
+                    if (newMessages.isNotEmpty()) {
+                        _forumFeed.value = _forumFeed.value + newMessages
+                        _page.value++
+                    } else {
+                        _canPaginate = false
+                    }
+                }
+                _isLoading.value = false
+            }
         }
     }
-}

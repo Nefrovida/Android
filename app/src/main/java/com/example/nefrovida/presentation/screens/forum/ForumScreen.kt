@@ -1,10 +1,13 @@
 package com.example.nefrovida.presentation.screens.forum
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,6 +22,7 @@ import com.example.nefrovida.data.remote.dto.SimpleForumInfo
 import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.ui.molecules.SearchBar
 import com.example.nefrovida.ui.organisms.ForumPostCard
+import com.example.nefrovida.ui.organisms.NewMessageModal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,9 +35,29 @@ fun ForumScreen(
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
     val navyBlue = Color(0xFF000080)
 
+    var showNewMessageDialog by remember { mutableStateOf(false) }
+    var newMessageText by remember { mutableStateOf("") }
+
+    val forums by viewModel.myForums.collectAsState()
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = { TopAppBar(title = { Text("Foros") }) },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    showNewMessageDialog = true
+                    viewModel.loadMyForums()
+                },
+                containerColor = Color(0xFF1E88E5),
+                contentColor = Color.White,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "New Message",
+                )
+            }
+        },
     ) { paddingValues ->
         Column(
             modifier =
@@ -41,6 +65,16 @@ fun ForumScreen(
                     .padding(paddingValues)
                     .fillMaxSize(),
         ) {
+            if (showNewMessageDialog) {
+                NewMessageModal(
+                    onDismiss = { showNewMessageDialog = false },
+                    forums = forums,
+                    onSend = { forumId, message ->
+                        viewModel.postNewMessage(forumId, message)
+                        showNewMessageDialog = false
+                    },
+                )
+            }
             TabRow(selectedTabIndex = selectedTabIndex) {
                 tabs.forEachIndexed { index, title ->
                     Tab(
@@ -83,7 +117,10 @@ fun DiscoverTabContent(
     val isDiscoverLoading by viewModel.isDiscoverLoading
     val listState = rememberLazyListState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
         Spacer(modifier = Modifier.height(16.dp))
         // No hay barra de búsqueda para Descubrir según la documentación
         if (isDiscoverLoading && discoverFeed.isEmpty()) {

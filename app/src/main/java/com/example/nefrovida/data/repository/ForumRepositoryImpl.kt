@@ -4,6 +4,7 @@ import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.ForumApiService
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.Message
+import com.example.nefrovida.data.remote.dto.MessageRequest
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
@@ -39,6 +40,14 @@ class ForumRepositoryImpl
 
         override suspend fun postLike(messageId: Int): StatusMessage {
             val response = api.postLike(messageId)
+            return response
+        }
+
+        override suspend fun postMessage(
+            forumId: Int,
+            content: String,
+        ): StatusMessage {
+            val response = api.postMessage(forumId, request = MessageRequest(content))
             return response
         }
 
