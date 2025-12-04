@@ -23,7 +23,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.nefrovida.di.NetworkModule
 import com.example.nefrovida.presentation.navigation.NefrovidaNavGraph
 import com.example.nefrovida.presentation.navigation.Screen
-import com.example.nefrovida.ui.DrawerContent
 import com.example.nefrovida.ui.organisms.NfBottomNavigationBar
 import com.example.nefrovida.ui.organisms.NfTopAppBar
 import com.example.nefrovida.ui.theme.NefrovidaTheme
@@ -48,14 +47,6 @@ class MainActivity : ComponentActivity() {
                 ModalNavigationDrawer(
                     drawerState = drawerState,
                     drawerContent = {
-                        ModalDrawerSheet(
-                            drawerContainerColor = MaterialTheme.colorScheme.surface,
-                            drawerContentColor = MaterialTheme.colorScheme.onSurface,
-                        ) {
-                            DrawerContent { selected ->
-                                scope.launch { drawerState.close() }
-                            }
-                        }
                     },
                 ) {
                     Scaffold(
