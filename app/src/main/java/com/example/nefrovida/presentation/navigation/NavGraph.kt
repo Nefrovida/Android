@@ -20,11 +20,14 @@ import com.example.nefrovida.presentation.screens.laboratory.AnalysisHistoryScre
 import com.example.nefrovida.presentation.screens.laboratory.LaboratoryScreen
 import com.example.nefrovida.presentation.screens.laboratory.ReportDetailScreen
 import com.example.nefrovida.presentation.screens.login.LoginScreen
+import com.example.nefrovida.presentation.screens.profile.ProfileScreen
 
 sealed class Screen(
     val route: String,
 ) {
     object Login : Screen("login")
+
+    object Profile : Screen("profile")
 
     object Home : Screen("home")
 
@@ -89,6 +92,10 @@ fun NefrovidaNavGraph(
         }
         composable(route = Screen.Home.route) {
             HomeScreen(navController = navController)
+        }
+
+        composable(Screen.Profile.route) {
+            ProfileScreen(navController = navController)
         }
         composable(route = Screen.Catalog.route) {
             CatalogScreen(
