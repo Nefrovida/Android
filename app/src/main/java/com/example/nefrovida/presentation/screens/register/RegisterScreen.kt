@@ -3,6 +3,7 @@ package com.example.nefrovida.presentation.screens.register
 import android.app.DatePickerDialog
 import android.widget.DatePicker
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.nefrovida.R
 import java.util.Calendar
 
 @Composable
@@ -167,21 +170,13 @@ fun RegisterScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     // Logo
-                    Text(
-                        text =
-                            buildAnnotatedString {
-                                withStyle(style = SpanStyle(color = Color(0xFF1E3A8A))) { append("NEFR") }
-                                withStyle(style = SpanStyle(color = Color(0xFFDC2626))) { append("O") }
-                                withStyle(style = SpanStyle(color = Color(0xFF84CC16))) { append("Vida") }
-                            },
-                        fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold,
-                    )
-                    Text(
-                        text = "Asociación Civil",
-                        fontSize = 12.sp,
-                        color = Color.Gray,
-                        modifier = Modifier.offset(y = (-8).dp),
+                    Image(
+                        painter = painterResource(id = R.drawable.nefrovidalogologin),
+                        contentDescription = "Logo NefroVida",
+                        modifier =
+                            Modifier
+                                .heightIn(max = 100.dp)
+                                .size(400.dp),
                     )
 
                     Text(
