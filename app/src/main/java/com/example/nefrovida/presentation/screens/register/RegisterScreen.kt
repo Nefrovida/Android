@@ -84,24 +84,40 @@ fun RegisterScreen(
     if (uiState is RegisterUiState.Success) {
         AlertDialog(
             onDismissRequest = {
-                // Optional: Handle dismiss if user clicks outside. 
-                // For now, we can either do nothing or treat it as confirmation.
-                // Let's force the user to click the button for clear intent, 
-                // or we can allow dismiss to also navigate back.
-                // Given the flow, clicking outside should probably also close and navigate.
                 onNavigateBack()
                 viewModel.resetState()
             },
-            title = { Text("Registro Exitoso") },
-            text = { Text((uiState as RegisterUiState.Success).message) },
+            containerColor = Color.White,
+            titleContentColor = Color(0xFF1E3A8A),
+            textContentColor = Color(0xFF1F2937),
+            shape = RoundedCornerShape(24.dp),
+            title = {
+                Text(
+                    text = "Registro Exitoso",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp
+                )
+            },
+            text = {
+                Text(
+                    text = (uiState as RegisterUiState.Success).message,
+                    fontSize = 16.sp,
+                    textAlign = TextAlign.Center
+                )
+            },
             confirmButton = {
-                TextButton(
+                Button(
                     onClick = {
                         onNavigateBack()
                         viewModel.resetState()
-                    }
+                    },
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF1E3A8A)
+                    ),
+                    shape = RoundedCornerShape(50),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Aceptar")
+                    Text("Aceptar", fontWeight = FontWeight.Bold, color = Color.White)
                 }
             }
         )
