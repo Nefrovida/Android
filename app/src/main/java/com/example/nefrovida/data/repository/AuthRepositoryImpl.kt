@@ -8,7 +8,9 @@ import com.example.nefrovida.domain.model.User
 import com.example.nefrovida.domain.repository.AuthRepository
 import com.example.nefrovida.domain.repository.Result
 
-class AuthRepositoryImpl(
+import javax.inject.Inject
+
+class AuthRepositoryImpl @Inject constructor(
     private val authApiService: AuthApiService,
 ) : AuthRepository {
     override suspend fun login(
@@ -46,6 +48,29 @@ class AuthRepositoryImpl(
                 Result.Success(Unit)
             } else {
                 Result.Error("Error al cerrar sesión")
+            }
+        } catch (e: Exception) {
+            Result.Error(
+                message = e.message ?: "Error de conexión",
+                exception = e,
+            )
+        }
+
+    override suspend fun register(request: com.example.nefrovida.data.remote.dto.RegisterRequest): Result<com.example.nefrovida.data.remote.dto.RegisterResponse> =
+        try {
+            val response = authApiService.register(request)
+
+            if (response.isSuccessful && response.body() != null) {
+                Result.Success(response.body()!!)
+            } else {
+                val errorMessage =
+                    when (response.code()) {
+                        409 -> "El usuario ya existe o falta CURP"
+                        400 -> "Datos inválidos"
+                        500 -> "Error del servidor"
+                        else -> "Error desconocido: ${response.code()}"
+                    }
+                Result.Error(errorMessage)
             }
         } catch (e: Exception) {
             Result.Error(
