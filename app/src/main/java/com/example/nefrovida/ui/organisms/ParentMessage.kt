@@ -36,15 +36,5 @@ fun ParentMessage(
     ) {
         Text(text = post.content, style = MaterialTheme.typography.bodyMedium)
         Spacer(modifier = Modifier.height(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Row {
-                Icon(imageVector = Icons.Default.FavoriteBorder, contentDescription = "Likes")
-                Text(text = "${post.likes}", modifier = Modifier.padding(start = 4.dp))
-            }
-        }
     }
 }
