@@ -73,17 +73,38 @@ fun RegisterScreen(
 
     LaunchedEffect(uiState) {
         when (uiState) {
-            is RegisterUiState.Success -> {
-                Toast.makeText(context, (uiState as RegisterUiState.Success).message, Toast.LENGTH_LONG).show()
-                onNavigateBack()
-                viewModel.resetState()
-            }
             is RegisterUiState.Error -> {
                 Toast.makeText(context, (uiState as RegisterUiState.Error).message, Toast.LENGTH_LONG).show()
                 viewModel.resetState()
             }
             else -> {}
         }
+    }
+
+    if (uiState is RegisterUiState.Success) {
+        AlertDialog(
+            onDismissRequest = {
+                // Optional: Handle dismiss if user clicks outside. 
+                // For now, we can either do nothing or treat it as confirmation.
+                // Let's force the user to click the button for clear intent, 
+                // or we can allow dismiss to also navigate back.
+                // Given the flow, clicking outside should probably also close and navigate.
+                onNavigateBack()
+                viewModel.resetState()
+            },
+            title = { Text("Registro Exitoso") },
+            text = { Text((uiState as RegisterUiState.Success).message) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onNavigateBack()
+                        viewModel.resetState()
+                    }
+                ) {
+                    Text("Aceptar")
+                }
+            }
+        )
     }
 
     Box(
