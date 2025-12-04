@@ -3,7 +3,9 @@ package com.example.nefrovida.presentation.screens.catalog.comps
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.*
@@ -99,7 +101,9 @@ fun AppointmentForm(
             ),
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
@@ -160,7 +164,7 @@ fun AppointmentForm(
                     } else {
                         "Seleccionar"
                     },
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.fillMaxWidth(),
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -194,7 +198,7 @@ fun AppointmentForm(
                             disabledContentColor = Color.White.copy(alpha = 0.4f),
                         ),
                 ) {
-                    Text("Agendar")
+                    Text("Citar")
                 }
             }
         }
