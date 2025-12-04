@@ -45,7 +45,9 @@ class MainActivity : ComponentActivity() {
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = currentBackStackEntry?.destination?.route
 
-                val showBottomBar = currentRoute != Screen.Login.route && currentRoute != Screen.Register.route
+                val showBottomBar = currentRoute != Screen.Login.route &&
+                        currentRoute != Screen.Register.route &&
+                        currentRoute?.contains("message") != true
 
                 Scaffold(
                     topBar = {

@@ -102,54 +102,11 @@ fun ForumMessageScreen(
         }
 
         else -> {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                // Contenido de la lista - COMPLETAMENTE ESTÁTICO
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null,
-                        ) {
-                            keyboardController?.hide()
-                            focusManager.clearFocus()
-                        },
-                    contentPadding = PaddingValues(bottom = 100.dp)
-                ) {
-                    item {
-                        uiState.parentMessage?.let { parent ->
-                            ParentMessage(
-                                post = parent,
-                            )
-                        }
-                    }
-
-                    items(uiState.messageRepliesList) { reply ->
-                        ForumPostCard(
-                            post = reply,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
-                            onClick = {
-                                navController.navigate(
-                                    Screen.Message.createRoute(
-                                        forumId = pMI.forumId,
-                                        messageId = reply.messageId,
-                                    ),
-                                )
-                            },
-                        )
-                    }
-                }
-
-                // Campo de texto con imePadding - SOLO ESTE SE MUEVE
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter)
-                        .imePadding()
-                ) {
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding(),
+                bottomBar = {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -190,6 +147,43 @@ fun ForumMessageScreen(
                                 contentDescription = "Responder",
                             )
                         }
+                    }
+                },
+            ) { paddingValues ->
+                LazyColumn(
+                    state = listState,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        },
+                ) {
+                    item {
+                        uiState.parentMessage?.let { parent ->
+                            ParentMessage(
+                                post = parent,
+                            )
+                        }
+                    }
+
+                    items(uiState.messageRepliesList) { reply ->
+                        ForumPostCard(
+                            post = reply,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
+                            onClick = {
+                                navController.navigate(
+                                    Screen.Message.createRoute(
+                                        forumId = pMI.forumId,
+                                        messageId = reply.messageId,
+                                    ),
+                                )
+                            },
+                        )
                     }
                 }
             }
