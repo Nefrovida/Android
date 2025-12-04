@@ -40,58 +40,41 @@ class MainActivity : ComponentActivity() {
                 val currentBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = currentBackStackEntry?.destination?.route
 
-                val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-                val scope = rememberCoroutineScope()
-
                 val showBottomBar = currentRoute != Screen.Login.route && currentRoute != Screen.Register.route
 
-                ModalNavigationDrawer(
-                    drawerState = drawerState,
-                    drawerContent = {
-                        ModalDrawerSheet(
-                            drawerContainerColor = MaterialTheme.colorScheme.surface,
-                            drawerContentColor = MaterialTheme.colorScheme.onSurface,
-                        ) {
-                            DrawerContent { selected ->
-                                scope.launch { drawerState.close() }
-                            }
+                Scaffold(
+                    topBar = {
+                        if (showBottomBar) {
+                            NfTopAppBar(
+                                navController = navController,
+                                onProfileClick = {
+                                    navController.navigate(Screen.Profile.route) {
+                                        launchSingleTop = true
+                                    }
+                                },
+                                onLogoutClick = {
+                                    // CLEAR COOKIES
+                                    NetworkModule.clearCookies()
+
+                                    // NAVIGATE TO LOGIN AND CLEAR HISTORY
+                                    navController.navigate(Screen.Login.route) {
+                                        popUpTo(0)
+                                        launchSingleTop = true
+                                    }
+                                },
+                            )
                         }
                     },
-                ) {
-                    Scaffold(
-                        topBar = {
-                            if (showBottomBar) {
-                                NfTopAppBar(
-                                    navController = navController,
-                                    onProfileClick = {
-                                        navController.navigate(Screen.Profile.route) {
-                                            launchSingleTop = true
-                                        }
-                                    },
-                                    onLogoutClick = {
-                                        // CLEAR COOKIES
-                                        NetworkModule.clearCookies()
-
-                                        // NAVIGATE TO LOGIN AND CLEAR HISTORY
-                                        navController.navigate(Screen.Login.route) {
-                                            popUpTo(0)
-                                            launchSingleTop = true
-                                        }
-                                    },
-                                )
-                            }
-                        },
-                        bottomBar = {
-                            if (showBottomBar) {
-                                NfBottomNavigationBar(navController)
-                            }
-                        },
-                    ) { innerPadding ->
-                        NefrovidaNavGraph(
-                            navController = navController,
-                            modifier = Modifier.padding(innerPadding),
-                        )
-                    }
+                    bottomBar = {
+                        if (showBottomBar) {
+                            NfBottomNavigationBar(navController)
+                        }
+                    },
+                ) { innerPadding ->
+                    NefrovidaNavGraph(
+                        navController = navController,
+                        modifier = Modifier.padding(innerPadding),
+                    )
                 }
             }
         }
