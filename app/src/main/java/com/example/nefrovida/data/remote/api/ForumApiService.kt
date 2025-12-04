@@ -7,6 +7,7 @@ import com.example.nefrovida.data.remote.dto.MessageDto
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
 import com.example.nefrovida.data.remote.dto.ReplyMessageStatus
+import com.example.nefrovida.data.remote.dto.ReportUserRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -54,5 +55,6 @@ interface ForumApiService {
     @POST("users/{userId}/report")
     suspend fun reportUser(
         @Path("userId") userId: String,
+        @Body request: ReportUserRequest,
     ): Response<Unit>
 }

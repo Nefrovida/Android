@@ -130,8 +130,8 @@ fun ForumMessageScreen(
                         ForumPostCard(
                             post = reply,
                             modifier = Modifier.padding(8.dp),
-                            onReportClick = { userId ->
-                                viewModel.reportUser(userId)
+                            onReportClick = { userId, messageId ->
+                                viewModel.reportUser(userId, messageId, "Contenido ofensivo o inapropiado")
                             },
                             onClick = {
                                 Log.d("ForumClick", "forumId = ${pMI.forumId}, replyId = ${reply.messageId}")

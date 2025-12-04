@@ -7,6 +7,7 @@ import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
+import com.example.nefrovida.data.remote.dto.ReportUserRequest
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository
@@ -66,9 +67,17 @@ class ForumRepositoryImpl
             }
         }
 
-        override suspend fun reportUser(userId: String): Result<Unit> =
+        override suspend fun reportUser(
+            userId: String,
+            messageId: Int,
+            cause: String,
+        ): Result<Unit> =
             try {
-                val response = api.reportUser(userId)
+                // Creamos el objeto request con los datos
+                val request = ReportUserRequest(messageId = messageId, cause = cause)
+
+                val response = api.reportUser(userId, request) // Pasamos el request a la API
+
                 if (response.isSuccessful) {
                     Result.Success(Unit)
                 } else {

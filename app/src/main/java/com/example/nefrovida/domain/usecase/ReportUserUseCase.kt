@@ -9,5 +9,9 @@ class ReportUserUseCase
     constructor(
         private val repository: ForumRepository,
     ) {
-        suspend operator fun invoke(userId: String): Result<Unit> = repository.reportUser(userId)
+        suspend operator fun invoke(
+            userId: String,
+            messageId: Int,
+            cause: String,
+        ): Result<Unit> = repository.reportUser(userId, messageId, cause)
     }

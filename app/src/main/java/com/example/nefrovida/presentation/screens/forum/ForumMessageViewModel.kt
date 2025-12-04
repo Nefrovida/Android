@@ -126,9 +126,13 @@ class ForumMessageViewModel
             }
         }
 
-        fun reportUser(userId: String) {
+        fun reportUser(
+            userId: String,
+            messageId: Int,
+            cause: String = "Comportamiento inapropiado",
+        ) {
             viewModelScope.launch {
-                when (val result = reportUserUseCase(userId)) {
+                when (val result = reportUserUseCase(userId, messageId, cause)) {
                     is Result.Success -> {
                         _uiEvent.send(UiEvent.ShowSnackbar("Usuario reportado correctamente"))
                     }

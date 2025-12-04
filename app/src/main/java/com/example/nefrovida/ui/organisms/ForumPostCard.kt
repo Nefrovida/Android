@@ -39,7 +39,7 @@ fun ForumPostCard(
     post: Message,
     modifier: Modifier = Modifier,
     isOwnMessage: Boolean = false,
-    onReportClick: (String) -> Unit = {},
+    onReportClick: (userId: String, messageId: Int) -> Unit = { _, _ -> },
     onClick: () -> Unit,
 ) {
     var showMenu by remember { mutableStateOf(false) }
@@ -102,7 +102,7 @@ fun ForumPostCard(
                                 },
                                 onClick = {
                                     showMenu = false
-                                    onReportClick(post.senderId)
+                                    onReportClick(post.senderId, post.messageId)
                                 },
                             )
                         }
