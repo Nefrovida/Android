@@ -1,5 +1,6 @@
 package com.example.nefrovida.data.remote.api
 
+import com.example.nefrovida.data.remote.dto.ForgotPasswordRequest
 import com.example.nefrovida.data.remote.dto.LoginRequest
 import com.example.nefrovida.data.remote.dto.LoginResponse
 import retrofit2.Response
@@ -22,4 +23,9 @@ interface AuthApiService {
     suspend fun register(
         @Body body: com.example.nefrovida.data.remote.dto.RegisterRequest
     ): Response<com.example.nefrovida.data.remote.dto.RegisterResponse>
+
+    @POST("auth/forgot-password")
+    suspend fun forgotPassword(
+        @Body body: ForgotPasswordRequest,
+    ): Response<Unit>
 }
