@@ -7,9 +7,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Science
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -25,6 +28,7 @@ import com.example.nefrovida.data.remote.dto.ServiceItemDto
 @Composable
 fun AnalysisCard(
     item: ServiceItemDto,
+    onReserve: (ServiceItemDto) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val showDialog = remember { mutableStateOf(false) }
@@ -84,11 +88,20 @@ fun AnalysisCard(
             TextButton(
                 onClick = { showDialog.value = true },
             ) {
-                Text(
-                    "Reservar",
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontWeight = FontWeight.Medium,
-                )
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Science,
+                        contentDescription = "Reservar",
+                    )
+                    Text(
+                        "Reservar",
+                        color = MaterialTheme.colorScheme.secondary,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
             }
         }
     }
@@ -122,7 +135,7 @@ fun AnalysisCard(
                 TextButton(
                     onClick = {
                         showDialog.value = false
-                        // TODO: Reservar
+                        onReserve(item)
                     },
                 ) {
                     Text(

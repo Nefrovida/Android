@@ -1,28 +1,23 @@
 package com.example.nefrovida.presentation.screens.login
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.nefrovida.data.repository.AuthRepositoryImpl
-import com.example.nefrovida.di.NetworkModule
 import com.example.nefrovida.domain.repository.Result
 import com.example.nefrovida.domain.usecase.ForgotPasswordUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PasswordResetViewModel(
-    application: Application,
-) : AndroidViewModel(application) {
+@HiltViewModel
+class PasswordResetViewModel @Inject constructor(
+    private val forgotPasswordUseCase: ForgotPasswordUseCase,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(PasswordResetDialogState())
     val uiState: StateFlow<PasswordResetDialogState> = _uiState.asStateFlow()
-
-    // Initialize dependencies
-    private val authApiService = NetworkModule.provideAuthApiService(application)
-    private val authRepository = AuthRepositoryImpl(authApiService)
-    private val forgotPasswordUseCase = ForgotPasswordUseCase(authRepository)
 
     fun onUsernameChange(username: String) {
         _uiState.update { it.copy(username = username, usernameError = null, errorMessage = null) }

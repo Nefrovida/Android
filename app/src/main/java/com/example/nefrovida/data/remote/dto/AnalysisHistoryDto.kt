@@ -8,5 +8,5 @@ data class AnalysisHistoryDto(
     @SerializedName("date") val date: String,
     @SerializedName("interpretations") val interpretations: String? = null,
     @SerializedName("recommendations") val recommendations: String? = null,
-    @SerializedName("download_url") val downloadUrl: String? = null,
+    @SerializedName("path") val downloadUrl: String? = null,  // Backend returns "path" not "download_url"
 )

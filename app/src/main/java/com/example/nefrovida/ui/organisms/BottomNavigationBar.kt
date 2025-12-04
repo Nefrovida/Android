@@ -8,6 +8,7 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.nefrovida.presentation.navigation.NavDestination
@@ -51,7 +52,7 @@ fun NfBottomNavigationBar(
                         contentDescription = destination.label,
                     )
                 },
-                label = { Text(destination.label) },
+                label = { Text(destination.label, fontSize = 10.sp) },
                 alwaysShowLabel = true,
                 colors =
                     NavigationBarItemDefaults.colors(

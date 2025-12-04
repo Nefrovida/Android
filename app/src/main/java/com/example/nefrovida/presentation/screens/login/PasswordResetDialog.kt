@@ -20,12 +20,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nefrovida.ui.theme.*
 
 @Composable
 fun PasswordResetDialog(
-    viewModel: PasswordResetViewModel = viewModel(),
+    viewModel: PasswordResetViewModel = hiltViewModel(),
     onDismiss: () -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()

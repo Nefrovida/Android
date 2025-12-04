@@ -5,4 +5,5 @@ import com.example.nefrovida.domain.model.Report
 
 interface ReportRepository {
     suspend fun getReportByPatientAnalysisId(id: Int): ApiResponse<Report>
+    fun getPdfUrl(patientAnalysisId: Int): String
 }
