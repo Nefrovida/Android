@@ -43,3 +43,5 @@ fun formatDatePretty2(
     } catch (e: Exception) {
         "$dateString $hourString"
     }
+
+annotation class DatePretty
