@@ -38,7 +38,7 @@ import java.util.Calendar
 @Composable
 fun RegisterScreen(
     onNavigateBack: () -> Unit,
-    viewModel: RegisterViewModel = hiltViewModel()
+    viewModel: RegisterViewModel = hiltViewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
@@ -53,7 +53,7 @@ fun RegisterScreen(
     var birthday by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("MALE") }
     var curp by remember { mutableStateOf("") }
-    
+
     var passwordVisible by remember { mutableStateOf(false) }
 
     // Date Picker Logic
@@ -62,14 +62,18 @@ fun RegisterScreen(
     val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _: DatePicker, y: Int, m: Int, d: Int ->
-            val formattedMonth = (m + 1).toString().padStart(2, '0')
-            val formattedDay = d.toString().padStart(2, '0')
-            birthday = "$y-$formattedMonth-$formattedDay"
-        }, year, month, day
-    )
+    val datePickerDialog =
+        DatePickerDialog(
+            context,
+            { _: DatePicker, y: Int, m: Int, d: Int ->
+                val formattedMonth = (m + 1).toString().padStart(2, '0')
+                val formattedDay = d.toString().padStart(2, '0')
+                birthday = "$y-$formattedMonth-$formattedDay"
+            },
+            year,
+            month,
+            day,
+        )
 
     LaunchedEffect(uiState) {
         when (uiState) {
@@ -95,14 +99,14 @@ fun RegisterScreen(
                 Text(
                     text = "Registro Exitoso",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
+                    fontSize = 20.sp,
                 )
             },
             text = {
                 Text(
                     text = (uiState as RegisterUiState.Success).message,
                     fontSize = 16.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             },
             confirmButton = {
@@ -111,85 +115,92 @@ fun RegisterScreen(
                         onNavigateBack()
                         viewModel.resetState()
                     },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFF1E3A8A)
-                    ),
+                    colors =
+                        ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF1E3A8A),
+                        ),
                     shape = RoundedCornerShape(50),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Text("Aceptar", fontWeight = FontWeight.Bold, color = Color.White)
                 }
-            }
+            },
         )
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFA8C5DD),
-                        Color(0xFF1E3A8A)
-                    )
-                )
-            )
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    brush =
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    Color(0xFFA8C5DD),
+                                    Color(0xFF1E3A8A),
+                                ),
+                        ),
+                ),
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
             Surface(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
                 shape = RoundedCornerShape(24.dp),
                 color = Color.White.copy(alpha = 0.95f),
-                shadowElevation = 8.dp
+                shadowElevation = 8.dp,
             ) {
                 Column(
                     modifier = Modifier.padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
                 ) {
                     // Logo
                     Text(
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = Color(0xFF1E3A8A))) { append("NEFR") }
-                            withStyle(style = SpanStyle(color = Color(0xFFDC2626))) { append("O") }
-                            withStyle(style = SpanStyle(color = Color(0xFF84CC16))) { append("Vida") }
-                        },
+                        text =
+                            buildAnnotatedString {
+                                withStyle(style = SpanStyle(color = Color(0xFF1E3A8A))) { append("NEFR") }
+                                withStyle(style = SpanStyle(color = Color(0xFFDC2626))) { append("O") }
+                                withStyle(style = SpanStyle(color = Color(0xFF84CC16))) { append("Vida") }
+                            },
                         fontSize = 32.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
                     )
                     Text(
                         text = "Asociación Civil",
                         fontSize = 12.sp,
                         color = Color.Gray,
-                        modifier = Modifier.offset(y = (-8).dp)
+                        modifier = Modifier.offset(y = (-8).dp),
                     )
 
                     Text(
                         text = "Registro de Paciente",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color(0xFF1F2937)
+                        color = Color(0xFF1F2937),
                     )
 
                     // Form Fields
                     RegisterTextField(value = name, onValueChange = { name = it }, label = "Nombre *")
                     RegisterTextField(value = parentLastName, onValueChange = { parentLastName = it }, label = "Apellido Paterno *")
                     RegisterTextField(value = maternalLastName, onValueChange = { maternalLastName = it }, label = "Apellido Materno")
-                    
+
                     RegisterTextField(
-                        value = phoneNumber, 
-                        onValueChange = { if (it.length <= 10) phoneNumber = it.filter { char -> char.isDigit() } }, 
+                        value = phoneNumber,
+                        onValueChange = { if (it.length <= 10) phoneNumber = it.filter { char -> char.isDigit() } },
                         label = "Teléfono *",
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
                     )
 
                     // Birthday
@@ -204,13 +215,14 @@ fun RegisterScreen(
                             trailingIcon = {
                                 Icon(Icons.Default.DateRange, contentDescription = "Select Date", tint = Color.Gray)
                             },
-                            colors = OutlinedTextFieldDefaults.colors(
-                                disabledTextColor = Color.Black,
-                                disabledBorderColor = Color.LightGray,
-                                disabledLabelColor = Color.Gray,
-                                disabledContainerColor = Color.Transparent
-                            ),
-                            shape = RoundedCornerShape(12.dp)
+                            colors =
+                                OutlinedTextFieldDefaults.colors(
+                                    disabledTextColor = Color.Black,
+                                    disabledBorderColor = Color.LightGray,
+                                    disabledLabelColor = Color.Gray,
+                                    disabledContainerColor = Color.Transparent,
+                                ),
+                            shape = RoundedCornerShape(12.dp),
                         )
                         // Make the disabled text field clickable
                         Box(modifier = Modifier.matchParentSize().clickable { datePickerDialog.show() })
@@ -220,10 +232,10 @@ fun RegisterScreen(
                     GenderSelector(selectedGender = gender, onGenderSelected = { gender = it })
 
                     RegisterTextField(
-                        value = username, 
-                        onValueChange = { username = it }, 
+                        value = username,
+                        onValueChange = { username = it },
                         label = "Usuario *",
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text)
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     )
 
                     OutlinedTextField(
@@ -236,29 +248,30 @@ fun RegisterScreen(
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                                 Icon(
                                     imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
-                                    contentDescription = if (passwordVisible) "Hide password" else "Show password"
+                                    contentDescription = if (passwordVisible) "Hide password" else "Show password",
                                 )
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
-                        colors = OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF1E3A8A),
-                            unfocusedBorderColor = Color.LightGray
-                        )
+                        colors =
+                            OutlinedTextFieldDefaults.colors(
+                                focusedBorderColor = Color(0xFF1E3A8A),
+                                unfocusedBorderColor = Color.LightGray,
+                            ),
                     )
 
                     RegisterTextField(
-                        value = curp, 
-                        onValueChange = { curp = it.uppercase() }, 
+                        value = curp,
+                        onValueChange = { curp = it.uppercase() },
                         label = "CURP *",
-                        placeholder = "ABCD123456HDFXYZ01"
+                        placeholder = "ABCD123456HDFXYZ01",
                     )
                     Text(
                         text = "Clave Única de Registro de Población (18 caracteres)",
                         style = MaterialTheme.typography.bodySmall,
                         color = Color.Gray,
-                        modifier = Modifier.align(Alignment.Start)
+                        modifier = Modifier.align(Alignment.Start),
                     )
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -266,17 +279,27 @@ fun RegisterScreen(
                     Button(
                         onClick = {
                             viewModel.register(
-                                name, parentLastName, maternalLastName, phoneNumber, username, password, birthday, gender, curp
+                                name,
+                                parentLastName,
+                                maternalLastName,
+                                phoneNumber,
+                                username,
+                                password,
+                                birthday,
+                                gender,
+                                curp,
                             )
                         },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(50.dp),
                         shape = RoundedCornerShape(50),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF1E3A8A)
-                        ),
-                        enabled = uiState !is RegisterUiState.Loading
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF1E3A8A),
+                            ),
+                        enabled = uiState !is RegisterUiState.Loading,
                     ) {
                         if (uiState is RegisterUiState.Loading) {
                             CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
@@ -288,7 +311,7 @@ fun RegisterScreen(
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text("¿Ya tienes cuenta? ", color = Color.Gray, fontSize = 14.sp)
                         TextButton(onClick = { onNavigateBack() }) {
@@ -307,26 +330,42 @@ fun RegisterTextField(
     onValueChange: (String) -> Unit,
     label: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-    placeholder: String? = null
+    placeholder: String? = null,
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
         label = { Text(label) },
-        placeholder = if (placeholder != null) { { Text(placeholder) } } else null,
+        placeholder =
+            if (placeholder !=
+                null
+            ) {
+                {
+                    Text(
+                        placeholder,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                    )
+                }
+            } else {
+                null
+            },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = Color(0xFF1E3A8A),
-            unfocusedBorderColor = Color.LightGray
-        ),
+        colors =
+            OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF1E3A8A),
+                unfocusedBorderColor = Color.LightGray,
+            ),
         keyboardOptions = keyboardOptions,
-        singleLine = true
+        singleLine = true,
     )
 }
 
 @Composable
-fun GenderSelector(selectedGender: String, onGenderSelected: (String) -> Unit) {
+fun GenderSelector(
+    selectedGender: String,
+    onGenderSelected: (String) -> Unit,
+) {
     var expanded by remember { mutableStateOf(false) }
     val genders = listOf("MALE" to "Masculino", "FEMALE" to "Femenino", "OTHER" to "Otro")
 
@@ -341,13 +380,14 @@ fun GenderSelector(selectedGender: String, onGenderSelected: (String) -> Unit) {
             trailingIcon = {
                 Icon(Icons.Default.ArrowDropDown, "Select Gender")
             },
-            colors = OutlinedTextFieldDefaults.colors(
-                disabledTextColor = Color.Black,
-                disabledBorderColor = Color.LightGray,
-                disabledLabelColor = Color.Gray,
-                disabledContainerColor = Color.Transparent
-            ),
-            shape = RoundedCornerShape(12.dp)
+            colors =
+                OutlinedTextFieldDefaults.colors(
+                    disabledTextColor = Color.Black,
+                    disabledBorderColor = Color.LightGray,
+                    disabledLabelColor = Color.Gray,
+                    disabledContainerColor = Color.Transparent,
+                ),
+            shape = RoundedCornerShape(12.dp),
         )
         // Overlay box to capture clicks
         Box(modifier = Modifier.matchParentSize().clickable { expanded = true })
@@ -355,7 +395,7 @@ fun GenderSelector(selectedGender: String, onGenderSelected: (String) -> Unit) {
         DropdownMenu(
             expanded = expanded,
             onDismissRequest = { expanded = false },
-            modifier = Modifier.fillMaxWidth(0.8f) // Adjust width as needed
+            modifier = Modifier.fillMaxWidth(0.8f), // Adjust width as needed
         ) {
             genders.forEach { (key, label) ->
                 DropdownMenuItem(
@@ -363,7 +403,7 @@ fun GenderSelector(selectedGender: String, onGenderSelected: (String) -> Unit) {
                     onClick = {
                         onGenderSelected(key)
                         expanded = false
-                    }
+                    },
                 )
             }
         }

@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "http://10.25.72.65:3001/api/" // Android emulator localhost
+    private const val BASE_URL = "http://192.168.100.9:3001/api/" // Android emulator localhost
 
     // For physical device, use your computer's IP: "http://192.168.x.x:3001/api/"
     private var retrofit: Retrofit? = null
