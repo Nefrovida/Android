@@ -24,6 +24,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindAnalysisHistoryRepository(impl: AppointmentNotesRepositoryImpl): AppointmentNotesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAuthRepository(impl: com.example.nefrovida.data.repository.AuthRepositoryImpl): com.example.nefrovida.domain.repository.AuthRepository
 }
 
 @Module

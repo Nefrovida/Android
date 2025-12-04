@@ -117,7 +117,6 @@ fun ForumMessageScreen(
                             post = reply,
                             modifier = Modifier.padding(8.dp),
                             onClick = {
-                                Log.d("ForumClick", "forumId = ${pMI.forumId}, replyId = ${reply.messageId}")
                                 navController.navigate(
                                     Screen.Message.createRoute(
                                         forumId = pMI.forumId,
@@ -140,20 +139,29 @@ fun ForumMessageScreen(
                 ) {
                     OutlinedTextField(
                         value = replyText,
-                        onValueChange = { replyText = it },
-                        placeholder = { Text("Write a reply...") },
+                        onValueChange = {
+                            if (it.length <= 5000) replyText = it
+                        },
+                        placeholder = { Text("Escribe una respuesta...") },
                         modifier = Modifier.weight(1f),
                         maxLines = 3,
+                        isError = replyText.trim().isEmpty() && replyText.isNotEmpty(),
+                        supportingText = {
+                            Text("${replyText.length}/5000")
+                        },
                     )
                     Spacer(modifier = Modifier.width(8.dp))
+
+                    val isReplyValid = replyText.trim().isNotEmpty() && replyText.length <= 5000
+
                     IconButton(
                         onClick = {
-                            if (replyText.isNotBlank()) {
-                                viewModel.postReply(pMI.forumId, pMI.messageId, replyText)
+                            if (isReplyValid) {
+                                viewModel.postReply(pMI.forumId, pMI.messageId, replyText.trim())
                                 replyText = ""
                             }
                         },
-                        enabled = replyText.isNotBlank(),
+                        enabled = isReplyValid,
                     ) {
                         Icon(
                             imageVector = Icons.Default.Send,

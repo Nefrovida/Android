@@ -1,12 +1,38 @@
 package com.example.nefrovida.presentation.screens.forum
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,6 +45,7 @@ import com.example.nefrovida.data.remote.dto.SimpleForumInfo
 import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.ui.molecules.SearchBar
 import com.example.nefrovida.ui.organisms.ForumPostCard
+import com.example.nefrovida.ui.organisms.NewMessageModal
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,18 +58,51 @@ fun ForumScreen(
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
     val navyBlue = Color(0xFF000080)
 
-    Column(
+    var showNewMessageDialog by remember { mutableStateOf(false) }
+    val forums by viewModel.myForums.collectAsStateWithLifecycle()
+
+    Scaffold(
         modifier = modifier.fillMaxSize(),
-    ) {
-        TabRow(selectedTabIndex = selectedTabIndex) {
-            tabs.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { viewModel.onTabSelected(index) },
-                    text = {
-                        Text(
-                            title,
-                            color =
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    showNewMessageDialog = true
+                    viewModel.loadMyForums()
+                },
+                containerColor = Color(0xFF1E88E5),
+                contentColor = Color.White,
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "New Message",
+                )
+            }
+        },
+    ) { _ ->
+        Column(
+            modifier =
+            Modifier
+                .fillMaxSize(),
+        ) {
+            if (showNewMessageDialog) {
+                NewMessageModal(
+                    onDismiss = { showNewMessageDialog = false },
+                    forums = forums,
+                    onSend = { forumId, message ->
+                        viewModel.postNewMessage(forumId, message)
+                        showNewMessageDialog = false
+                    },
+                )
+            }
+            TabRow(selectedTabIndex = selectedTabIndex) {
+                tabs.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { viewModel.onTabSelected(index) },
+                        text = {
+                            Text(
+                                title,
+                                color =
                                 if (selectedTabIndex ==
                                     index
                                 ) {
@@ -50,18 +110,19 @@ fun ForumScreen(
                                 } else {
                                     navyBlue
                                 },
-                        )
-                    },
-                    selectedContentColor = MaterialTheme.colorScheme.primary,
-                    unselectedContentColor = navyBlue,
-                )
+                            )
+                        },
+                        selectedContentColor = MaterialTheme.colorScheme.primary,
+                        unselectedContentColor = navyBlue,
+                    )
+                }
             }
-        }
 
-        when (selectedTabIndex) {
-            0 -> DiscoverTabContent(viewModel = viewModel, navController = navController)
-            1 -> MyForumsTabContent(viewModel = viewModel, navController = navController)
-            2 -> AllForumsTabContent(viewModel = viewModel, navController = navController)
+            when (selectedTabIndex) {
+                0 -> DiscoverTabContent(viewModel = viewModel, navController = navController)
+                1 -> MyForumsTabContent(viewModel = viewModel, navController = navController)
+                2 -> AllForumsTabContent(viewModel = viewModel, navController = navController)
+            }
         }
     }
 }
@@ -71,11 +132,15 @@ fun DiscoverTabContent(
     viewModel: ForumViewModel,
     navController: NavController,
 ) {
-    val discoverFeed by viewModel.discoverFeed.collectAsState()
+    val discoverFeed by viewModel.discoverFeed.collectAsStateWithLifecycle()
     val isDiscoverLoading by viewModel.isDiscoverLoading
     val listState = rememberLazyListState()
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier.height(16.dp))
         // No hay barra de búsqueda para Descubrir según la documentación
         if (isDiscoverLoading && discoverFeed.isEmpty()) {
             Box(
@@ -114,9 +179,9 @@ fun DiscoverTabContent(
                     item {
                         Box(
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             CircularProgressIndicator()
@@ -148,8 +213,8 @@ fun MyForumsTabContent(
     viewModel: ForumViewModel,
     navController: NavController,
 ) {
-    val myForumsSearchQuery by viewModel.myForumsSearchQuery.collectAsState()
-    val filteredMyForums by viewModel.filteredMyForums.collectAsState()
+    val myForumsSearchQuery by viewModel.myForumsSearchQuery.collectAsStateWithLifecycle()
+    val filteredMyForums by viewModel.filteredMyForums.collectAsStateWithLifecycle()
     val isMyForumsLoading by viewModel.isMyForumsLoading
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -194,8 +259,8 @@ fun AllForumsTabContent(
     viewModel: ForumViewModel,
     navController: NavController,
 ) {
-    val allForumsSearchQuery by viewModel.allForumsSearchQuery.collectAsState()
-    val filteredAllForums by viewModel.filteredAllForums.collectAsState()
+    val allForumsSearchQuery by viewModel.allForumsSearchQuery.collectAsStateWithLifecycle()
+    val filteredAllForums by viewModel.filteredAllForums.collectAsStateWithLifecycle()
     val isAllForumsLoading by viewModel.isAllForumsLoading
     val listState = rememberLazyListState()
 
@@ -237,9 +302,9 @@ fun AllForumsTabContent(
                     item {
                         Box(
                             modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
                             contentAlignment = Alignment.Center,
                         ) {
                             CircularProgressIndicator()
@@ -275,9 +340,9 @@ fun ForumListItem(
 ) {
     Card(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick),
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -298,9 +363,9 @@ fun ForumAllListItem(
 ) {
     Card(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick),
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

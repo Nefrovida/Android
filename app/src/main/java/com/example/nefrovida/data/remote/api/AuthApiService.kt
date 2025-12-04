@@ -17,4 +17,9 @@ interface AuthApiService {
 
     @POST("auth/logout")
     suspend fun logout(): Response<Unit>
+
+    @POST("auth/register")
+    suspend fun register(
+        @Body body: com.example.nefrovida.data.remote.dto.RegisterRequest
+    ): Response<com.example.nefrovida.data.remote.dto.RegisterResponse>
 }

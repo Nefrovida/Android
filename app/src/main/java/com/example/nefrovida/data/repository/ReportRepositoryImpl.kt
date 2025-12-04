@@ -3,6 +3,7 @@ package com.example.nefrovida.data.repository
 import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.ReportsApi
 import com.example.nefrovida.data.remote.dto.ApiResponse
+import com.example.nefrovida.di.NetworkModule
 import com.example.nefrovida.domain.model.Report
 import com.example.nefrovida.domain.repository.ReportRepository
 import javax.inject.Inject
@@ -25,5 +26,9 @@ class ReportRepositoryImpl @Inject constructor(
             error = response.error,
             data = response.data?.toDomain()
         )
+    }
+
+    override fun getPdfUrl(patientAnalysisId: Int): String {
+        return "${NetworkModule.getBaseUrl()}analysis/download-report?id=$patientAnalysisId"
     }
 }
