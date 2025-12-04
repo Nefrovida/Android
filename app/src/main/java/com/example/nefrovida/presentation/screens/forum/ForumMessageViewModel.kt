@@ -12,12 +12,20 @@ import com.example.nefrovida.domain.usecase.GetMessageUseCase
 import com.example.nefrovida.domain.usecase.PostMessageUseCase
 import com.example.nefrovida.domain.usecase.ReportUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
+sealed interface UiEvent {
+    data class ShowSnackbar(
+        val message: String,
+    ) : UiEvent
+}
 
 @HiltViewModel
 class ForumMessageViewModel
@@ -30,6 +38,8 @@ class ForumMessageViewModel
     ) : ViewModel() {
         private val _messageReplies = MutableStateFlow(MessageReplyUiState())
         val messageReplies: StateFlow<MessageReplyUiState> = _messageReplies.asStateFlow()
+        private val _uiEvent = Channel<UiEvent>()
+        val uiEvent = _uiEvent.receiveAsFlow()
 
         public fun loadReplies(
             forumId: Int,
@@ -118,15 +128,15 @@ class ForumMessageViewModel
 
         fun reportUser(userId: String) {
             viewModelScope.launch {
-                // Opcional: Poner estado de 'loading'
                 when (val result = reportUserUseCase(userId)) {
                     is Result.Success -> {
-                        // Mostrar mensaje de éxito (usando un Channel o State para la UI)
                         _uiEvent.send(UiEvent.ShowSnackbar("Usuario reportado correctamente"))
                     }
                     is Result.Error -> {
-                        _uiEvent.send(UiEvent.ShowSnackbar("Error al reportar usuario"))
+                        val errorMsg = result.exception.message ?: "Error al reportar usuario"
+                        _uiEvent.send(UiEvent.ShowSnackbar(errorMsg))
                     }
+                    else -> {}
                 }
             }
         }

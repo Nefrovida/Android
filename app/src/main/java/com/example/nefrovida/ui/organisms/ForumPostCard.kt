@@ -22,6 +22,8 @@ fun ForumPostCard(
     modifier: Modifier = Modifier,
     post: Message,
     onClick: () -> Unit,
+    isOwnMessage: Boolean = false,
+    onReportClick: (String) -> Unit = {}
 ) {
     Card(
         modifier =
