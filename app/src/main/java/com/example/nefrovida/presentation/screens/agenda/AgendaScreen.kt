@@ -98,47 +98,49 @@ fun AgendaScreen(
             val scope = rememberCoroutineScope()
             val userId by viewModel.userId.collectAsState()
 
-            WeeklyCalendarView(
-                selectedDate = selectedDate,
-                onDateSelected = { date ->
-                    selectedDate = date
-                    val formattedDate = date.toString()
+            if (!showRescheduleForm) {
+                WeeklyCalendarView(
+                    selectedDate = selectedDate,
+                    onDateSelected = { date ->
+                        selectedDate = date
+                        val formattedDate = date.toString()
 
-                    if (userId.isNotEmpty()) {
-                        scope.launch {
-                            viewModel.loadAgendaList(formattedDate, userId)
+                        if (userId.isNotEmpty()) {
+                            scope.launch {
+                                viewModel.loadAgendaList(formattedDate, userId)
+                            }
                         }
-                    }
-                },
-                modifier = Modifier.padding(8.dp),
-            )
+                    },
+                    modifier = Modifier.padding(8.dp),
+                )
 
-            if (unifiedList.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        text = "No hay citas ni análisis para este día.",
-                        modifier = Modifier.padding(16.dp),
-                        fontSize = 14.sp,
-                        color = Color.Gray,
+                if (unifiedList.isEmpty()) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            text = "No hay citas ni análisis para este día.",
+                            modifier = Modifier.padding(16.dp),
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                        )
+                    }
+                } else {
+                    AgendaUnifiedList(
+                        items = unifiedList,
+                        onAppointmentClick = { appointment ->
+                            viewModel.getAppointment(appointment.id)
+                            viewModel.selectItem(AgendaItem.AppointmentItem(appointment))
+                            showDialog = true
+                        },
+                        onAnalysisClick = { analysis ->
+                            viewModel.getAnalysis(analysis.patientAnalysisId)
+                            viewModel.selectItem(AgendaItem.AnalysisItem(analysis))
+                            showDialog = true
+                        },
                     )
                 }
-            } else {
-                AgendaUnifiedList(
-                    items = unifiedList,
-                    onAppointmentClick = { appointment ->
-                        viewModel.getAppointment(appointment.id)
-                        viewModel.selectItem(AgendaItem.AppointmentItem(appointment))
-                        showDialog = true
-                    },
-                    onAnalysisClick = { analysis ->
-                        viewModel.getAnalysis(analysis.patientAnalysisId)
-                        viewModel.selectItem(AgendaItem.AnalysisItem(analysis))
-                        showDialog = true
-                    },
-                )
             }
 
             if (showDialog) {

@@ -7,4 +7,6 @@ data class CatalogUIState(
     val appointments: List<ServiceItemDto> = emptyList(),
     val analysis: List<ServiceItemDto> = emptyList(),
     val error: String? = null,
+    val showCreateSuccess: Boolean = false,
+    val showCreateError: Boolean = false,
 )
