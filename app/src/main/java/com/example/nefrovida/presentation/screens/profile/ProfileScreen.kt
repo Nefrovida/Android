@@ -2,7 +2,6 @@ package com.example.nefrovida.presentation.screens.profile
 
 import android.app.DatePickerDialog
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -26,8 +25,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -36,9 +35,9 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
 import com.example.nefrovida.ui.theme.ErrorRed
 import com.example.nefrovida.ui.theme.NavyBlue
 import java.text.SimpleDateFormat
@@ -231,9 +230,18 @@ fun ProfileHeader() {
 @Composable
 fun ProfileInfoCard(profile: com.example.nefrovida.domain.model.UserProfile) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .shadow(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    spotColor = MaterialTheme.colorScheme.tertiary,
+                    ambientColor = MaterialTheme.colorScheme.tertiary,
+                ),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
@@ -296,9 +304,18 @@ fun formatDate(dateString: String?): String {
 @Composable
 fun PasswordInfoCard() {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .shadow(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    spotColor = MaterialTheme.colorScheme.tertiary,
+                    ambientColor = MaterialTheme.colorScheme.tertiary,
+                ),
         shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(modifier = Modifier.padding(20.dp)) {
             Text(
@@ -632,7 +649,6 @@ fun ChangePasswordDialog(
     var isConfirmPasswordVisible by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    // Password validation regex matching backend: PASSWORD_REGEX
     val passwordRegex = Regex("^(?=.*[A-Z])(?=.*\\d)(?=.*[#?!@\$%^&*\\-]).{8,}\$")
 
     fun validatePassword(): Boolean {
@@ -641,42 +657,34 @@ fun ChangePasswordDialog(
                 errorMessage = "La nueva contraseña es requerida"
                 return false
             }
-
             newPassword.length > 15 -> {
                 errorMessage = "La contraseña no puede tener más de 15 caracteres"
                 return false
             }
-
             newPassword.length < 8 -> {
                 errorMessage = "La contraseña debe tener al menos 8 caracteres"
                 return false
             }
-
             !newPassword.contains(Regex("[A-Z]")) -> {
                 errorMessage = "La contraseña debe tener al menos una letra mayúscula"
                 return false
             }
-
             !newPassword.contains(Regex("\\d")) -> {
                 errorMessage = "La contraseña debe tener al menos un número"
                 return false
             }
-
             !newPassword.contains(Regex("[#?!@\$%^&*\\-]")) -> {
                 errorMessage = "La contraseña debe tener al menos un carácter especial [#?!@\$%^&*-]"
                 return false
             }
-
             !passwordRegex.matches(newPassword) -> {
                 errorMessage = "La contraseña no cumple con los requisitos"
                 return false
             }
-
             confirmPassword.isEmpty() -> {
                 errorMessage = "Debe confirmar la nueva contraseña"
                 return false
             }
-
             newPassword != confirmPassword -> {
                 errorMessage = "Las contraseñas no coinciden"
                 return false
@@ -686,111 +694,129 @@ fun ChangePasswordDialog(
         return true
     }
 
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = {
-            Text(
-                "Cambiar Contraseña",
-                fontWeight = FontWeight.Bold,
-                color = NavyBlue,
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                OutlinedTextField(
-                    value = newPassword,
-                    onValueChange = {
-                        if (it.length <= 15) {
-                            newPassword = it
-                            errorMessage = ""
-                        }
-                    },
-                    label = { Text("Nueva contraseña") },
-                    modifier = Modifier.fillMaxWidth(),
-                    visualTransformation = if (isNewPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    trailingIcon = {
-                        val image = if (isNewPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                        IconButton(onClick = { isNewPasswordVisible = !isNewPasswordVisible }) {
-                            Icon(image, contentDescription = "Toggle visibility")
-                        }
-                    },
-                    singleLine = true,
-                    isError = errorMessage.isNotEmpty() && newPassword.isNotEmpty(),
-                    supportingText = { Text("${newPassword.length}/15") },
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(12.dp),
+                    spotColor = MaterialTheme.colorScheme.tertiary,
+                    ambientColor = MaterialTheme.colorScheme.tertiary
+                ),
+            shape = RoundedCornerShape(12.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White)
+        ) {
+            Column(modifier = Modifier.padding(24.dp)) {
+                Text(
+                    "Cambiar Contraseña",
+                    fontWeight = FontWeight.Bold,
+                    color = NavyBlue,
+                    style = MaterialTheme.typography.headlineSmall
                 )
-                OutlinedTextField(
-                    value = confirmPassword,
-                    onValueChange = {
-                        if (it.length <= 15) {
-                            confirmPassword = it
-                            errorMessage = ""
-                        }
-                    },
-                    label = { Text("Confirmar contraseña") },
-                    modifier = Modifier.fillMaxWidth(),
-                    visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    trailingIcon = {
-                        val image = if (isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
-                        IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
-                            Icon(image, contentDescription = "Toggle visibility")
-                        }
-                    },
-                    singleLine = true,
-                    isError = errorMessage.isNotEmpty() && confirmPassword.isNotEmpty(),
-                    supportingText = { Text("${confirmPassword.length}/15") },
-                )
+                Spacer(modifier = Modifier.height(16.dp))
 
-                if (errorMessage.isNotEmpty()) {
-                    Text(
-                        text = errorMessage,
-                        color = ErrorRed,
-                        fontSize = 12.sp,
-                        modifier = Modifier.padding(top = 4.dp),
+                // Content
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    OutlinedTextField(
+                        value = newPassword,
+                        onValueChange = {
+                            if (it.length <= 15) {
+                                newPassword = it
+                                errorMessage = ""
+                            }
+                        },
+                        label = { Text("Nueva contraseña") },
+                        modifier = Modifier.fillMaxWidth(),
+                        visualTransformation = if (isNewPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        trailingIcon = {
+                            val image = if (isNewPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                            IconButton(onClick = { isNewPasswordVisible = !isNewPasswordVisible }) {
+                                Icon(image, contentDescription = "Toggle visibility")
+                            }
+                        },
+                        singleLine = true,
+                        isError = errorMessage.isNotEmpty() && newPassword.isNotEmpty(),
+                        supportingText = { Text("${newPassword.length}/15") },
                     )
-                } else {
-                    Text(
-                        text = "La contraseña debe tener entre 8 y 15 caracteres, una mayúscula, un número y un carácter especial [#?!@\$%^&*-]",
-                        style = MaterialTheme.typography.bodySmall,
-                        textAlign = TextAlign.Start,
-                        color = Color.Gray,
-                        fontSize = 11.sp,
+                    OutlinedTextField(
+                        value = confirmPassword,
+                        onValueChange = {
+                            if (it.length <= 15) {
+                                confirmPassword = it
+                                errorMessage = ""
+                            }
+                        },
+                        label = { Text("Confirmar contraseña") },
+                        modifier = Modifier.fillMaxWidth(),
+                        visualTransformation = if (isConfirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        trailingIcon = {
+                            val image = if (isConfirmPasswordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff
+                            IconButton(onClick = { isConfirmPasswordVisible = !isConfirmPasswordVisible }) {
+                                Icon(image, contentDescription = "Toggle visibility")
+                            }
+                        },
+                        singleLine = true,
+                        isError = errorMessage.isNotEmpty() && confirmPassword.isNotEmpty(),
+                        supportingText = { Text("${confirmPassword.length}/15") },
                     )
-                }
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = {
-                    if (validatePassword()) {
-                        onSave(newPassword, confirmPassword)
+
+                    if (errorMessage.isNotEmpty()) {
+                        Text(
+                            text = errorMessage,
+                            color = ErrorRed,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(top = 4.dp),
+                        )
+                    } else {
+                        Text(
+                            text = "La contraseña debe tener entre 8 y 15 caracteres, una mayúscula, un número y un carácter especial [#?!@\$%^&*-]",
+                            style = MaterialTheme.typography.bodySmall,
+                            textAlign = TextAlign.Start,
+                            color = Color.Gray,
+                            fontSize = 11.sp,
+                        )
                     }
-                },
-                enabled = !isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = NavyBlue),
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = Color.White,
-                        strokeWidth = 2.dp,
-                    )
-                } else {
-                    Text("GUARDAR")
+                }
+                Spacer(modifier = Modifier.height(24.dp))
+
+                // Buttons
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(
+                        onClick = onDismiss,
+                        colors = ButtonDefaults.textButtonColors(contentColor = ErrorRed),
+                    ) {
+                        Text("CANCELAR")
+                    }
+                    Spacer(Modifier.width(8.dp))
+                    Button(
+                        onClick = {
+                            if (validatePassword()) {
+                                onSave(newPassword, confirmPassword)
+                            }
+                        },
+                        enabled = !isLoading,
+                        colors = ButtonDefaults.buttonColors(containerColor = NavyBlue),
+                    ) {
+                        if (isLoading) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(20.dp),
+                                color = Color.White,
+                                strokeWidth = 2.dp,
+                            )
+                        } else {
+                            Text("GUARDAR")
+                        }
+                    }
                 }
             }
-        },
-        dismissButton = {
-            TextButton(
-                onClick = onDismiss,
-                colors = ButtonDefaults.textButtonColors(contentColor = ErrorRed),
-            ) {
-                Text("CANCELAR")
-            }
-        },
-    )
+        }
+    }
 }
