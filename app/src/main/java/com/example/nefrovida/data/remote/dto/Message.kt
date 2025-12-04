@@ -11,8 +11,15 @@ data class Message(
     val likes: Int,
     @SerializedName("replies")
     val replies: Int,
-    @SerializedName("forums") // Coincide con el JSON, pero lo mapearemos a 'forum'
+    // Coincide con el JSON, pero lo mapearemos a 'forum'
+    @SerializedName("forums")
     val forum: MessageForumInfo,
+    @SerializedName("senderId")
+    val senderId: String,
+    @SerializedName("senderName")
+    val senderName: String? = "Anónimo",
+    @SerializedName("createdAt")
+    val createdAt: String,
 )
 
 data class Reply(

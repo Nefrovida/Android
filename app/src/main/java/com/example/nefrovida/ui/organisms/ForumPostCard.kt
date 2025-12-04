@@ -32,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.data.remote.dto.Message
-import com.example.nefrovida.presentation.utils.DatePretty
+import com.example.nefrovida.presentation.utils.formatDatePretty
 
 @Composable
 fun ForumPostCard(
@@ -71,7 +71,7 @@ fun ForumPostCard(
                         color = MaterialTheme.colorScheme.primary,
                     )
                     Text(
-                        text = DatePretty.getPrettyDate(post.createdAt),
+                        text = formatDatePretty(post.createdAt),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -112,7 +112,6 @@ fun ForumPostCard(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Contenido del mensaje
             Text(
                 text = post.content,
                 style = MaterialTheme.typography.bodyMedium,
