@@ -10,6 +10,7 @@ fun Reply.toDomain(): Message =
         content = content,
         likes = stats.likes,
         replies = stats.replies,
+        liked = liked,
         forum =
             MessageForumInfo(
                 forumId,

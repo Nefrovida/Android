@@ -5,6 +5,7 @@ import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.domain.common.Result
+import com.example.nefrovida.data.remote.dto.StatusMessage
 import com.example.nefrovida.domain.model.MessageObj
 import retrofit2.Response
 
@@ -25,11 +26,18 @@ interface ForumRepository {
 
     suspend fun getMessage(messageId: Int): Message
 
+    suspend fun postLike(messageId: Int): StatusMessage
+
     suspend fun postMessage(
         forumId: Int,
         parentMessageId: Int,
         content: String,
     ): Boolean
+
+    suspend fun postMessage(
+        forumId: Int,
+        content: String,
+    ): StatusMessage
 
     suspend fun getMessageReplies(
         forumId: Int,

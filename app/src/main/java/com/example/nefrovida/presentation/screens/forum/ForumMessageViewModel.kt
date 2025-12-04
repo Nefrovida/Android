@@ -1,14 +1,12 @@
 package com.example.nefrovida.presentation.screens.forum
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.lifecycle.SavedStateHandle
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.usecase.GetMessageRepliesUseCase
 import com.example.nefrovida.domain.usecase.GetMessageUseCase
+import com.example.nefrovida.domain.usecase.PostLikeUseCase
 import com.example.nefrovida.domain.usecase.PostMessageUseCase
 import com.example.nefrovida.domain.usecase.ReportUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

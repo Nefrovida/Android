@@ -4,7 +4,9 @@ import com.example.nefrovida.domain.model.User
 import com.example.nefrovida.domain.repository.AuthRepository
 import com.example.nefrovida.domain.repository.Result
 
-class LoginUseCase(
+import javax.inject.Inject
+
+class LoginUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
     suspend operator fun invoke(username: String, password: String): Result<User> {
