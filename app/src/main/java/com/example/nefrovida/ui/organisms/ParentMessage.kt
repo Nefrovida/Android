@@ -38,7 +38,7 @@ fun ParentMessage(
                 .padding(horizontal = 8.dp, vertical = 16.dp),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp), // Sin sombra
-        colors = CardDefaults.cardColors(containerColor = Color.White), // Fondo blanco
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface), // Fondo blanco
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

@@ -106,12 +106,13 @@ fun ForumMessageScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .imePadding(),
+                containerColor = MaterialTheme.colorScheme.background,
                 bottomBar = {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(MaterialTheme.colorScheme.surface)
-                            .padding(8.dp),
+                            .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         OutlinedTextField(

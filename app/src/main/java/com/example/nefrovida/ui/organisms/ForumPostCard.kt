@@ -46,7 +46,7 @@ fun ForumPostCard(
         shape = MaterialTheme.shapes.medium,
         colors =
             CardDefaults.cardColors(
-                containerColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.surface,
             ),
         onClick = onClick,
     ) {

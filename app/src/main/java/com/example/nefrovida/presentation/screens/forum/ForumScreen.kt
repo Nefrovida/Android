@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -61,7 +62,6 @@ fun ForumScreen(
 ) {
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
-    val navyBlue = Color(0xFF000080)
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val scope = rememberCoroutineScope()
@@ -79,8 +79,8 @@ fun ForumScreen(
                         viewModel.loadMyForums()
                     }
                 },
-                containerColor = Color(0xFF1E88E5),
-                contentColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -117,20 +117,10 @@ fun ForumScreen(
                         selected = selectedTabIndex == index,
                         onClick = { viewModel.onTabSelected(index) },
                         text = {
-                            Text(
-                                title,
-                                color =
-                                if (selectedTabIndex ==
-                                    index
-                                ) {
-                                    MaterialTheme.colorScheme.onPrimaryContainer
-                                } else {
-                                    navyBlue
-                                },
-                            )
+                            Text(title)
                         },
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = navyBlue,
+                        selectedContentColor = MaterialTheme.colorScheme.secondary,
+                        unselectedContentColor = MaterialTheme.colorScheme.secondary,
                     )
                 }
             }
@@ -177,7 +167,7 @@ fun DiscoverTabContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text("Aún no hay mensajes o foros con mensajes", color = Color(0xFF000080))
+                    Text("Aún no hay mensajes o foros con mensajes", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             } else {
                 LazyColumn(
@@ -282,7 +272,7 @@ fun MyForumsTabContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text("Aún no perteneces a ningún foro", color = Color(0xFF000080))
+                    Text("Aún no perteneces a ningún foro", color = MaterialTheme.colorScheme.secondary)
                 }
             } else {
                 LazyColumn(
@@ -349,7 +339,7 @@ fun AllForumsTabContent(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center,
                 ) {
-                    Text("Aún no hay foros", color = Color(0xFF000080))
+                    Text("Aún no hay foros", color = MaterialTheme.colorScheme.secondary)
                 }
             } else {
                 LazyColumn(
@@ -412,11 +402,13 @@ fun ForumListItem(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = simpleForumInfo.name,
                 style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
@@ -435,6 +427,7 @@ fun ForumAllListItem(
             .fillMaxWidth()
             .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = forumComplete.name, style = MaterialTheme.typography.titleMedium)
