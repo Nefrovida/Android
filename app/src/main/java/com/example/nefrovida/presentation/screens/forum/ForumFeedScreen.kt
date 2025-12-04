@@ -33,11 +33,10 @@ fun ForumFeedScreen(
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-    ) { paddingValues ->
+    ) { _ ->
         Column(
             modifier =
                 Modifier
-                    .padding(paddingValues)
                     .padding(horizontal = 16.dp),
         ) {
             if (isLoading && forumFeed.isEmpty()) {
