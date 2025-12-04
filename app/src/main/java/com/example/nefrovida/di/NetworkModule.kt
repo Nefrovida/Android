@@ -6,14 +6,17 @@ import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.api.AuthApiService
 import com.example.nefrovida.data.remote.api.CatalogApi
 import com.example.nefrovida.data.remote.api.ForumApiService
+import com.example.nefrovida.data.remote.api.ProfileApi
 import com.example.nefrovida.data.remote.api.RefreshAuthenticator
 import com.example.nefrovida.data.remote.api.ReportsApi
 import com.example.nefrovida.data.repository.AnalysisHistoryRepositoryImpl
 import com.example.nefrovida.data.repository.AppointmentRepositoryImpl
 import com.example.nefrovida.data.repository.ForumRepositoryImpl
+import com.example.nefrovida.data.repository.ProfileRepositoryImpl
 import com.example.nefrovida.domain.repository.AnalysisHistoryRepository
 import com.example.nefrovida.domain.repository.AppointmentRepository
 import com.example.nefrovida.domain.repository.ForumRepository
+import com.example.nefrovida.domain.repository.ProfileRepository
 import com.franmontiel.persistentcookiejar.PersistentCookieJar
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor
@@ -33,7 +36,7 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "http://10.25.102.123:3001/api/" // Android emulator localhost
+    private const val BASE_URL = "http://192.168.56.1:3001/api/" // Android emulator localhost
 
     // For physical device, use your computer's IP: "http://192.168.x.x:3001/api/"
     private var retrofit: Retrofit? = null
@@ -73,6 +76,14 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAnalysisHistoryRepository(api: AnalysisHistoryApi): AnalysisHistoryRepository = AnalysisHistoryRepositoryImpl(api)
+
+    @Provides
+    @Singleton
+    fun provideProfileApi(retrofit: Retrofit): ProfileApi = retrofit.create(ProfileApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideProfileRepository(api: ProfileApi): ProfileRepository = ProfileRepositoryImpl(api)
 
     @Provides
     @Singleton
