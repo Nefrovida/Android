@@ -15,4 +15,7 @@ fun Reply.toDomain(): Message =
                 forumId,
                 "",
             ),
+        senderId = senderId,
+        senderName = senderName,
+        createdAt = createdAt,
     )

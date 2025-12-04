@@ -27,6 +27,9 @@ data class Reply(
     @SerializedName("forumId") val forumId: Int,
     @SerializedName("content") val content: String,
     @SerializedName("stats") val stats: Stats,
+    @SerializedName("senderId") val senderId: String,
+    @SerializedName("senderName") val senderName: String? = "Anónimo",
+    @SerializedName("createdAt") val createdAt: String,
 )
 
 data class Stats(
