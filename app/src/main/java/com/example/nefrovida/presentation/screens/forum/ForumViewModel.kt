@@ -40,6 +40,9 @@ class ForumViewModel
         private val _selectedTabIndex = MutableStateFlow(0)
         val selectedTabIndex: StateFlow<Int> = _selectedTabIndex.asStateFlow()
 
+        private val _isRefreshing = MutableStateFlow(false)
+        val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
         fun onTabSelected(index: Int) {
             _selectedTabIndex.value = index
         }
@@ -101,13 +104,27 @@ class ForumViewModel
             )
 
         init {
-            loadDiscoverFeed(reset = true)
-            loadMyForums(reset = true)
-            loadAllForums(reset = true)
+            viewModelScope.launch {
+                loadDiscoverFeed(reset = true)
+                loadMyForums(reset = true)
+                loadAllForums(reset = true)
+            }
+        }
+
+        fun refresh() {
+            viewModelScope.launch {
+                _isRefreshing.value = true
+                when (_selectedTabIndex.value) {
+                    0 -> loadDiscoverFeed(reset = true)
+                    1 -> loadMyForums(reset = true)
+                    2 -> loadAllForums(reset = true)
+                }
+                _isRefreshing.value = false
+            }
         }
 
         // --- Functions for "Descubrir" ---
-        fun loadDiscoverFeed(reset: Boolean = false) {
+        suspend fun loadDiscoverFeed(reset: Boolean = false) {
             if (_isDiscoverLoading.value || (!_canDiscoverPaginate && !reset)) return
 
             if (reset) {
@@ -116,39 +133,35 @@ class ForumViewModel
                 _canDiscoverPaginate = true
             }
 
-            viewModelScope.launch {
-                _isDiscoverLoading.value = true
-                val response = getForumFeedUseCase(_discoverPage.value, null)
-                if (response.isSuccessful) {
-                    val newMessages = response.body() ?: emptyList()
-                    if (newMessages.isNotEmpty()) {
-                        _discoverFeed.value = _discoverFeed.value + newMessages
-                        _discoverPage.value++
-                    } else {
-                        _canDiscoverPaginate = false
-                    }
+            _isDiscoverLoading.value = true
+            val response = getForumFeedUseCase(_discoverPage.value, null)
+            if (response.isSuccessful) {
+                val newMessages = response.body() ?: emptyList()
+                if (newMessages.isNotEmpty()) {
+                    _discoverFeed.value = _discoverFeed.value + newMessages
+                    _discoverPage.value++
+                } else {
+                    _canDiscoverPaginate = false
                 }
-                _isDiscoverLoading.value = false
             }
+            _isDiscoverLoading.value = false
         }
 
         // --- Functions for "Mis Foros" ---
-        fun loadMyForums(reset: Boolean = false) {
+        suspend fun loadMyForums(reset: Boolean = false) {
             if (_isMyForumsLoading.value && !reset) return
 
             if (reset) {
                 _myForums.value = emptyList() // Clear for refresh
             }
 
-            viewModelScope.launch {
-                _isMyForumsLoading.value = true
-                val response = getMyForumsUseCase()
-                if (response.isSuccessful) {
-                    // Filtramos elementos donde 'forum' es nulo
-                    _myForums.value = response.body()?.mapNotNull { it.forum } ?: emptyList()
-                }
-                _isMyForumsLoading.value = false
+            _isMyForumsLoading.value = true
+            val response = getMyForumsUseCase()
+            if (response.isSuccessful) {
+                // Filtramos elementos donde 'forum' es nulo
+                _myForums.value = response.body()?.mapNotNull { it.forum } ?: emptyList()
             }
+            _isMyForumsLoading.value = false
         }
 
         fun onMyForumsSearchQueryChange(query: String) {
@@ -156,7 +169,7 @@ class ForumViewModel
         }
 
         // --- Functions for "Todos los Foros" ---
-        fun loadAllForums(reset: Boolean = false) {
+        suspend fun loadAllForums(reset: Boolean = false) {
             if (_isAllForumsLoading.value || (!_canAllForumsPaginate && !reset)) return
 
             if (reset) {
@@ -165,29 +178,28 @@ class ForumViewModel
                 _canAllForumsPaginate = true
             }
 
-            viewModelScope.launch {
-                _isAllForumsLoading.value = true
-                val response =
-                    getAllForumsUseCase(
-                        page = _allForumsPage.intValue,
-                        search = _allForumsSearchQuery.value.ifBlank { null },
-                    )
-                if (response.isSuccessful) {
-                    val newForums = response.body() ?: emptyList()
-                    if (newForums.isNotEmpty()) {
-                        _allForums.value += newForums
-                        _allForumsPage.intValue++
-                    } else {
-                        _canAllForumsPaginate = false
-                    }
+            _isAllForumsLoading.value = true
+            val response =
+                getAllForumsUseCase(
+                    page = _allForumsPage.intValue,
+                    search = _allForumsSearchQuery.value.ifBlank { null },
+                )
+            if (response.isSuccessful) {
+                val newForums = response.body() ?: emptyList()
+                if (newForums.isNotEmpty()) {
+                    _allForums.value += newForums
+                    _allForumsPage.intValue++
+                } else {
+                    _canAllForumsPaginate = false
                 }
-                _isAllForumsLoading.value = false
             }
+            _isAllForumsLoading.value = false
         }
 
         fun onAllForumsSearchQueryChange(query: String) {
-            _allForumsSearchQuery.value = query
-            loadAllForums(reset = true) // Reload all forums on search query change
+            viewModelScope.launch {
+                loadAllForums(reset = true) // Reload all forums on search query change
+            }
         }
 
         fun onSearch() {
