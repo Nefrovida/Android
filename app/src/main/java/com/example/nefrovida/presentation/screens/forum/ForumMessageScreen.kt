@@ -2,6 +2,8 @@ package com.example.nefrovida.presentation.screens.forum
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +25,9 @@ import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +38,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -61,6 +67,8 @@ fun ForumMessageScreen(
 ) {
     val uiState by viewModel.messageReplies.collectAsStateWithLifecycle()
     var replyText by remember { mutableStateOf("") }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     // Load replies when the parameters change
     LaunchedEffect(pMI) {
@@ -94,19 +102,71 @@ fun ForumMessageScreen(
         }
 
         else -> {
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize(),
-            ) {
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .imePadding(),
+                containerColor = MaterialTheme.colorScheme.background,
+                bottomBar = {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.surface)
+                            .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        OutlinedTextField(
+                            value = replyText,
+                            onValueChange = {
+                                if (it.length <= 5000) replyText = it
+                            },
+                            placeholder = { Text("Escribe una respuesta...") },
+                            modifier = Modifier.weight(1f),
+                            maxLines = 3,
+                            isError = replyText.trim().isEmpty() && replyText.isNotEmpty(),
+                            supportingText = {
+                                Text("${replyText.length}/5000")
+                            },
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+
+                        val isReplyValid = replyText.trim().isNotEmpty() && replyText.length <= 5000
+
+                        IconButton(
+                            onClick = {
+                                if (isReplyValid) {
+                                    viewModel.postReply(pMI.forumId, pMI.messageId, replyText.trim())
+                                    replyText = ""
+                                    keyboardController?.hide()
+                                    focusManager.clearFocus()
+                                }
+                            },
+                            enabled = isReplyValid,
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Responder",
+                            )
+                        }
+                    }
+                },
+            ) { paddingValues ->
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        },
                 ) {
                     item {
                         uiState.parentMessage?.let { parent ->
                             ParentMessage(
-                                modifier = Modifier.fillMaxWidth(),
                                 post = parent,
                             )
                         }
@@ -115,7 +175,7 @@ fun ForumMessageScreen(
                     items(uiState.messageRepliesList) { reply ->
                         ForumPostCard(
                             post = reply,
-                            modifier = Modifier.padding(8.dp),
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
                             onClick = {
                                 navController.navigate(
                                     Screen.Message.createRoute(
@@ -124,48 +184,6 @@ fun ForumMessageScreen(
                                     ),
                                 )
                             },
-                        )
-                    }
-                }
-
-                // Reply input at the bottom
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(Color.White)
-                            .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    OutlinedTextField(
-                        value = replyText,
-                        onValueChange = {
-                            if (it.length <= 5000) replyText = it
-                        },
-                        placeholder = { Text("Write a reply...") },
-                        modifier = Modifier.weight(1f),
-                        maxLines = 3,
-                        isError = replyText.trim().isEmpty() && replyText.isNotEmpty(),
-                        supportingText = {
-                            Text("${replyText.length}/5000")
-                        },
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-
-                    val isReplyValid = replyText.trim().isNotEmpty() && replyText.length <= 5000
-
-                    IconButton(
-                        onClick = {
-                            if (isReplyValid) {
-                                viewModel.postReply(pMI.forumId, pMI.messageId, replyText.trim())
-                                replyText = ""
-                            }
-                        },
-                        enabled = isReplyValid,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Send,
-                            contentDescription = "Responder",
                         )
                     }
                 }

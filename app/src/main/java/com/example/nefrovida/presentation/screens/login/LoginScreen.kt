@@ -3,6 +3,8 @@ package com.example.nefrovida.presentation.screens.login
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +30,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -57,6 +60,7 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
     var showPasswordResetDialog by remember { mutableStateOf(false) }
 
     // Navigate on successful login
@@ -70,25 +74,32 @@ fun LoginScreen(
 
     Box(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .background(
-                    brush =
-                        Brush.verticalGradient(
-                            colors =
-                                listOf(
-                                    BackgroundGradientStart,
-                                    BackgroundGradientEnd,
-                                ),
-                        ),
+        Modifier
+            .fillMaxSize()
+            .background(
+                brush =
+                Brush.verticalGradient(
+                    colors =
+                    listOf(
+                        BackgroundGradientStart,
+                        BackgroundGradientEnd,
+                    ),
                 ),
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+            ) {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            },
     ) {
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp),
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -97,33 +108,33 @@ fun LoginScreen(
                 painter = painterResource(id = R.drawable.nefrovidalogologin),
                 contentDescription = "Logo NefroVida",
                 modifier =
-                    Modifier
-                        .heightIn(max = 100.dp)
-                        .size(400.dp),
+                Modifier
+                    .heightIn(max = 100.dp)
+                    .size(400.dp),
             )
             Spacer(modifier = Modifier.height(40.dp))
 
             // Card de Login
             Card(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
                 shape = RoundedCornerShape(16.dp),
                 colors =
-                    CardDefaults.cardColors(
-                        containerColor = White,
-                    ),
+                CardDefaults.cardColors(
+                    containerColor = White,
+                ),
                 elevation =
-                    CardDefaults.cardElevation(
-                        defaultElevation = 8.dp,
-                    ),
+                CardDefaults.cardElevation(
+                    defaultElevation = 8.dp,
+                ),
             ) {
                 Column(
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(24.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     // Título
@@ -162,20 +173,20 @@ fun LoginScreen(
                             }
                         },
                         keyboardOptions =
-                            KeyboardOptions(
-                                keyboardType = KeyboardType.Email,
-                                imeAction = ImeAction.Next,
-                            ),
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next,
+                        ),
                         keyboardActions =
-                            KeyboardActions(
-                                onNext = { focusManager.moveFocus(FocusDirection.Down) },
-                            ),
+                        KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                        ),
                         colors =
-                            OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = NavyBlue,
-                                unfocusedBorderColor = TextGray,
-                                focusedLabelColor = NavyBlue,
-                            ),
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = NavyBlue,
+                            unfocusedBorderColor = TextGray,
+                            focusedLabelColor = NavyBlue,
+                        ),
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
@@ -188,11 +199,11 @@ fun LoginScreen(
                         modifier = Modifier.fillMaxWidth(),
                         singleLine = true,
                         visualTransformation =
-                            if (uiState.isPasswordVisible) {
-                                VisualTransformation.None
-                            } else {
-                                PasswordVisualTransformation()
-                            },
+                        if (uiState.isPasswordVisible) {
+                            VisualTransformation.None
+                        } else {
+                            PasswordVisualTransformation()
+                        },
                         isError = uiState.passwordError != null,
                         supportingText = {
                             uiState.passwordError?.let {
@@ -206,38 +217,39 @@ fun LoginScreen(
                             IconButton(onClick = { viewModel.togglePasswordVisibility() }) {
                                 Icon(
                                     imageVector =
-                                        if (uiState.isPasswordVisible) {
-                                            Icons.Filled.VisibilityOff
-                                        } else {
-                                            Icons.Filled.Visibility
-                                        },
+                                    if (uiState.isPasswordVisible) {
+                                        Icons.Filled.VisibilityOff
+                                    } else {
+                                        Icons.Filled.Visibility
+                                    },
                                     contentDescription =
-                                        if (uiState.isPasswordVisible) {
-                                            "Hide password"
-                                        } else {
-                                            "Show password"
-                                        },
+                                    if (uiState.isPasswordVisible) {
+                                        "Hide password"
+                                    } else {
+                                        "Show password"
+                                    },
                                 )
                             }
                         },
                         keyboardOptions =
-                            KeyboardOptions(
-                                keyboardType = KeyboardType.Password,
-                                imeAction = ImeAction.Done,
-                            ),
+                        KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = ImeAction.Done,
+                        ),
                         keyboardActions =
-                            KeyboardActions(
-                                onDone = {
-                                    focusManager.clearFocus()
-                                    viewModel.onLoginClick()
-                                },
-                            ),
+                        KeyboardActions(
+                            onDone = {
+                                keyboardController?.hide()
+                                focusManager.clearFocus()
+                                viewModel.onLoginClick()
+                            },
+                        ),
                         colors =
-                            OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = NavyBlue,
-                                unfocusedBorderColor = TextGray,
-                                focusedLabelColor = NavyBlue,
-                            ),
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = NavyBlue,
+                            unfocusedBorderColor = TextGray,
+                            focusedLabelColor = NavyBlue,
+                        ),
                     )
 
                     // Olvidaste tu contraseña
@@ -256,18 +268,22 @@ fun LoginScreen(
 
                     // Botón de Iniciar Sesión
                     Button(
-                        onClick = { viewModel.onLoginClick() },
+                        onClick = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                            viewModel.onLoginClick()
+                        },
                         modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(50.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
                         enabled = !uiState.isLoading,
                         shape = RoundedCornerShape(25.dp),
                         colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = NavyBlue,
-                                contentColor = White,
-                            ),
+                        ButtonDefaults.buttonColors(
+                            containerColor = NavyBlue,
+                            contentColor = White,
+                        ),
                     ) {
                         if (uiState.isLoading) {
                             CircularProgressIndicator(

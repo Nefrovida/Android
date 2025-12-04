@@ -1,21 +1,49 @@
 package com.example.nefrovida.presentation.screens.forum
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.SimpleForumInfo
@@ -23,6 +51,7 @@ import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.ui.molecules.SearchBar
 import com.example.nefrovida.ui.organisms.ForumPostCard
 import com.example.nefrovida.ui.organisms.NewMessageModal
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -31,26 +60,27 @@ fun ForumScreen(
     modifier: Modifier = Modifier,
     viewModel: ForumViewModel = hiltViewModel(),
 ) {
-    var selectedTabIndex by remember { mutableIntStateOf(0) }
+    val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
-    val navyBlue = Color(0xFF000080)
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val scope = rememberCoroutineScope()
 
     var showNewMessageDialog by remember { mutableStateOf(false) }
-    var newMessageText by remember { mutableStateOf("") }
-
-    val forums by viewModel.myForums.collectAsState()
+    val forums by viewModel.myForums.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
-        topBar = { TopAppBar(title = { Text("Foros") }) },
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
                     showNewMessageDialog = true
-                    viewModel.loadMyForums()
+                    scope.launch {
+                        viewModel.loadMyForums()
+                    }
                 },
-                containerColor = Color(0xFF1E88E5),
-                contentColor = Color.White,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary,
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
@@ -58,12 +88,18 @@ fun ForumScreen(
                 )
             }
         },
-    ) { paddingValues ->
+    ) { _ ->
         Column(
             modifier =
-                Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize(),
+            Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
         ) {
             if (showNewMessageDialog) {
                 NewMessageModal(
@@ -79,22 +115,12 @@ fun ForumScreen(
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTabIndex == index,
-                        onClick = { selectedTabIndex = index },
+                        onClick = { viewModel.onTabSelected(index) },
                         text = {
-                            Text(
-                                title,
-                                color =
-                                    if (selectedTabIndex ==
-                                        index
-                                    ) {
-                                        MaterialTheme.colorScheme.onPrimaryContainer
-                                    } else {
-                                        navyBlue
-                                    },
-                            )
+                            Text(title)
                         },
-                        selectedContentColor = MaterialTheme.colorScheme.primary,
-                        unselectedContentColor = navyBlue,
+                        selectedContentColor = MaterialTheme.colorScheme.secondary,
+                        unselectedContentColor = MaterialTheme.colorScheme.secondary,
                     )
                 }
             }
@@ -108,64 +134,71 @@ fun ForumScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DiscoverTabContent(
     viewModel: ForumViewModel,
     navController: NavController,
 ) {
-    val discoverFeed by viewModel.discoverFeed.collectAsState()
+    val discoverFeed by viewModel.discoverFeed.collectAsStateWithLifecycle()
     val isDiscoverLoading by viewModel.isDiscoverLoading
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refresh() }
     ) {
-        Spacer(modifier = Modifier.height(16.dp))
-        // No hay barra de búsqueda para Descubrir según la documentación
-        if (isDiscoverLoading && discoverFeed.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator()
-            }
-        } else if (discoverFeed.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text("Aún no hay mensajes o foros con mensajes", color = Color(0xFF000080))
-            }
-        } else {
-            LazyColumn(
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-            ) {
-                items(discoverFeed) { post ->
-                    ForumPostCard(
-                        post = post,
-                        onClick = {
-                            navController.navigate(
-                                Screen.Message.createRoute(
-                                    forumId = post.forum.forumId,
-                                    messageId = post.messageId,
-                                ),
-                            )
-                        },
-                    )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+            // No hay barra de búsqueda para Descubrir según la documentación
+            if (isDiscoverLoading && discoverFeed.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator()
                 }
-                if (isDiscoverLoading) {
-                    item {
-                        Box(
-                            modifier =
+            } else if (discoverFeed.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text("Aún no hay mensajes o foros con mensajes", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                }
+            } else {
+                LazyColumn(
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                ) {
+                    items(discoverFeed) { post ->
+                        ForumPostCard(
+                            post = post,
+                            onClick = {
+                                navController.navigate(
+                                    Screen.Message.createRoute(
+                                        forumId = post.forum.forumId,
+                                        messageId = post.messageId,
+                                    ),
+                                )
+                            },
+                        )
+                    }
+                    if (isDiscoverLoading) {
+                        item {
+                            Box(
+                                modifier =
                                 Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            CircularProgressIndicator()
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }
@@ -183,52 +216,73 @@ fun DiscoverTabContent(
             if (lastVisibleItemIndex != null &&
                 lastVisibleItemIndex >= listState.layoutInfo.totalItemsCount - 1 - 2
             ) {
-                viewModel.loadDiscoverFeed()
+                launch {
+                    viewModel.loadDiscoverFeed()
+                }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MyForumsTabContent(
     viewModel: ForumViewModel,
     navController: NavController,
 ) {
-    val myForumsSearchQuery by viewModel.myForumsSearchQuery.collectAsState()
-    val filteredMyForums by viewModel.filteredMyForums.collectAsState()
+    val myForumsSearchQuery by viewModel.myForumsSearchQuery.collectAsStateWithLifecycle()
+    val filteredMyForums by viewModel.filteredMyForums.collectAsStateWithLifecycle()
     val isMyForumsLoading by viewModel.isMyForumsLoading
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(16.dp))
-        SearchBar(
-            query = myForumsSearchQuery,
-            onQueryChange = viewModel::onMyForumsSearchQueryChange,
-            onSearch = viewModel::onSearch,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        if (isMyForumsLoading && filteredMyForums.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator()
-            }
-        } else if (filteredMyForums.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text("Aún no perteneces a ningún foro", color = Color(0xFF000080))
-            }
-        } else {
-            LazyColumn(
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(filteredMyForums) { simpleForumInfo ->
-                    ForumListItem(simpleForumInfo = simpleForumInfo) {
-                        navController.navigate(Screen.ForumFeed.createRoute(simpleForumInfo.forumId))
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refresh() }
+    ) {
+        Column(
+            modifier =
+            Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
+        ) {
+            SearchBar(
+                query = myForumsSearchQuery,
+                onQueryChange = viewModel::onMyForumsSearchQueryChange,
+                onSearch = viewModel::onSearch,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            if (isMyForumsLoading && filteredMyForums.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator()
+                }
+            } else if (filteredMyForums.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text("Aún no perteneces a ningún foro", color = MaterialTheme.colorScheme.secondary)
+                }
+            } else {
+                LazyColumn(
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    items(filteredMyForums) { simpleForumInfo ->
+                        ForumListItem(simpleForumInfo = simpleForumInfo) {
+                            navController.navigate(Screen.ForumFeed.createRoute(simpleForumInfo.forumId))
+                        }
                     }
                 }
             }
@@ -236,61 +290,80 @@ fun MyForumsTabContent(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AllForumsTabContent(
     viewModel: ForumViewModel,
     navController: NavController,
 ) {
-    val allForumsSearchQuery by viewModel.allForumsSearchQuery.collectAsState()
-    val filteredAllForums by viewModel.filteredAllForums.collectAsState()
+    val allForumsSearchQuery by viewModel.allForumsSearchQuery.collectAsStateWithLifecycle()
+    val filteredAllForums by viewModel.filteredAllForums.collectAsStateWithLifecycle()
     val isAllForumsLoading by viewModel.isAllForumsLoading
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        Spacer(modifier = Modifier.height(16.dp))
-        SearchBar(
-            query = allForumsSearchQuery,
-            onQueryChange = viewModel::onAllForumsSearchQueryChange,
-            onSearch = viewModel::onSearch,
-            modifier = Modifier.padding(horizontal = 16.dp),
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        if (isAllForumsLoading && filteredAllForums.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                CircularProgressIndicator()
-            }
-        } else if (filteredAllForums.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text("Aún no hay foros", color = Color(0xFF000080))
-            }
-        } else {
-            LazyColumn(
-                state = listState,
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
-            ) {
-                items(filteredAllForums) { forumComplete ->
-                    ForumAllListItem(forumComplete = forumComplete) {
-                        // Aquí puedes decidir a dónde navegar, por ejemplo, al ForumFeedScreen
-                        navController.navigate(Screen.ForumFeed.createRoute(forumComplete.forumId))
-                    }
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refresh() }
+    ) {
+        Column(
+            modifier =
+            Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
+        ) {
+            SearchBar(
+                query = allForumsSearchQuery,
+                onQueryChange = viewModel::onAllForumsSearchQueryChange,
+                onSearch = viewModel::onSearch,
+                modifier = Modifier.padding(horizontal = 16.dp),
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            if (isAllForumsLoading && filteredAllForums.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator()
                 }
-                if (isAllForumsLoading) {
-                    item {
-                        Box(
-                            modifier =
+            } else if (filteredAllForums.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text("Aún no hay foros", color = MaterialTheme.colorScheme.secondary)
+                }
+            } else {
+                LazyColumn(
+                    state = listState,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+                ) {
+                    items(filteredAllForums) { forumComplete ->
+                        ForumAllListItem(forumComplete = forumComplete) {
+                            // Aquí puedes decidir a dónde navegar, por ejemplo, al ForumFeedScreen
+                            navController.navigate(Screen.ForumFeed.createRoute(forumComplete.forumId))
+                        }
+                    }
+                    if (isAllForumsLoading) {
+                        item {
+                            Box(
+                                modifier =
                                 Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            CircularProgressIndicator()
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }
@@ -308,7 +381,9 @@ fun AllForumsTabContent(
             if (lastVisibleItemIndex != null &&
                 lastVisibleItemIndex >= listState.layoutInfo.totalItemsCount - 1 - 2
             ) {
-                viewModel.loadAllForums()
+                launch {
+                    viewModel.loadAllForums()
+                }
             }
         }
     }
@@ -323,15 +398,17 @@ fun ForumListItem(
 ) {
     Card(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick),
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
                 text = simpleForumInfo.name,
                 style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
@@ -346,10 +423,11 @@ fun ForumAllListItem(
 ) {
     Card(
         modifier =
-            modifier
-                .fillMaxWidth()
-                .clickable(onClick = onClick),
+        modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = forumComplete.name, style = MaterialTheme.typography.titleMedium)
