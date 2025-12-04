@@ -1,6 +1,7 @@
 package com.example.nefrovida.ui.organisms
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.*
@@ -15,6 +16,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.data.remote.dto.SimpleForumInfo
@@ -28,6 +31,8 @@ fun NewMessageModal(
     var text by remember { mutableStateOf("") }
     var expanded by remember { mutableStateOf(false) }
     var selectedForum by remember { mutableStateOf<SimpleForumInfo?>(null) }
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -37,7 +42,16 @@ fun NewMessageModal(
         title = {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier =
+                    Modifier
+                        .padding(bottom = 8.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        },
             ) {
                 Icon(
                     imageVector = Icons.Default.Forum,
@@ -56,7 +70,16 @@ fun NewMessageModal(
         },
         text = {
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                        ) {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                        },
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 // Forum Selector

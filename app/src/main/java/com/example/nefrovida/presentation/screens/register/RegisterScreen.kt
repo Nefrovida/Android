@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -45,6 +48,8 @@ fun RegisterScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     // Form State
     var name by remember { mutableStateOf("") }
@@ -133,33 +138,40 @@ fun RegisterScreen(
 
     Box(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .background(
-                    brush =
-                        Brush.verticalGradient(
-                            colors =
-                                listOf(
-                                    Color(0xFFA8C5DD),
-                                    Color(0xFF1E3A8A),
-                                ),
-                        ),
+        Modifier
+            .fillMaxSize()
+            .background(
+                brush =
+                Brush.verticalGradient(
+                    colors =
+                    listOf(
+                        Color(0xFFA8C5DD),
+                        Color(0xFF1E3A8A),
+                    ),
                 ),
+            )
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+            ) {
+                keyboardController?.hide()
+                focusManager.clearFocus()
+            },
     ) {
         Column(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(16.dp)
-                    .verticalScroll(rememberScrollState()),
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             Surface(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
                 shape = RoundedCornerShape(24.dp),
                 color = Color.White.copy(alpha = 0.95f),
                 shadowElevation = 8.dp,
@@ -174,9 +186,9 @@ fun RegisterScreen(
                         painter = painterResource(id = R.drawable.nefrovidalogologin),
                         contentDescription = "Logo NefroVida",
                         modifier =
-                            Modifier
-                                .heightIn(max = 100.dp)
-                                .size(400.dp),
+                        Modifier
+                            .heightIn(max = 100.dp)
+                            .size(400.dp),
                     )
 
                     Text(
@@ -211,12 +223,12 @@ fun RegisterScreen(
                                 Icon(Icons.Default.DateRange, contentDescription = "Select Date", tint = Color.Gray)
                             },
                             colors =
-                                OutlinedTextFieldDefaults.colors(
-                                    disabledTextColor = Color.Black,
-                                    disabledBorderColor = Color.LightGray,
-                                    disabledLabelColor = Color.Gray,
-                                    disabledContainerColor = Color.Transparent,
-                                ),
+                            OutlinedTextFieldDefaults.colors(
+                                disabledTextColor = Color.Black,
+                                disabledBorderColor = Color.LightGray,
+                                disabledLabelColor = Color.Gray,
+                                disabledContainerColor = Color.Transparent,
+                            ),
                             shape = RoundedCornerShape(12.dp),
                         )
                         // Make the disabled text field clickable
@@ -250,10 +262,10 @@ fun RegisterScreen(
                         modifier = Modifier.fillMaxWidth(),
                         shape = RoundedCornerShape(12.dp),
                         colors =
-                            OutlinedTextFieldDefaults.colors(
-                                focusedBorderColor = Color(0xFF1E3A8A),
-                                unfocusedBorderColor = Color.LightGray,
-                            ),
+                        OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF1E3A8A),
+                            unfocusedBorderColor = Color.LightGray,
+                        ),
                     )
 
                     RegisterTextField(
@@ -273,6 +285,8 @@ fun RegisterScreen(
 
                     Button(
                         onClick = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
                             viewModel.register(
                                 name,
                                 parentLastName,
@@ -286,14 +300,14 @@ fun RegisterScreen(
                             )
                         },
                         modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height(50.dp),
+                        Modifier
+                            .fillMaxWidth()
+                            .height(50.dp),
                         shape = RoundedCornerShape(50),
                         colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFF1E3A8A),
-                            ),
+                        ButtonDefaults.buttonColors(
+                            containerColor = Color(0xFF1E3A8A),
+                        ),
                         enabled = uiState !is RegisterUiState.Loading,
                     ) {
                         if (uiState is RegisterUiState.Loading) {
@@ -332,25 +346,25 @@ fun RegisterTextField(
         onValueChange = onValueChange,
         label = { Text(label) },
         placeholder =
-            if (placeholder !=
-                null
-            ) {
-                {
-                    Text(
-                        placeholder,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
-                    )
-                }
-            } else {
-                null
-            },
+        if (placeholder !=
+            null
+        ) {
+            {
+                Text(
+                    placeholder,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
+                )
+            }
+        } else {
+            null
+        },
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors =
-            OutlinedTextFieldDefaults.colors(
-                focusedBorderColor = Color(0xFF1E3A8A),
-                unfocusedBorderColor = Color.LightGray,
-            ),
+        OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = Color(0xFF1E3A8A),
+            unfocusedBorderColor = Color.LightGray,
+        ),
         keyboardOptions = keyboardOptions,
         singleLine = true,
     )
@@ -376,12 +390,12 @@ fun GenderSelector(
                 Icon(Icons.Default.ArrowDropDown, "Select Gender")
             },
             colors =
-                OutlinedTextFieldDefaults.colors(
-                    disabledTextColor = Color.Black,
-                    disabledBorderColor = Color.LightGray,
-                    disabledLabelColor = Color.Gray,
-                    disabledContainerColor = Color.Transparent,
-                ),
+            OutlinedTextFieldDefaults.colors(
+                disabledTextColor = Color.Black,
+                disabledBorderColor = Color.LightGray,
+                disabledLabelColor = Color.Gray,
+                disabledContainerColor = Color.Transparent,
+            ),
             shape = RoundedCornerShape(12.dp),
         )
         // Overlay box to capture clicks

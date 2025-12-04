@@ -1,6 +1,7 @@
 package com.example.nefrovida.presentation.screens.forum
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,6 +37,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -57,6 +60,8 @@ fun ForumScreen(
     val selectedTabIndex by viewModel.selectedTabIndex.collectAsStateWithLifecycle()
     val tabs = listOf("Descubrir", "Mis Foros", "Todos los Foros")
     val navyBlue = Color(0xFF000080)
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     var showNewMessageDialog by remember { mutableStateOf(false) }
     val forums by viewModel.myForums.collectAsStateWithLifecycle()
@@ -82,7 +87,14 @@ fun ForumScreen(
         Column(
             modifier =
             Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
         ) {
             if (showNewMessageDialog) {
                 NewMessageModal(
@@ -216,8 +228,21 @@ fun MyForumsTabContent(
     val myForumsSearchQuery by viewModel.myForumsSearchQuery.collectAsStateWithLifecycle()
     val filteredMyForums by viewModel.filteredMyForums.collectAsStateWithLifecycle()
     val isMyForumsLoading by viewModel.isMyForumsLoading
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
+    ) {
         SearchBar(
             query = myForumsSearchQuery,
             onQueryChange = viewModel::onMyForumsSearchQueryChange,
@@ -263,8 +288,21 @@ fun AllForumsTabContent(
     val filteredAllForums by viewModel.filteredAllForums.collectAsStateWithLifecycle()
     val isAllForumsLoading by viewModel.isAllForumsLoading
     val listState = rememberLazyListState()
+    val focusManager = LocalFocusManager.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) {
+                    keyboardController?.hide()
+                    focusManager.clearFocus()
+                },
+    ) {
         SearchBar(
             query = allForumsSearchQuery,
             onQueryChange = viewModel::onAllForumsSearchQueryChange,
