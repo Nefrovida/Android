@@ -2,7 +2,6 @@ package com.example.nefrovida.data.remote.api
 
 import com.example.nefrovida.data.remote.dto.ApiResponse
 import com.example.nefrovida.data.remote.dto.ResultResponse
-import com.example.nefrovida.domain.model.Report
 import retrofit2.http.GET
 import retrofit2.http.Path
 
