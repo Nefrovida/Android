@@ -20,7 +20,7 @@ data class Message(
     @SerializedName("senderName")
     val senderName: String? = "Anónimo",
     @SerializedName("createdAt")
-    val createdAt: String,
+    val createdAt: String? = null,
 )
 
 data class Reply(
@@ -31,7 +31,7 @@ data class Reply(
     @SerializedName("stats") val stats: Stats,
     @SerializedName("senderId") val senderId: String,
     @SerializedName("senderName") val senderName: String? = "Anónimo",
-    @SerializedName("createdAt") val createdAt: String,
+    @SerializedName("createdAt") val createdAt: String? = null,
 )
 
 data class Stats(
