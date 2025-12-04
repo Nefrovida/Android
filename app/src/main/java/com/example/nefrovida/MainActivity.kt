@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.view.WindowCompat
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.nefrovida.di.NetworkModule
@@ -34,6 +35,10 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Esto ayuda a que el teclado funcione correctamente con Compose
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             NefrovidaTheme {
                 val navController = rememberNavController()
