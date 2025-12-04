@@ -41,9 +41,6 @@ fun AppointmentNoteCard(item: AppointmentNotes) {
             if (expanded) {
                 item.notes.forEach { note ->
                     Text(text = "Notas", style = MaterialTheme.typography.titleMedium)
-                    Text(text = note.content)
-
-                    Text(text = "Diagnóstico", style = MaterialTheme.typography.titleMedium)
                     Text(text = note.generalNotes)
 
                     Text(text = "Observaciones", style = MaterialTheme.typography.titleMedium)
