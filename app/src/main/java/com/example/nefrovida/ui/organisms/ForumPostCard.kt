@@ -66,11 +66,12 @@ fun ForumPostCard(
     Card(
         modifier = modifier
             .fillMaxWidth()
+            .padding(vertical = 4.dp)
             .clip(RoundedCornerShape(12.dp))
             .clickable { onClick() },
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+            containerColor = Color.White,
         ),
     ) {
         Column(
@@ -79,20 +80,13 @@ fun ForumPostCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.Top
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = post.senderName ?: "Usuario Anónimo",
-                        style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                    Text(
-                        text = formatDatePretty(post.createdAt),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                Text(
+                    text = formatDatePretty(post.createdAt),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
 
                 if (!isOwnMessage) {
                     Box {
@@ -103,16 +97,17 @@ fun ForumPostCard(
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
                                 contentDescription = "Opciones",
+                                tint = Color.Gray
                             )
                         }
 
                         DropdownMenu(
                             expanded = showMenu,
                             onDismissRequest = { showMenu = false },
-                            modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                            modifier = Modifier.background(Color.White),
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Reportar cuenta") },
+                                text = { Text("Reportar comentario") },
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Report,
@@ -122,7 +117,9 @@ fun ForumPostCard(
                                 },
                                 onClick = {
                                     showMenu = false
-                                    onReportClick(post.senderId, post.messageId)
+                                    if (post.senderId.isNotEmpty()) {
+                                        onReportClick(post.senderId, post.messageId)
+                                    }
                                 },
                             )
                         }
@@ -130,7 +127,7 @@ fun ForumPostCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 text = post.content,
@@ -144,48 +141,47 @@ fun ForumPostCard(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                // Like
                 Row(
                     modifier = Modifier
                         .clickable {
                             val newLikedState = if (liked.intValue == 0) 1 else 0
                             liked.intValue = newLikedState
                             likesCount.intValue += if (newLikedState == 1) 1 else -1
-                            
                             viewModel.postLike(post.messageId)
                         }
-                        .padding(4.dp),
+                        .padding(end = 16.dp, top = 4.dp, bottom = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         imageVector = if (liked.intValue == 1) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Me gusta",
-                        tint = if (liked.intValue == 1) Color.Red else MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = if (liked.intValue == 1) Color.Red else Color.Gray,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "${likesCount.intValue}",
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color.Gray
                     )
                 }
 
-                Spacer(modifier = Modifier.width(16.dp))
-
+                // Reply
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
-                        imageVector = Icons.AutoMirrored.Filled.Comment, 
+                        imageVector = Icons.AutoMirrored.Filled.Comment,
                         contentDescription = "Respuestas",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        tint = Color.Gray,
                         modifier = Modifier.size(20.dp)
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "${post.replies}",
                         style = MaterialTheme.typography.labelMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = Color.Gray
                     )
                 }
             }
