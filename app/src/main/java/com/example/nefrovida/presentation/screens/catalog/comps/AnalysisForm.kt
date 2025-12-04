@@ -79,9 +79,10 @@ fun AnalysisForm(
             ),
     ) {
         Column(
-            modifier = Modifier
-                .padding(16.dp)
-                .verticalScroll(rememberScrollState()),
+            modifier =
+                Modifier
+                    .padding(16.dp)
+                    .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
@@ -177,7 +178,7 @@ fun AnalysisForm(
                             disabledContentColor = Color.White.copy(alpha = 0.4f),
                         ),
                 ) {
-                    Text("Citar")
+                    Text("Reservar")
                 }
             }
         }
