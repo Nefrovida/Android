@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.nefrovida.di.NetworkModule
 import com.example.nefrovida.ui.organisms.NfBottomNavigationBar
 import java.io.File
 
@@ -108,6 +109,10 @@ fun AnalysisDetailScreen(
     }
 
     fun downloadAndOpenPdf(urlPath: String, fileName: String) {
+        // Debug: Print all cookies before download
+        android.util.Log.d("AnalysisDetailScreen", "========== BEFORE DOWNLOAD - DEBUG COOKIES ==========")
+        NetworkModule.debugPrintAllCookies()
+
         // The URL comes as: /uploads/orina_20251021.pdf
         // We need to construct the full URL using the base URL
         val baseUrl = "http://10.25.102.123:3001"
@@ -175,6 +180,18 @@ fun AnalysisDetailScreen(
                 uiState.selectedAnalysis != null -> {
                     val analysis = uiState.selectedAnalysis!!
 
+                    // Debug: Log analysis details
+                    android.util.Log.d("AnalysisDetailScreen", "========== RENDERING ANALYSIS DETAILS ==========")
+                    android.util.Log.d("AnalysisDetailScreen", "Analysis ID: ${analysis.id}")
+                    android.util.Log.d("AnalysisDetailScreen", "Analysis Name: ${analysis.name}")
+                    android.util.Log.d("AnalysisDetailScreen", "Download URL: ${analysis.downloadUrl}")
+                    android.util.Log.d("AnalysisDetailScreen", "Download URL is null: ${analysis.downloadUrl == null}")
+
+                    // Show toast to verify new version is installed
+                    if (analysis.downloadUrl == null) {
+                        android.widget.Toast.makeText(context, "DEBUG: downloadUrl es NULL", android.widget.Toast.LENGTH_SHORT).show()
+                    }
+
                     Column(
                         modifier =
                             modifier
@@ -229,7 +246,11 @@ fun AnalysisDetailScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                 ) {
                                     if (analysis.downloadUrl != null) {
+                                        android.util.Log.d("AnalysisDetailScreen", "Download button IS being rendered for URL: ${analysis.downloadUrl}")
                                         IconButton(onClick = {
+                                            android.util.Log.d("AnalysisDetailScreen", "!!!!! DOWNLOAD BUTTON CLICKED !!!!!")
+                                            android.util.Log.d("AnalysisDetailScreen", "About to call downloadAndOpenPdf with URL: ${analysis.downloadUrl}")
+                                            android.widget.Toast.makeText(context, "Descargando PDF desde app...", android.widget.Toast.LENGTH_LONG).show()
                                             downloadAndOpenPdf(
                                                 analysis.downloadUrl,
                                                 "analisis_${analysis.id}.pdf"
@@ -241,6 +262,8 @@ fun AnalysisDetailScreen(
                                                 tint = MaterialTheme.colorScheme.primary,
                                             )
                                         }
+                                    } else {
+                                        android.util.Log.d("AnalysisDetailScreen", "Download button NOT rendered - downloadUrl is NULL")
                                     }
                                 }
                             }
