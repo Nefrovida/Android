@@ -64,4 +64,16 @@ class ForumRepositoryImpl
                 r.toDomain()
             }
         }
+
+        override suspend fun reportUser(userId: String): Result<Unit> =
+            try {
+                val response = api.reportUser(userId)
+                if (response.isSuccessful) {
+                    Result.Success(Unit)
+                } else {
+                    Result.Error(Exception("Error al reportar"))
+                }
+            } catch (e: Exception) {
+                Result.Error(e)
+            }
     }

@@ -10,6 +10,7 @@ import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.usecase.GetMessageRepliesUseCase
 import com.example.nefrovida.domain.usecase.GetMessageUseCase
 import com.example.nefrovida.domain.usecase.PostMessageUseCase
+import com.example.nefrovida.domain.usecase.ReportUserUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,6 +26,7 @@ class ForumMessageViewModel
         private val getReplies: GetMessageRepliesUseCase,
         private val getMessage: GetMessageUseCase,
         private val postReply: PostMessageUseCase,
+        private val reportUserUseCase: ReportUserUseCase,
     ) : ViewModel() {
         private val _messageReplies = MutableStateFlow(MessageReplyUiState())
         val messageReplies: StateFlow<MessageReplyUiState> = _messageReplies.asStateFlow()
@@ -109,6 +111,21 @@ class ForumMessageViewModel
                         is Result.Loading -> {
                             // Nada
                         }
+                    }
+                }
+            }
+        }
+
+        fun reportUser(userId: String) {
+            viewModelScope.launch {
+                // Opcional: Poner estado de 'loading'
+                when (val result = reportUserUseCase(userId)) {
+                    is Result.Success -> {
+                        // Mostrar mensaje de éxito (usando un Channel o State para la UI)
+                        _uiEvent.send(UiEvent.ShowSnackbar("Usuario reportado correctamente"))
+                    }
+                    is Result.Error -> {
+                        _uiEvent.send(UiEvent.ShowSnackbar("Error al reportar usuario"))
                     }
                 }
             }

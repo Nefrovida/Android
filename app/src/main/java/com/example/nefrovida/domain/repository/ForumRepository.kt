@@ -36,4 +36,6 @@ interface ForumRepository {
         page: Int,
         limit: Int,
     ): List<Message>
+
+    suspend fun reportUser(userId: String): Result<Unit>
 }

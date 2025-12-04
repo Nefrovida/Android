@@ -4,14 +4,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.example.nefrovida.data.remote.dto.Message
+
 
 @Composable
 fun ForumPostCard(
@@ -59,5 +63,43 @@ fun ForumPostCard(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun MessageCard(
+    message: Message,
+    isOwnMessage: Boolean, // Para saber si ocultar el botón
+    onReportClick: (String) -> Unit
+) {
+    var showMenu by remember { mutableStateOf(false) }
+
+    Card(...) {
+        Row(...) {
+
+        if (!isOwnMessage) {
+            Box {
+                IconButton(onClick = { showMenu = !showMenu }) {
+                    Icon(Icons.Default.MoreVert, contentDescription = "Opciones")
+                }
+
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { showMenu = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Reportar cuenta") },
+                        onClick = {
+                            showMenu = false
+                            onReportClick(message.senderId) // Dispara la acción
+                        },
+                        leadingIcon = {
+                            Icon(Icons.Default.Report, contentDescription = null)
+                        }
+                    )
+                }
+            }
+        }
+    }
     }
 }

@@ -50,4 +50,9 @@ interface ForumApiService {
         @Query("page") page: Int = 0,
         @Query("limit") limit: Int,
     ): MessageDto
+
+    @POST("users/{userId}/report")
+    suspend fun reportUser(
+        @Path("userId") userId: String,
+    ): Response<Unit>
 }
