@@ -7,6 +7,7 @@ import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
+import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository
 import retrofit2.Response
