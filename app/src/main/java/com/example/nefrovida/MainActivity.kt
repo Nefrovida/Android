@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                 val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
                 val scope = rememberCoroutineScope()
 
-                val showBottomBar = currentRoute != Screen.Login.route
+                val showBottomBar = currentRoute != Screen.Login.route && currentRoute != Screen.Register.route
 
                 ModalNavigationDrawer(
                     drawerState = drawerState,
