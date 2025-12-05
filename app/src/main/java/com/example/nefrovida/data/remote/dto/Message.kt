@@ -13,8 +13,14 @@ data class Message(
     val replies: Int,
     @SerializedName("liked")
     val liked: Int,
-    @SerializedName("forums") // Coincide con el JSON, pero lo mapearemos a 'forum'
+    @SerializedName("forums")
     val forum: MessageForumInfo,
+    @SerializedName("senderId")
+    val senderId: String? = null,
+    @SerializedName("senderName")
+    val senderName: String? = "Anónimo",
+    @SerializedName("createdAt")
+    val createdAt: String? = null,
 )
 
 data class Reply(
@@ -23,6 +29,9 @@ data class Reply(
     @SerializedName("forumId") val forumId: Int,
     @SerializedName("content") val content: String,
     @SerializedName("stats") val stats: Stats,
+    @SerializedName("senderId") val senderId: String? = null,
+    @SerializedName("senderName") val senderName: String? = "Anónimo",
+    @SerializedName("createdAt") val createdAt: String? = null,
 )
 
 data class Stats(

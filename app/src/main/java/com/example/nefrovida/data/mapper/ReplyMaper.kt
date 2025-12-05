@@ -11,9 +11,8 @@ fun Reply.toDomain(): Message =
         likes = stats.likes,
         replies = stats.replies,
         liked = liked,
-        forum =
-            MessageForumInfo(
-                forumId,
-                "",
-            ),
+        forum = MessageForumInfo(forumId, ""),
+        senderId = senderId,
+        senderName = senderName,
+        createdAt = createdAt,
     )

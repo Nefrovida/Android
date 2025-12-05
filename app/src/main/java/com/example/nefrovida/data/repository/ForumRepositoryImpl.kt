@@ -8,6 +8,8 @@ import com.example.nefrovida.data.remote.dto.MessageRequest
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.Reply
 import com.example.nefrovida.data.remote.dto.ReplyMessageRequest
+import com.example.nefrovida.data.remote.dto.ReportUserRequest
+import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.data.remote.dto.StatusMessage
 import com.example.nefrovida.domain.model.MessageObj
 import com.example.nefrovida.domain.repository.ForumRepository
@@ -79,4 +81,24 @@ class ForumRepositoryImpl
                 r.toDomain()
             }
         }
+
+        override suspend fun reportUser(
+            userId: String,
+            messageId: Int,
+            cause: String,
+        ): Result<Unit> =
+            try {
+                // Creamos el objeto request con los datos
+                val request = ReportUserRequest(messageId = messageId, cause = cause)
+
+                val response = api.reportUser(userId, request) // Pasamos el request a la API
+
+                if (response.isSuccessful) {
+                    Result.Success(Unit)
+                } else {
+                    Result.Error(Exception("Error al reportar"))
+                }
+            } catch (e: Exception) {
+                Result.Error(e)
+            }
     }

@@ -4,20 +4,19 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-fun formatDatePretty(dateString: String): String =
-    try {
+fun formatDatePretty(dateString: String?): String {
+    if (dateString.isNullOrEmpty()) return "Fecha desconocida"
+    return try {
         val parsed = ZonedDateTime.parse(dateString)
-
-        val formatter =
-            DateTimeFormatter.ofPattern(
-                "d MMM yyyy – hh:mm a",
-                Locale("es", "ES"),
-            )
-
+        val formatter = DateTimeFormatter.ofPattern(
+            "d MMM yyyy – hh:mm a",
+            Locale("es", "ES"),
+        )
         parsed.format(formatter)
     } catch (e: Exception) {
         dateString
     }
+}
 
 fun formatDatePretty2(
     dateString: String,
@@ -43,3 +42,5 @@ fun formatDatePretty2(
     } catch (e: Exception) {
         "$dateString $hourString"
     }
+
+annotation class DatePretty

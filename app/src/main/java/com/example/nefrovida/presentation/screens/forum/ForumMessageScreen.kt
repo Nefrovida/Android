@@ -1,6 +1,7 @@
 package com.example.nefrovida.presentation.screens.forum
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -61,6 +63,18 @@ fun ForumMessageScreen(
 ) {
     val uiState by viewModel.messageReplies.collectAsStateWithLifecycle()
     var replyText by remember { mutableStateOf("") }
+    val context = LocalContext.current
+
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collect { event ->
+            when (event) {
+                is UiEvent.ShowSnackbar -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    // O si usas un ScaffoldState con Snackbar, úsalo aquí.
+                }
+            }
+        }
+    }
 
     // Load replies when the parameters change
     LaunchedEffect(pMI) {
@@ -116,6 +130,9 @@ fun ForumMessageScreen(
                         ForumPostCard(
                             post = reply,
                             modifier = Modifier.padding(8.dp),
+                            onReportClick = { userId, messageId ->
+                                viewModel.reportUser(userId, messageId, "Contenido ofensivo o inapropiado")
+                            },
                             onClick = {
                                 navController.navigate(
                                     Screen.Message.createRoute(
