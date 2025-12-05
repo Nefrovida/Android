@@ -64,15 +64,17 @@ fun ForumPostCard(
     }
 
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .clickable { onClick() },
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .padding(vertical = 4.dp)
+                .clip(RoundedCornerShape(12.dp))
+                .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color.White,
-        ),
+        colors =
+            CardDefaults.cardColors(
+                containerColor = Color.White,
+            ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -80,7 +82,7 @@ fun ForumPostCard(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
                     text = formatDatePretty(post.createdAt),
@@ -92,12 +94,12 @@ fun ForumPostCard(
                     Box {
                         IconButton(
                             onClick = { showMenu = !showMenu },
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(24.dp),
                         ) {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
                                 contentDescription = "Opciones",
-                                tint = Color.Gray
+                                tint = Color.Gray,
                             )
                         }
 
@@ -117,7 +119,7 @@ fun ForumPostCard(
                                 },
                                 onClick = {
                                     showMenu = false
-                                    if (post.senderId.isNotEmpty()) {
+                                    if (!post.senderId.isNullOrEmpty()) {
                                         onReportClick(post.senderId, post.messageId)
                                     }
                                 },
@@ -139,49 +141,49 @@ fun ForumPostCard(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 // Like
                 Row(
-                    modifier = Modifier
-                        .clickable {
-                            val newLikedState = if (liked.intValue == 0) 1 else 0
-                            liked.intValue = newLikedState
-                            likesCount.intValue += if (newLikedState == 1) 1 else -1
-                            viewModel.postLike(post.messageId)
-                        }
-                        .padding(end = 16.dp, top = 4.dp, bottom = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    modifier =
+                        Modifier
+                            .clickable {
+                                val newLikedState = if (liked.intValue == 0) 1 else 0
+                                liked.intValue = newLikedState
+                                likesCount.intValue += if (newLikedState == 1) 1 else -1
+                                viewModel.postLike(post.messageId)
+                            }.padding(end = 16.dp, top = 4.dp, bottom = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         imageVector = if (liked.intValue == 1) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                         contentDescription = "Me gusta",
                         tint = if (liked.intValue == 1) Color.Red else Color.Gray,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "${likesCount.intValue}",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Color.Gray
+                        color = Color.Gray,
                     )
                 }
 
                 // Reply
                 Row(
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Comment,
                         contentDescription = "Respuestas",
                         tint = Color.Gray,
-                        modifier = Modifier.size(20.dp)
+                        modifier = Modifier.size(20.dp),
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         text = "${post.replies}",
                         style = MaterialTheme.typography.labelMedium,
-                        color = Color.Gray
+                        color = Color.Gray,
                     )
                 }
             }
