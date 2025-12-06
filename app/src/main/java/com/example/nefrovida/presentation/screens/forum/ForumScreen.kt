@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -313,11 +314,14 @@ fun AllForumsTabContent(
 
     if (showJoinDialog && forumToJoin != null) {
         AlertDialog(
+            containerColor = MaterialTheme.colorScheme.surface,
             onDismissRequest = { viewModel.onJoinForumDismiss() },
-            title = { Text("Unirse al foro") },
-            text = { Text("¿Quieres unirte al foro \"${forumToJoin!!.name}\"?") },
+            title = { Text("¿Quieres unirte al foro \"${forumToJoin!!.name.trim()}\"?") },
             confirmButton = {
-                TextButton(onClick = { viewModel.onJoinForumConfirm() }) {
+                TextButton(
+                    onClick = { viewModel.onJoinForumConfirm() },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
+                ) {
                     when (joinState) {
                         is Result.Loading -> CircularProgressIndicator()
                         else -> Text("Unirme")
@@ -325,7 +329,10 @@ fun AllForumsTabContent(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.onJoinForumDismiss() }) {
+                TextButton(
+                    onClick = { viewModel.onJoinForumDismiss() },
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
+                ) {
                     Text("Cancelar")
                 }
             }
