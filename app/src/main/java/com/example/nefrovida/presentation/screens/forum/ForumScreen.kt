@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -27,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.SimpleForumInfo
+import com.example.nefrovida.domain.common.Result
 import com.example.nefrovida.presentation.navigation.Screen
 import com.example.nefrovida.ui.molecules.SearchBar
 import com.example.nefrovida.ui.organisms.ForumPostCard
@@ -304,6 +307,40 @@ fun AllForumsTabContent(
     val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
 
+    val showJoinDialog by viewModel.showJoinForumDialog.collectAsStateWithLifecycle()
+    val forumToJoin by viewModel.forumToJoin.collectAsStateWithLifecycle()
+    val joinState by viewModel.joinForumState.collectAsStateWithLifecycle()
+
+    if (showJoinDialog && forumToJoin != null) {
+        AlertDialog(
+            onDismissRequest = { viewModel.onJoinForumDismiss() },
+            title = { Text("Unirse al foro") },
+            text = { Text("¿Quieres unirte al foro \"${forumToJoin!!.name}\"?") },
+            confirmButton = {
+                TextButton(onClick = { viewModel.onJoinForumConfirm() }) {
+                    when (joinState) {
+                        is Result.Loading -> CircularProgressIndicator()
+                        else -> Text("Unirme")
+                    }
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { viewModel.onJoinForumDismiss() }) {
+                    Text("Cancelar")
+                }
+            }
+        )
+    }
+
+    // Effect to navigate after successfully joining a forum
+    LaunchedEffect(joinState) {
+        if (joinState is Result.Success && !showJoinDialog && forumToJoin != null) {
+            navController.navigate(Screen.ForumFeed.createRoute(forumToJoin!!.forumId))
+            viewModel.onJoinForumDismiss() // Reset state
+        }
+        // You might want to show a Snackbar for errors
+    }
+
     PullToRefreshBox(
         isRefreshing = isRefreshing,
         onRefresh = { viewModel.refresh() }
@@ -349,8 +386,9 @@ fun AllForumsTabContent(
                 ) {
                     items(filteredAllForums) { forumComplete ->
                         ForumAllListItem(forumComplete = forumComplete) {
-                            // Aquí puedes decidir a dónde navegar, por ejemplo, al ForumFeedScreen
-                            navController.navigate(Screen.ForumFeed.createRoute(forumComplete.forumId))
+                            if (viewModel.onForumTapped(forumComplete)) {
+                                navController.navigate(Screen.ForumFeed.createRoute(forumComplete.forumId))
+                            }
                         }
                     }
                     if (isAllForumsLoading) {

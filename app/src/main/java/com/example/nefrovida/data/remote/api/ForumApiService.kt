@@ -2,6 +2,7 @@ package com.example.nefrovida.data.remote.api
 
 import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.ForumMessageDto
+import com.example.nefrovida.data.remote.dto.JoinForumResponse
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MessageDto
 import com.example.nefrovida.data.remote.dto.MessageRequest
@@ -63,4 +64,9 @@ interface ForumApiService {
         @Query("page") page: Int = 0,
         @Query("limit") limit: Int,
     ): MessageDto
+
+    @POST("forums/{forumId}/android/join")
+    suspend fun joinForum(
+        @Path("forumId") forumId: Int,
+    ): Response<JoinForumResponse>
 }

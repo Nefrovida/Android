@@ -1,6 +1,7 @@
 package com.example.nefrovida.domain.repository
 
 import com.example.nefrovida.data.remote.dto.ForumComplete
+import com.example.nefrovida.data.remote.dto.JoinForumResponse
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MyForumItem
 import com.example.nefrovida.data.remote.dto.Reply
@@ -44,4 +45,6 @@ interface ForumRepository {
         page: Int,
         limit: Int,
     ): List<Message>
+
+    suspend fun joinForum(forumId: Int): Response<JoinForumResponse>
 }
