@@ -95,7 +95,8 @@ fun ReportDetailScreen(
         NetworkModule.debugPrintAllCookies()
 
         // The URL comes as: /uploads/orina_20251021.pdf
-        val baseUrl = "http://10.25.102.123:3001"
+        // Get the base URL from NetworkModule, removing the trailing "/api/" and any trailing "/"
+        val baseUrl = NetworkModule.getBaseUrl().removeSuffix("api/").removeSuffix("/")
         val fullUrl = if (urlPath.startsWith("http")) {
             urlPath
         } else {

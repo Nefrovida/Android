@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val BASE_URL = "https://www.snefrovidaac.com/api/"
+    private const val BASE_URL = "http://x.x.x.x:3001/api/"//"https://www.snefrovidaac.com/api/"
 
     private var retrofit: Retrofit? = null
     private var cookieJar: PersistentCookieJar? = null
