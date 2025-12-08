@@ -27,6 +27,8 @@ import com.example.nefrovida.ui.molecules.ReusableStringDropdown
 import com.example.nefrovida.ui.theme.NavyBlue
 import com.example.nefrovida.ui.theme.TextGray
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -216,6 +218,14 @@ fun AppointmentForm(
                     date = pickedDate
                     time = null // Reset time when date changes
                     showDatePicker = false
+
+                    val localDate = LocalDate.parse(date)
+                    Log.d("Selected Date Week", localDate.dayOfWeek.toString())
+                    if (localDate.dayOfWeek == DayOfWeek.SATURDAY || localDate.dayOfWeek == DayOfWeek.SUNDAY) {
+                        availability = emptyList()
+                        Log.e("Date: ", "Invalid Date")
+                        return@DatePickerDialog
+                    }
 
                     // Fetch occupied times for the selected date and appointmentId
                     scope.launch {

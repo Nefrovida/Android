@@ -2,6 +2,8 @@ package com.example.nefrovida.presentation.utils
 
 import android.util.Log
 import java.text.SimpleDateFormat
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.util.*
 
 fun formatDateToDDMMYYYY(dateString: String): String {
@@ -60,7 +62,7 @@ fun checkValidDate(dateString: String): Boolean {
 
     Log.d("checkValidDate", "Selected date: ${cDate.time}, Tomorrow: ${tomorrow.time}")
 
-    if (cDate.before(tomorrow)) {
+    if (cDate.before(now)) {
         Log.d("checkValidDate", "Date is before tomorrow")
         return false
     }

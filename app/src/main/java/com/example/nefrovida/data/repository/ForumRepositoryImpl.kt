@@ -3,6 +3,7 @@ package com.example.nefrovida.data.repository
 import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.ForumApiService
 import com.example.nefrovida.data.remote.dto.ForumComplete
+import com.example.nefrovida.data.remote.dto.JoinForumResponse
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.MessageRequest
 import com.example.nefrovida.data.remote.dto.MyForumItem
@@ -79,4 +80,6 @@ class ForumRepositoryImpl
                 r.toDomain()
             }
         }
+
+        override suspend fun joinForum(forumId: Int): Response<JoinForumResponse> = api.joinForum(forumId)
     }

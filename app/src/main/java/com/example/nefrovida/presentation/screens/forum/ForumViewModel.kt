@@ -10,6 +10,7 @@ import com.example.nefrovida.data.remote.dto.ForumComplete
 import com.example.nefrovida.data.remote.dto.Message
 import com.example.nefrovida.data.remote.dto.SimpleForumInfo
 import com.example.nefrovida.domain.common.Result
+import com.example.nefrovida.domain.repository.ForumRepository
 import com.example.nefrovida.domain.usecase.GetAllForumsUseCase
 import com.example.nefrovida.domain.usecase.GetForumFeedUseCase
 import com.example.nefrovida.domain.usecase.GetMyForumsUseCase
@@ -35,6 +36,7 @@ class ForumViewModel
         private val getForumFeedUseCase: GetForumFeedUseCase,
         private val getAllForumsUseCase: GetAllForumsUseCase,
         private val postMessage: PostNewMessage,
+        private val forumRepository: ForumRepository, // Inyectar el repositorio
     ) : ViewModel() {
         // --- State for Tab Selection ---
         private val _selectedTabIndex = MutableStateFlow(0)
@@ -42,6 +44,16 @@ class ForumViewModel
 
         private val _isRefreshing = MutableStateFlow(false)
         val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
+        // --- State for Join Forum Dialog ---
+        private val _showJoinForumDialog = MutableStateFlow(false)
+        val showJoinForumDialog: StateFlow<Boolean> = _showJoinForumDialog.asStateFlow()
+
+        private val _forumToJoin = MutableStateFlow<ForumComplete?>(null)
+        val forumToJoin: StateFlow<ForumComplete?> = _forumToJoin.asStateFlow()
+
+        private val _joinForumState = MutableStateFlow<Result<Unit>>(Result.Success(Unit)) // o un estado idle
+        val joinForumState: StateFlow<Result<Unit>> = _joinForumState.asStateFlow()
 
         fun onTabSelected(index: Int) {
             _selectedTabIndex.value = index
@@ -227,5 +239,46 @@ class ForumViewModel
                     }
                 }
             }
+        }
+
+        // --- Functions for Joining a Forum ---
+
+        fun onForumTapped(forum: ForumComplete): Boolean {
+            val isMember = _myForums.value.any { it.forumId == forum.forumId }
+            return if (isMember) {
+                true // Navigate directly
+            } else {
+                _forumToJoin.value = forum
+                _showJoinForumDialog.value = true
+                false // Do not navigate
+            }
+        }
+
+        fun onJoinForumConfirm() {
+            val forum = _forumToJoin.value ?: return
+            viewModelScope.launch {
+                _joinForumState.value = Result.Loading
+                try {
+                    val response = forumRepository.joinForum(forum.forumId)
+                    if (response.isSuccessful && response.body()?.success == true) {
+                        _joinForumState.value = Result.Success(Unit)
+                        _showJoinForumDialog.value = false
+                        // Actualizar la lista de foros para reflejar la membresía
+                        loadAllForums(reset = true)
+                        loadMyForums(reset = true)
+                    } else {
+                        val errorBody = response.errorBody()?.string() ?: "Error al unirse al foro"
+                        _joinForumState.value = Result.Error(Exception(errorBody))
+                    }
+                } catch (e: Exception) {
+                    _joinForumState.value = Result.Error(e)
+                }
+            }
+        }
+
+        fun onJoinForumDismiss() {
+            _showJoinForumDialog.value = false
+            _forumToJoin.value = null
+            _joinForumState.value = Result.Success(Unit) // Reset state
         }
     }

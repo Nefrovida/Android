@@ -1,5 +1,6 @@
 package com.example.nefrovida.data.repository
 
+import android.util.Log
 import com.example.nefrovida.data.mapper.toDomain
 import com.example.nefrovida.data.remote.api.AppointmentApi
 import com.example.nefrovida.data.remote.dto.RescheduleAppointmentDto
