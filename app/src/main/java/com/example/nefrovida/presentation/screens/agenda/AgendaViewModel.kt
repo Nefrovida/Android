@@ -20,8 +20,8 @@ import jakarta.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -39,8 +39,7 @@ class AgendaViewModel
         private val getAnalysisUseCase: GetAnalysisUseCase,
         private val getDateAvailabilityUseCase: GetDateAvailabilityUseCase,
         private val rescheduleAppointmentUseCase: RescheduleAppointmentUseCase,
-
-        ) : ViewModel() {
+    ) : ViewModel() {
         private val _uiState = MutableStateFlow(AgendaUiState())
         val uiState: StateFlow<AgendaUiState> = _uiState.asStateFlow()
         private val _userId = MutableStateFlow("")
@@ -129,33 +128,33 @@ class AgendaViewModel
             }
         }
 
-    fun getAnalysis(id: Int) {
-        viewModelScope.launch {
-            getAnalysisUseCase(id).collect { result ->
-                _uiState.update { state ->
-                    when (result) {
-                        is Result.Loading -> {
-                            state.copy(isLoading = true)
-                        }
-                        is Result.Success -> {
-                            state.copy(
-                                selectedAnalysis = result.data,
-                                isLoading = false,
-                                error = null,
-                            )
-                        }
+        fun getAnalysis(id: Int) {
+            viewModelScope.launch {
+                getAnalysisUseCase(id).collect { result ->
+                    _uiState.update { state ->
+                        when (result) {
+                            is Result.Loading -> {
+                                state.copy(isLoading = true)
+                            }
+                            is Result.Success -> {
+                                state.copy(
+                                    selectedAnalysis = result.data,
+                                    isLoading = false,
+                                    error = null,
+                                )
+                            }
 
-                        is Result.Error -> {
-                            state.copy(
-                                error = result.exception.message,
-                                isLoading = false,
-                            )
+                            is Result.Error -> {
+                                state.copy(
+                                    error = result.exception.message,
+                                    isLoading = false,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
         fun cancelAppointment(id: Int) {
             viewModelScope.launch {
@@ -200,143 +199,144 @@ class AgendaViewModel
             }
         }
 
-    fun cancelAnalysis(id: Int) {
-        viewModelScope.launch {
-            cancelAnalysisUseCase(id).collect { result ->
-                when (result) {
-                    is Result.Loading -> {
-                        _uiState.update { state ->
-                            state.copy(isLoading = true)
-                        }
-                    }
-
-                    is Result.Success -> {
-                        _uiState.value.selectedDate?.let { selected ->
-                            _userId.value?.let { userId ->
-                                loadAgendaList(selected, userId)
+        fun cancelAnalysis(id: Int) {
+            viewModelScope.launch {
+                cancelAnalysisUseCase(id).collect { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            _uiState.update { state ->
+                                state.copy(isLoading = true)
                             }
                         }
 
-                        _uiState.update { state ->
-                            state.copy(
-                                selectedAnalysis =
-                                    state.selectedAnalysis?.copy(
-                                        analysisStatus = AnalysisStatus.CANCELED,
-                                    ),
-                                isLoading = false,
-                                error = null,
-                                showCancelSuccess = true,
-                            )
-                        }
-                    }
+                        is Result.Success -> {
+                            _uiState.value.selectedDate?.let { selected ->
+                                _userId.value?.let { userId ->
+                                    loadAgendaList(selected, userId)
+                                }
+                            }
 
-                    is Result.Error -> {
-                        _uiState.update { state ->
-                            state.copy(
-                                error = result.exception.message,
-                                isLoading = false,
-                            )
+                            _uiState.update { state ->
+                                state.copy(
+                                    selectedAnalysis =
+                                        state.selectedAnalysis?.copy(
+                                            analysisStatus = AnalysisStatus.CANCELED,
+                                        ),
+                                    isLoading = false,
+                                    error = null,
+                                    showCancelSuccess = true,
+                                )
+                            }
+                        }
+
+                        is Result.Error -> {
+                            _uiState.update { state ->
+                                state.copy(
+                                    error = result.exception.message,
+                                    isLoading = false,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-    }
 
         fun resetCancelSuccess() {
             _uiState.update { it.copy(showCancelSuccess = false) }
         }
 
-    fun selectItem(item: AgendaItem) {
-        _uiState.update { it.copy(selectedItem = item) }
-    }
-
-    fun clearSelectedItem() {
-        _uiState.update {
-            it.copy(
-                selectedItem = null,
-                selectedAppointment = null,
-                selectedAnalysis = null,
-            )
+        fun selectItem(item: AgendaItem) {
+            _uiState.update { it.copy(selectedItem = item) }
         }
-    }
-    fun resetRescheduleSuccess() {
-        _uiState.update { it.copy(showRescheduleSuccess = false) }
-    }
 
-    suspend fun getDateAvailability(
-        appointmentName: String,
-        date: String,
-    ): List<String> {
-        var result: List<String> = emptyList()
-
-        getDateAvailabilityUseCase(appointmentName, date).collect { state ->
-            when (state) {
-                is Result.Loading -> {
-                    Log.d("AgendaVM", "Get Availability is loading")
-                    // Loading state
-                }
-                is Result.Success -> {
-                    Log.d("AgendaVM", "Get Availability List is successful")
-                    result = state.data
-                }
-                is Result.Error -> {
-                    Log.d("AgendaVM", "Get Availability is error")
-                    result = emptyList()
-                }
+        fun clearSelectedItem() {
+            _uiState.update {
+                it.copy(
+                    selectedItem = null,
+                    selectedAppointment = null,
+                    selectedAnalysis = null,
+                )
             }
         }
 
-        return result
-    }
+        fun resetRescheduleSuccess() {
+            _uiState.update { it.copy(showRescheduleSuccess = false) }
+        }
 
-    fun rescheduleAppointment(
-        id: Int,
-        reason: String,
-        date: String,
-        time: String,
-    ) {
-        viewModelScope.launch {
-            rescheduleAppointmentUseCase(
-                id,
-                reason,
-                date,
-                time,
-            ).collect { result ->
-                when (result) {
+        suspend fun getDateAvailability(
+            appointmentName: String,
+            date: String,
+        ): List<String> {
+            var result: List<String> = emptyList()
+
+            getDateAvailabilityUseCase(appointmentName, date).collect { state ->
+                when (state) {
                     is Result.Loading -> {
-                        _uiState.update { state ->
-                            state.copy(isLoading = true)
-                        }
+                        Log.d("AgendaVM", "Get Availability is loading")
+                        // Loading state
                     }
                     is Result.Success -> {
-                        _uiState.value.selectedDate?.let { selected ->
-                            _userId.value?.let { userId ->
-                                loadAgendaList(selected, userId)
-                            }
-                        }
-                        _uiState.update { state ->
-                            state.copy(
-                                selectedAppointment =
-                                    state.selectedAppointment?.copy(
-                                        status = AppointmentStatus.PROGRAMMED,
-                                    ),
-                                isLoading = false,
-                                error = null,
-                                showRescheduleSuccess = true,
-                            )
-                        }
+                        Log.d("AgendaVM", "Get Availability List is successful")
+                        result = state.data
                     }
                     is Result.Error -> {
-                        _uiState.update { state ->
-                            state.copy(
-                                error = result.exception.message,
-                                isLoading = false,
-                            )
+                        Log.d("AgendaVM", "Get Availability is error")
+                        result = emptyList()
+                    }
+                }
+            }
+
+            return result
+        }
+
+        fun rescheduleAppointment(
+            id: Int,
+            reason: String,
+            date: String,
+            time: String,
+        ) {
+            viewModelScope.launch {
+                rescheduleAppointmentUseCase(
+                    id,
+                    reason,
+                    date,
+                    time,
+                ).collect { result ->
+                    when (result) {
+                        is Result.Loading -> {
+                            _uiState.update { state ->
+                                state.copy(isLoading = true)
+                            }
+                        }
+                        is Result.Success -> {
+                            _uiState.value.selectedDate?.let { selected ->
+                                _userId.value?.let { userId ->
+                                    loadAgendaList(selected, userId)
+                                }
+                            }
+                            _uiState.update { state ->
+                                state.copy(
+                                    selectedAppointment =
+                                        state.selectedAppointment?.copy(
+                                            status = AppointmentStatus.PROGRAMMED,
+                                        ),
+                                    isLoading = false,
+                                    error = null,
+                                    showRescheduleSuccess = true,
+                                )
+                            }
+                        }
+                        is Result.Error -> {
+                            _uiState.update { state ->
+                                state.copy(
+                                    error = result.exception.message,
+                                    isLoading = false,
+                                )
+                            }
                         }
                     }
                 }
             }
         }
-    }
     }
