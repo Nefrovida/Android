@@ -23,9 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.nefrovida.R
 import com.example.nefrovida.presentation.navigation.Screen
+import com.example.nefrovida.ui.theme.DarkBlue
 import com.example.nefrovida.ui.theme.NavyBlue
 import com.example.nefrovida.ui.theme.White
-import com.example.nefrovida.ui.theme.DarkBlue
 
 @Composable
 fun HeaderSection() {
@@ -42,8 +42,35 @@ fun HeaderSection() {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
         )
+    }
+}
 
+@Composable
+fun PresentacionSection() {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+    ) {
+        Text(
+            text = "Presentación",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = NavyBlue,
+            modifier = Modifier.padding(bottom = 16.dp),
+        )
 
+        Text(
+            text = "NEFROVIDA A.C es una asociación sin fines de lucro cuyo principal objetivo es apoyar a pacientes y familiares con Enfermedad Renal Crónica, en situación de vulnerabilidad, y residentes de San Juan del Río y municipios aledaños.",
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(bottom = 12.dp),
+        )
+
+        Text(
+            text = "Además, con tu donativo ayudas a pacientes en tratamiento sustitutivo con el pago de sesiones de hemodiálisis y a continuar realizando prevención de Enfermedad Renal a personas en situación vulnerable.",
+            style = MaterialTheme.typography.bodyLarge,
+        )
     }
 }
 
@@ -59,11 +86,10 @@ fun BlueSection(navController: NavController) {
         Column {
             Text(
                 text =
-                    "En NefroVida A.C. estamos comprometidos con la salud de " +
-                        "nuestros pacientes. Ofrecemos servicios especializados en " +
-                        "la detección, prevención y tratamiento de la Enfermedad Renal " +
-                        "Crónica, diseñados para proteger tu salud renal y mejorar tu " +
-                        "calidad de vida.",
+                    "Estamos comprometidos con la salud de nuestros pacientes. " +
+                        "Ofrecemos servicios especializados en la detección, prevención " +
+                        "y tratamiento de la Enfermedad Renal Crónica, diseñados para " +
+                        "proteger tu salud renal y mejorar tu calidad de vida.",
                 color = White,
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.padding(bottom = 16.dp),
@@ -92,7 +118,7 @@ fun BlueSection(navController: NavController) {
                     modifier = Modifier.padding(top = 8.dp),
                 ) {
                     Text(
-                        text = "Ver Catalogo",
+                        text = "Ver Catálogo",
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.padding(horizontal = 8.dp),
                     )
@@ -103,32 +129,35 @@ fun BlueSection(navController: NavController) {
 }
 
 @Composable
-fun TextBox(title: String, description: String) {
+fun TextBox(
+    title: String,
+    description: String,
+) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
         )
         Text(
             text = description,
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .wrapContentHeight(align = Alignment.CenterVertically)
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
         )
     }
 }
-
 
 @Composable
 fun SocialMediaBox(modifier: Modifier = Modifier) {
