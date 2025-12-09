@@ -23,7 +23,7 @@ fun EncuentranosSection() {
                 .padding(24.dp),
     ) {
         Text(
-            text = "Encuéntranos",
+            text = "Contáctanos",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = NavyBlue,
@@ -34,7 +34,7 @@ fun EncuentranosSection() {
         ContactInfoRow(
             icon = Icons.Default.LocationOn,
             label = "Dirección",
-            value = "Calle Principal #123, Colonia Centro, Ciudad, CP 12345",
+            value = "Sierra Vertientes #167 Lomas de San Juan\nSan Juan del Río, Querétaro, Méx.",
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -43,7 +43,7 @@ fun EncuentranosSection() {
         ContactInfoRow(
             icon = Icons.Default.Schedule,
             label = "Horario",
-            value = "Lunes a Viernes: 8:00 AM - 6:00 PM\nSábados: 9:00 AM - 2:00 PM",
+            value = "Beneficiarios: Lunes - Viernes 7:30am - 3:30pm\nLaboratorio: Lunes - Viernes 7:30am - 9:00am",
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -52,7 +52,16 @@ fun EncuentranosSection() {
         ContactInfoRow(
             icon = Icons.Default.Phone,
             label = "Teléfono",
-            value = "+52 (123) 456-7890",
+            value = "427 101 34 35",
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // WhatsApp
+        ContactInfoRow(
+            icon = Icons.Default.Phone,
+            label = "WhatsApp",
+            value = "427 219 1068",
         )
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -61,7 +70,16 @@ fun EncuentranosSection() {
         ContactInfoRow(
             icon = Icons.Default.Email,
             label = "Correo",
-            value = "contacto@nefrovida.org",
+            value = "nefrovida.a.c@hotmail.com",
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Facebook
+        ContactInfoRow(
+            icon = Icons.Default.ThumbUp,
+            label = "Facebook",
+            value = "https://www.facebook.com/NefroVida.ac",
         )
 
         // Extra spacing at bottom for social media box
@@ -101,4 +119,3 @@ fun ContactInfoRow(
         }
     }
 }
-

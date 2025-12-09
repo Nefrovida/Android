@@ -50,7 +50,7 @@ fun AgendaUnifiedList(
                         Text("Doctor: ${item.appointment.name}", style = MaterialTheme.typography.titleMedium)
                         Text("Cita: ${item.appointment.appointmentName}", style = MaterialTheme.typography.bodyMedium)
                         Text(
-                            "Fecha y hora: ${formatDatePretty2(item.appointment.date, item.appointment.time)} ",
+                            "Fecha y hora: ${formatDatePretty2(item.appointment.date, item.appointment.time + ":00")} ",
                             style = MaterialTheme.typography.bodyMedium,
                         )
                         when (item.appointment.status) {

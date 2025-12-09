@@ -28,6 +28,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.invoke
 
+/**
+ * ViewModel for the Forum screen.
+ *
+ * Manages the logic and state for the three tabs: "Discover", "My Forums", and "All Forums".
+ * It handles data loading, pagination, search queries, and user interactions
+ * such as joining a forum or posting a new message.
+ *
+ * @property getMyForumsUseCase Use case to get the user's forums.
+ * @property getForumFeedUseCase Use case to get the message feed.
+ * @property getAllForumsUseCase Use case to get all available forums.
+ * @property postMessage Use case to post a new message.
+ * @property forumRepository Repository for direct forum actions like joining a forum.
+ */
 @HiltViewModel
 class ForumViewModel
     @Inject
@@ -36,30 +49,33 @@ class ForumViewModel
         private val getForumFeedUseCase: GetForumFeedUseCase,
         private val getAllForumsUseCase: GetAllForumsUseCase,
         private val postMessage: PostNewMessage,
-        private val forumRepository: ForumRepository, // Inyectar el repositorio
+        private val forumRepository: ForumRepository,
     ) : ViewModel() {
-        // --- State for Tab Selection ---
+        /** The index of the currently selected tab in the UI. */
         private val _selectedTabIndex = MutableStateFlow(0)
         val selectedTabIndex: StateFlow<Int> = _selectedTabIndex.asStateFlow()
 
+        /** State indicating if a pull-to-refresh action is in progress. */
         private val _isRefreshing = MutableStateFlow(false)
         val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
 
-        // --- State for Join Forum Dialog ---
+        // --- State for the join forum dialog ---
+
+        /** Controls the visibility of the confirmation dialog to join a forum. */
         private val _showJoinForumDialog = MutableStateFlow(false)
         val showJoinForumDialog: StateFlow<Boolean> = _showJoinForumDialog.asStateFlow()
 
+        /** Stores the forum that the user has selected to join. */
         private val _forumToJoin = MutableStateFlow<ForumComplete?>(null)
         val forumToJoin: StateFlow<ForumComplete?> = _forumToJoin.asStateFlow()
 
-        private val _joinForumState = MutableStateFlow<Result<Unit>>(Result.Success(Unit)) // o un estado idle
+        /** Represents the current state of the join forum operation (Loading, Success, Error). */
+        private val _joinForumState = MutableStateFlow<Result<Unit>>(Result.Success(Unit))
         val joinForumState: StateFlow<Result<Unit>> = _joinForumState.asStateFlow()
 
-        fun onTabSelected(index: Int) {
-            _selectedTabIndex.value = index
-        }
+        // --- State for the "Discover" tab ---
 
-        // --- State for "Descubrir" (General Feed) ---
+        /** The list of messages for the "Discover" feed. */
         private val _discoverFeed = MutableStateFlow<List<Message>>(emptyList())
         val discoverFeed: StateFlow<List<Message>> = _discoverFeed.asStateFlow()
         private val _discoverPage = mutableStateOf(0)
@@ -67,19 +83,19 @@ class ForumViewModel
         private val _isDiscoverLoading = mutableStateOf(false)
         val isDiscoverLoading: State<Boolean> = _isDiscoverLoading
 
-        // --- State for "Mis Foros" ---
+        // --- State for the "My Forums" tab ---
+
+        /** The list of forums the user belongs to. */
         private val _myForums = MutableStateFlow<List<SimpleForumInfo>>(emptyList())
         val myForums = _myForums.asStateFlow()
 
+        /** The current search query for the "My Forums" tab. */
         private val _myForumsSearchQuery = MutableStateFlow("")
         val myForumsSearchQuery: StateFlow<String> = _myForumsSearchQuery.asStateFlow()
         private val _isMyForumsLoading = mutableStateOf(false)
         val isMyForumsLoading: State<Boolean> = _isMyForumsLoading
 
-        // --- State for "Post new Message" ---
-        private val _postMessageError = MutableStateFlow("")
-        val postMessageError = _postMessageError.asStateFlow()
-
+        /** The user's list of forums, filtered by [myForumsSearchQuery]. */
         val filteredMyForums: StateFlow<List<SimpleForumInfo>> =
             combine(_myForums, _myForumsSearchQuery) { forums, query ->
                 if (query.isBlank()) {
@@ -93,15 +109,18 @@ class ForumViewModel
                 emptyList(),
             )
 
-        // --- State for "Todos los Foros" ---
+        // --- State for the "All Forums" tab ---
         private val _allForums = MutableStateFlow<List<ForumComplete>>(emptyList())
         private val _allForumsPage = mutableIntStateOf(1) // Page is 1-indexed
         private var _canAllForumsPaginate = true
+
+        /** The current search query for the "All Forums" tab. */
         private val _allForumsSearchQuery = MutableStateFlow("")
         val allForumsSearchQuery: StateFlow<String> = _allForumsSearchQuery.asStateFlow()
         private val _isAllForumsLoading = mutableStateOf(false)
         val isAllForumsLoading: State<Boolean> = _isAllForumsLoading
 
+        /** The list of all forums, filtered by [allForumsSearchQuery]. */
         val filteredAllForums: StateFlow<List<ForumComplete>> =
             combine(_allForums, _allForumsSearchQuery) { forums, query ->
                 if (query.isBlank()) {
@@ -115,6 +134,10 @@ class ForumViewModel
                 emptyList(),
             )
 
+        // --- State for posting a new message ---
+        private val _postMessageError = MutableStateFlow("")
+        val postMessageError = _postMessageError.asStateFlow()
+
         init {
             viewModelScope.launch {
                 loadDiscoverFeed(reset = true)
@@ -123,6 +146,17 @@ class ForumViewModel
             }
         }
 
+        /**
+         * Updates the index of the selected tab.
+         * @param index The new tab index.
+         */
+        fun onTabSelected(index: Int) {
+            _selectedTabIndex.value = index
+        }
+
+        /**
+         * Refreshes the data for the currently visible tab.
+         */
         fun refresh() {
             viewModelScope.launch {
                 _isRefreshing.value = true
@@ -135,7 +169,10 @@ class ForumViewModel
             }
         }
 
-        // --- Functions for "Descubrir" ---
+        /**
+         * Loads the message feed for the "Discover" tab, handling pagination.
+         * @param reset If true, resets pagination and clears the current list.
+         */
         suspend fun loadDiscoverFeed(reset: Boolean = false) {
             if (_isDiscoverLoading.value || (!_canDiscoverPaginate && !reset)) return
 
@@ -159,7 +196,10 @@ class ForumViewModel
             _isDiscoverLoading.value = false
         }
 
-        // --- Functions for "Mis Foros" ---
+        /**
+         * Loads the list of forums the user belongs to.
+         * @param reset If true, clears the current list before loading.
+         */
         suspend fun loadMyForums(reset: Boolean = false) {
             if (_isMyForumsLoading.value && !reset) return
 
@@ -170,22 +210,28 @@ class ForumViewModel
             _isMyForumsLoading.value = true
             val response = getMyForumsUseCase()
             if (response.isSuccessful) {
-                // Filtramos elementos donde 'forum' es nulo
                 _myForums.value = response.body()?.mapNotNull { it.forum } ?: emptyList()
             }
             _isMyForumsLoading.value = false
         }
 
+        /**
+         * Updates the search query for "My Forums".
+         * @param query The new search text.
+         */
         fun onMyForumsSearchQueryChange(query: String) {
             _myForumsSearchQuery.value = query
         }
 
-        // --- Functions for "Todos los Foros" ---
+        /**
+         * Loads the list of all available forums, handling pagination.
+         * @param reset If true, resets pagination and clears the current list.
+         */
         suspend fun loadAllForums(reset: Boolean = false) {
             if (_isAllForumsLoading.value || (!_canAllForumsPaginate && !reset)) return
 
             if (reset) {
-                _allForumsPage.intValue = 1 // 1-indexed for this endpoint
+                _allForumsPage.intValue = 1
                 _allForums.value = emptyList()
                 _canAllForumsPaginate = true
             }
@@ -208,19 +254,22 @@ class ForumViewModel
             _isAllForumsLoading.value = false
         }
 
+        /**
+         * Updates the search query for "All Forums" and reloads the list.
+         * @param query The new search text.
+         */
         fun onAllForumsSearchQueryChange(query: String) {
+            _allForumsSearchQuery.value = query
             viewModelScope.launch {
-                loadAllForums(reset = true) // Reload all forums on search query change
+                loadAllForums(reset = true)
             }
         }
 
-        fun onSearch() {
-            // This function will be called from the SearchBar in ForumScreen
-            // but the filtering logic is handled by combine for "Mis Foros" and "Todos los Foros"
-            // and for "Descubrir" there is no search on content, only filtering by forumId which is not in this ViewModel.
-            // It's effectively a no-op here for now, as search is handled by query change and combine.
-        }
-
+        /**
+         * Posts a new message to a forum.
+         * @param forumId The ID of the forum where the message will be posted.
+         * @param content The content of the message.
+         */
         fun postNewMessage(
             forumId: Int,
             content: String,
@@ -229,20 +278,27 @@ class ForumViewModel
                 postMessage.invoke(forumId, content).collect { result ->
                     when (result) {
                         is Result.Success -> {
+                            // TODO: Consider refreshing the feed or showing a confirmation.
                         }
                         is Result.Error -> {
                             _postMessageError.update { result.toString() }
                         }
                         is Result.Loading -> {
-                            // Nada
+                            // A loading indicator could be shown if necessary.
                         }
                     }
                 }
             }
         }
 
-        // --- Functions for Joining a Forum ---
-
+        /**
+         * Handles the tap event on a forum from the "All Forums" list.
+         * If the user is already a member, it allows navigation.
+         * If not a member, it shows the confirmation dialog to join.
+         *
+         * @param forum The forum that was tapped.
+         * @return `true` if navigation should proceed, `false` if the dialog should be shown.
+         */
         fun onForumTapped(forum: ForumComplete): Boolean {
             val isMember = _myForums.value.any { it.forumId == forum.forumId }
             return if (isMember) {
@@ -254,6 +310,11 @@ class ForumViewModel
             }
         }
 
+        /**
+         * Confirms and executes the action to join the selected forum.
+         * Makes the API call and updates the [joinForumState].
+         * On success, it reloads the forum lists.
+         */
         fun onJoinForumConfirm() {
             val forum = _forumToJoin.value ?: return
             viewModelScope.launch {
@@ -263,11 +324,11 @@ class ForumViewModel
                     if (response.isSuccessful && response.body()?.success == true) {
                         _joinForumState.value = Result.Success(Unit)
                         _showJoinForumDialog.value = false
-                        // Actualizar la lista de foros para reflejar la membresía
+                        // Update forum lists to reflect membership
                         loadAllForums(reset = true)
                         loadMyForums(reset = true)
                     } else {
-                        val errorBody = response.errorBody()?.string() ?: "Error al unirse al foro"
+                        val errorBody = response.errorBody()?.string() ?: "Failed to join forum"
                         _joinForumState.value = Result.Error(Exception(errorBody))
                     }
                 } catch (e: Exception) {
@@ -276,6 +337,9 @@ class ForumViewModel
             }
         }
 
+        /**
+         * Closes and resets the state of the join forum dialog.
+         */
         fun onJoinForumDismiss() {
             _showJoinForumDialog.value = false
             _forumToJoin.value = null

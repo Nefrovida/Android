@@ -23,61 +23,110 @@ fun OurServicesSection() {
                 .padding(24.dp),
     ) {
         Text(
-            text = "Nuestros Servicios",
+            text = "Nuestros Tamizajes",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = NavyBlue,
+            modifier = Modifier.padding(bottom = 12.dp),
+        )
+
+        Text(
+            text = "OBJETIVO: Realizar un tamizaje de función renal es detectar de manera temprana alteraciones en la función renal, incluso antes de que aparezcan síntomas clínicos evidentes, para poder prevenir o retrasar la progresión de enfermedades renales crónicas y reducir complicaciones asociadas.",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 16.dp),
+        )
+
+        Text(
+            text = "INCLUYE: aplicación de cuestionario de factor de riesgo, toma de presión arterial, peso, talla, circunferencia de cintura, estudios de laboratorio de sangre y orina, entrega de estudios impresos, interpretación, recomendaciones y derivación con especialidades.",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(bottom = 24.dp),
+        )
+
+        // Service 1: Tamizacion Niños
+        ServiceCard(
+            icon = Icons.Default.CheckCircle,
+            title = "Niños",
+            description = "Química Sanguínea de 6 elementos + examen general de orina",
+            bulletPoints =
+                listOf(
+                    "Llama, pregunta por nuestras cuotas de recuperación y agenda",
+                ),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Service 2: Tamizacion Adultos
+        ServiceCard(
+            icon = Icons.Default.CheckCircle,
+            title = "Adultos",
+            description = "Química Sanguínea de 6 elementos + microalbuminuria",
+            bulletPoints =
+                listOf(
+                    "Llama, pregunta por nuestras cuotas de recuperación y agenda",
+                ),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Service 3: Tamizacion Embarazadas
+        ServiceCard(
+            icon = Icons.Default.CheckCircle,
+            title = "Embarazadas",
+            description = "Química Sanguínea de 6 elementos + PFH + BH + examen general de orina",
+            bulletPoints =
+                listOf(
+                    "Llama, pregunta por nuestras cuotas de recuperación y agenda",
+                ),
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Consultas
+        Text(
+            text = "Consultas",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = NavyBlue,
             modifier = Modifier.padding(bottom = 24.dp),
         )
 
-        // Service 1: Tamizacion y Prevencion
-        ServiceCard(
-            icon = Icons.Default.CheckCircle,
-            title = "Tamización y Prevención",
-            description = "Detección temprana de enfermedad renal crónica",
-            bulletPoints = listOf(
-                "Niños (donativo $180)",
-                "Adultos (donativo $200)",
-                "Embarazadas (donativo $395)"
-            )
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Service 2: Consultas
         ServiceCard(
             icon = Icons.Default.MedicalServices,
-            title = "Consultas",
-            description = "Atención médica especializada",
-            bulletPoints = listOf(
-                "Nefrología",
-                "Nefro Pediatra",
-                "Urología",
-                "Diabetólogo",
-                "Médico General",
-                "Nutrición",
-                "Psicología"
-            )
+            title = "Atención médica especializada",
+            description = "Llama, pregunta por nuestras cuotas de recuperación y agenda",
+            bulletPoints =
+                listOf(
+                    "Nefrología",
+                    "Nefro pediatra",
+                    "Urología",
+                    "Diabetólogo",
+                    "Médico General",
+                    "Nutrición",
+                    "Psicología",
+                ),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
-        // Service 3: Ultrasonidos
+        // Ultrasonidos
+        Text(
+            text = "Ultrasonidos",
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold,
+            color = NavyBlue,
+            modifier = Modifier.padding(bottom = 24.dp),
+        )
+
         ServiceCard(
             icon = Icons.Default.Monitor,
-            title = "Ultrasonidos",
-            description = "Realizados por un médico certificado",
-            bulletPoints = listOf(
-                "Renal",
-                "Abdomen",
-                "Próstata",
-                "Tiroides",
-                "Obstétrico",
-                "Tejidos blandos",
-                "Hernias",
-                "Testicular",
-                "Mama"
-            )
+            title = "Realizadas por un médico certificado",
+            description = "Con previa cita. Llama, pregunta por nuestras cuotas de recuperación y agenda",
+            bulletPoints =
+                listOf(
+                    "Renal",
+                    "Abdomen",
+                    "Entre otros más",
+                ),
         )
     }
 }
@@ -108,7 +157,7 @@ fun ServiceCard(
             // Icon and Title
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(bottom = 12.dp)
+                modifier = Modifier.padding(bottom = 12.dp),
             ) {
                 Icon(
                     imageVector = icon,
@@ -135,11 +184,11 @@ fun ServiceCard(
 
             // Bullet points
             Column(
-                verticalArrangement = Arrangement.spacedBy(6.dp)
+                verticalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 bulletPoints.forEach { point ->
                     Row(
-                        verticalAlignment = Alignment.Top
+                        verticalAlignment = Alignment.Top,
                     ) {
                         Text(
                             text = "• ",
@@ -158,4 +207,3 @@ fun ServiceCard(
         }
     }
 }
-

@@ -32,8 +32,12 @@ fun HomeScreen(
                         .verticalScroll(rememberScrollState()),
             ) {
                 Spacer(modifier = Modifier.height(10.dp))
+
                 // Header with background image and logo
                 HeaderSection()
+
+                // Presentación section
+                PresentacionSection()
 
                 // Blue section with text and button
                 BlueSection(navController = navController)
@@ -52,6 +56,7 @@ fun HomeScreen(
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
+
                 // Vision
                 TextBox(
                     title = "Visión",
@@ -64,6 +69,7 @@ fun HomeScreen(
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
+
                 // Our Services section
                 OurServicesSection()
 

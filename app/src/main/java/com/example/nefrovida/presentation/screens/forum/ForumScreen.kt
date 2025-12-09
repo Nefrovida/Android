@@ -95,15 +95,15 @@ fun ForumScreen(
     ) { _ ->
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                ) {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                },
+                Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                    ) {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    },
         ) {
             if (showNewMessageDialog) {
                 NewMessageModal(
@@ -151,7 +151,7 @@ fun DiscoverTabContent(
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refresh() }
+        onRefresh = { viewModel.refresh() },
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -196,9 +196,9 @@ fun DiscoverTabContent(
                         item {
                             Box(
                                 modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()
@@ -243,24 +243,24 @@ fun MyForumsTabContent(
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refresh() }
+        onRefresh = { viewModel.refresh() },
     ) {
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                ) {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                },
+                Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                    ) {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    },
         ) {
             SearchBar(
                 query = myForumsSearchQuery,
                 onQueryChange = viewModel::onMyForumsSearchQueryChange,
-                onSearch = viewModel::onSearch,
+                onSearch = { },
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -320,7 +320,7 @@ fun AllForumsTabContent(
             confirmButton = {
                 TextButton(
                     onClick = { viewModel.onJoinForumConfirm() },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
                 ) {
                     when (joinState) {
                         is Result.Loading -> CircularProgressIndicator()
@@ -331,11 +331,11 @@ fun AllForumsTabContent(
             dismissButton = {
                 TextButton(
                     onClick = { viewModel.onJoinForumDismiss() },
-                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary)
+                    colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.secondary),
                 ) {
                     Text("Cancelar")
                 }
-            }
+            },
         )
     }
 
@@ -350,24 +350,24 @@ fun AllForumsTabContent(
 
     PullToRefreshBox(
         isRefreshing = isRefreshing,
-        onRefresh = { viewModel.refresh() }
+        onRefresh = { viewModel.refresh() },
     ) {
         Column(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                ) {
-                    keyboardController?.hide()
-                    focusManager.clearFocus()
-                },
+                Modifier
+                    .fillMaxSize()
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null,
+                    ) {
+                        keyboardController?.hide()
+                        focusManager.clearFocus()
+                    },
         ) {
             SearchBar(
                 query = allForumsSearchQuery,
                 onQueryChange = viewModel::onAllForumsSearchQueryChange,
-                onSearch = viewModel::onSearch,
+                onSearch = { },
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
             Spacer(modifier = Modifier.height(16.dp))
@@ -402,9 +402,9 @@ fun AllForumsTabContent(
                         item {
                             Box(
                                 modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp),
                                 contentAlignment = Alignment.Center,
                             ) {
                                 CircularProgressIndicator()
@@ -443,9 +443,9 @@ fun ForumListItem(
 ) {
     Card(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+            modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
@@ -468,9 +468,9 @@ fun ForumAllListItem(
 ) {
     Card(
         modifier =
-        modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+            modifier
+                .fillMaxWidth()
+                .clickable(onClick = onClick),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     ) {
