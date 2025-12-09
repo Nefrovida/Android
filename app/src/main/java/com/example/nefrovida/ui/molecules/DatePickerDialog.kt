@@ -1,21 +1,52 @@
 package com.example.nefrovida.ui.molecules
 
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.Dialog
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SelectableDates
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDatePickerState
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import java.text.SimpleDateFormat
-import java.util.*
+import androidx.compose.ui.window.Dialog
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DatePickerDialog(
     onDismiss: () -> Unit,
     onDateSelected: (String) -> Unit,
+    dateValidator: (Long) -> Boolean = { true },
 ) {
-    val datePickerState = rememberDatePickerState()
+    // Get the start of today in UTC milliseconds to prevent selecting past dates.
+    val todayUtcMillis = LocalDate.now(ZoneId.of("UTC"))
+        .atStartOfDay(ZoneId.of("UTC"))
+        .toInstant()
+        .toEpochMilli()
+
+    val selectableDates = object : SelectableDates {
+        override fun isSelectableDate(utcTimeMillis: Long): Boolean {
+            // A date is selectable if it's not in the past AND it passes the external validation (e.g., not a weekend).
+            return utcTimeMillis >= todayUtcMillis && dateValidator(utcTimeMillis)
+        }
+    }
+
+    val datePickerState = rememberDatePickerState(
+        selectableDates = selectableDates
+    )
 
     Dialog(onDismissRequest = onDismiss) {
         Surface(
@@ -23,8 +54,8 @@ fun DatePickerDialog(
             shape = MaterialTheme.shapes.medium,
             tonalElevation = 6.dp
         ) {
-            Column(modifier = Modifier.padding(16.dp)) {
-
+            // Reduce horizontal padding to give the calendar more space
+            Column(modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)) {
                 DatePicker(
                     state = datePickerState,
                     colors = DatePickerDefaults.colors(
@@ -60,13 +91,9 @@ fun DatePickerDialog(
                     }
 
                     TextButton(onClick = {
-                        val selectedMillis = datePickerState.selectedDateMillis
-                        if (selectedMillis != null) {
-                            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
-                                timeZone = TimeZone.getTimeZone("UTC")
-                            }
-                            val formatted = sdf.format(Date(selectedMillis))
-                            onDateSelected(formatted)
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            val selectedDate = Instant.ofEpochMilli(millis).atZone(ZoneId.of("UTC")).toLocalDate()
+                            onDateSelected(selectedDate.toString())
                         }
                         onDismiss()
                     }) {

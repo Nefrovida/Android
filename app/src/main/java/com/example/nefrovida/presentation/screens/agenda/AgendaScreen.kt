@@ -26,13 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.nefrovida.data.remote.dto.AppointmentStatus
 import com.example.nefrovida.data.remote.dto.AppointmentTypes
 import com.example.nefrovida.domain.model.AgendaItem
 import com.example.nefrovida.domain.model.AnalysisStatus
 import com.example.nefrovida.presentation.utils.formatDatePretty
+import com.example.nefrovida.presentation.utils.formatTimeAmPm
 import com.example.nefrovida.ui.atoms.SimpleIconButton
 import com.example.nefrovida.ui.molecules.DatePickerDialog
 import com.example.nefrovida.ui.molecules.Dialog
@@ -177,7 +178,7 @@ fun AgendaScreen(
                                         style = MaterialTheme.typography.titleMedium,
                                     )
                                     Text("Fecha: ${appointment.date}")
-                                    Text("Hora: ${appointment.time}")
+                                    Text("Hora: ${formatTimeAmPm(appointment.time)}")
                                     Text("Tipo: ${appointment.appointmentType}")
                                     Text(placeOrLink)
                                     Text(status)
