@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -72,12 +73,14 @@ class CatalogViewModel
             appointmentId: Int,
         ) {
             viewModelScope.launch {
+                val formattedDateHour = LocalDateTime.parse(dateHour)
+                val newDateHour = formattedDateHour.plusHours(-6).toString()
                 try {
                     val success =
                         createAppointmentUseCase(
                             patientId = _userId.value,
                             appointmentId = appointmentId,
-                            dateHour = dateHour,
+                            dateHour = newDateHour,
                             appointmentType = appointmentType,
                         )
                     _uiState.value =
