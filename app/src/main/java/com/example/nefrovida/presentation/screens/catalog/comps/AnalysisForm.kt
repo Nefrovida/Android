@@ -26,6 +26,9 @@ import com.example.nefrovida.ui.molecules.ReusableStringDropdown
 import com.example.nefrovida.ui.theme.NavyBlue
 import com.example.nefrovida.ui.theme.TextGray
 import kotlinx.coroutines.launch
+import java.time.DayOfWeek
+import java.time.Instant
+import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -117,7 +120,7 @@ fun AnalysisForm(
                 label = { Text("Fecha") },
                 trailingIcon = {
                     IconButton(onClick = { showDatePicker = true }) {
-                        Icon(Icons.Default.DateRange, contentDescription = "Seleccionar fecha")
+                        Icon(Icons.Default.DateRange, contentDescription = "Seleccionar hora")
                     }
                 },
                 colors =
@@ -210,6 +213,15 @@ fun AnalysisForm(
                     Log.w("AnalysisForm", "Selected date is invalid")
                     // TODO: Show snackbar for invalid date
                 }
+            },
+            dateValidator = { timeInMillis ->
+                val dayOfWeek =
+                    Instant
+                        .ofEpochMilli(timeInMillis)
+                        .atZone(ZoneId.of("UTC"))
+                        .toLocalDate()
+                        .dayOfWeek
+                dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY
             },
         )
     }
